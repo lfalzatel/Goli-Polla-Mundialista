@@ -25,6 +25,8 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
   const [isBonosExpanded, setIsBonosExpanded] = useState(false);
   const [notifText, setNotifText] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   React.useEffect(() => {
     if (bonificaciones) {
@@ -39,6 +41,13 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
     equiposSet.add(p.equipoVisitante);
   });
   const equiposOrdenados = Array.from(equiposSet).sort();
+
+  // Extract dates for heatmap calendar
+  const dateCounts: Record<string, number> = {};
+  partidos.forEach(p => {
+    dateCounts[p.fecha] = (dateCounts[p.fecha] || 0) + 1;
+  });
+  const uniqueDates = Object.keys(dateCounts);
 
   // Bloqueo de Bonificaciones Especiales (Inicio de Octavos: Aprox 27 Junio 2026)
   const isBonosLocked = Date.now() >= new Date('2026-06-27T00:00:00').getTime();
@@ -57,8 +66,10 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
     }
   };
 
-  // Filter matches based on search term (universal filter)
+  // Filter matches based on search term (universal filter) and selected date
   const filteredPartidos = partidos.filter(p => {
+    if (selectedDate && p.fecha !== selectedDate) return false;
+    if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return p.equipoLocal.toLowerCase().includes(term) ||
            p.equipoVisitante.toLowerCase().includes(term) ||
@@ -370,25 +381,75 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
         )}
       </div>
 
-      {/* Universal Search Filter */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <span className="material-symbols-outlined text-slate-400">search</span>
-        </div>
-        <input
-          type="text"
-          placeholder="Buscar por equipo, fecha o grupo..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-white border-2 border-slate-200 rounded-xl py-3.5 pl-11 pr-4 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#e1b12c]/30 focus:border-[#e1b12c] transition-all font-sans text-sm shadow-sm"
-        />
-        {searchTerm && (
-          <button 
-            onClick={() => setSearchTerm('')}
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white"
+      {/* Universal Search Filter and Calendar Toggle */}
+      <div className="flex flex-col gap-3">
+        <div className="flex gap-2 relative">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <span className="material-symbols-outlined text-slate-400">search</span>
+            </div>
+            <input
+              type="text"
+              placeholder="Buscar equipo o grupo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-white border-2 border-slate-200 rounded-xl py-3.5 pl-11 pr-4 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#e1b12c]/30 focus:border-[#e1b12c] transition-all font-sans text-sm shadow-sm"
+            />
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600"
+              >
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => setShowCalendar(!showCalendar)}
+            className={`w-14 shrink-0 rounded-xl flex items-center justify-center border-2 transition-all shadow-sm ${showCalendar || selectedDate ? 'bg-[#034226] text-white border-[#034226]' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}
           >
-            <span className="material-symbols-outlined text-[18px]">close</span>
+            <span className="material-symbols-outlined text-[24px]">calendar_month</span>
           </button>
+        </div>
+
+        {/* Heatmap Calendar Ribbon */}
+        {showCalendar && (
+          <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-inner animate-in slide-in-from-top-2 fade-in">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-slate-600 font-sans uppercase">Filtro por Fecha</span>
+              {selectedDate && (
+                <button 
+                  onClick={() => setSelectedDate(null)}
+                  className="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded font-bold hover:bg-slate-200 transition-colors"
+                >
+                  MOSTRAR TODOS
+                </button>
+              )}
+            </div>
+            <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide snap-x">
+              {uniqueDates.map(date => {
+                const count = dateCounts[date];
+                // Intensidad de calor: 1-2 partidos = suave, 3 = medio, 4+ = intenso
+                let intensityClass = 'bg-[#e1b12c]/20 text-slate-700';
+                if (count === 3) intensityClass = 'bg-[#e1b12c]/60 text-slate-900 font-bold';
+                if (count >= 4) intensityClass = 'bg-[#e1b12c] text-slate-900 font-extrabold';
+
+                const isSelected = selectedDate === date;
+
+                return (
+                  <button
+                    key={date}
+                    onClick={() => setSelectedDate(isSelected ? null : date)}
+                    className={`snap-start shrink-0 flex flex-col items-center justify-center p-2 rounded-lg min-w-[70px] border-2 transition-all ${isSelected ? 'border-[#034226] shadow-md ring-2 ring-[#034226]/20' : 'border-transparent hover:border-slate-300'} ${intensityClass}`}
+                  >
+                    <span className="text-[10px] uppercase font-bold opacity-80">{date.split(' ')[0]}</span>
+                    <span className="text-lg leading-none mt-1">{date.split(' ')[1].split('-')[0]}</span>
+                    <span className="text-[9px] mt-1.5 opacity-80 font-bold bg-white/40 px-1 rounded-sm">{count} part.</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
 

@@ -27,13 +27,13 @@ export default function Header({ usuario, onLogout, onChangeGroup, partidos = []
   // Determinar próximos partidos y alertas
   const now = new Date();
   const proximosPartidos = partidos
-    .filter(p => p.fechaReal > now)
-    .sort((a, b) => a.fechaReal.getTime() - b.fechaReal.getTime())
+    .filter(p => p.fechaHoraInicio > now.getTime())
+    .sort((a, b) => a.fechaHoraInicio - b.fechaHoraInicio)
     .slice(0, 3); // Mostrar los próximos 3
     
   // Alerta si el próximo partido es en menos de 24 horas
   const hasAlert = proximosPartidos.length > 0 && 
-    (proximosPartidos[0].fechaReal.getTime() - now.getTime() < 24 * 60 * 60 * 1000);
+    (proximosPartidos[0].fechaHoraInicio - now.getTime() < 24 * 60 * 60 * 1000);
 
   const handleShareApp = () => {
     setShowDropdown(false);
@@ -100,7 +100,7 @@ export default function Header({ usuario, onLogout, onChangeGroup, partidos = []
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200">
+            <div className="absolute right-0 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 mt-2 w-[280px] bg-white border border-slate-200 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200">
               <div className="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
                 <h4 className="font-bold text-slate-800 text-sm">Próximos Partidos</h4>
               </div>
@@ -109,20 +109,20 @@ export default function Header({ usuario, onLogout, onChangeGroup, partidos = []
                   <p className="text-xs text-slate-500 p-4 text-center">No hay partidos próximos</p>
                 ) : (
                   proximosPartidos.map(p => {
-                    const diffTime = p.fechaReal.getTime() - now.getTime();
+                    const diffTime = p.fechaHoraInicio - now.getTime();
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     const isUrgent = diffDays <= 1;
 
                     return (
-                      <div key={p.id} className={`p-3 border-b border-slate-50 flex items-center gap-3 ${isUrgent ? 'bg-red-50/50' : 'hover:bg-slate-50'}`}>
+                      <div key={p.partidoId} className={`p-3 border-b border-slate-50 flex items-center gap-3 ${isUrgent ? 'bg-red-50/50' : 'hover:bg-slate-50'}`}>
                         <div className="flex flex-col items-center shrink-0">
-                          <img src={p.banderaLoc} alt={p.local} className="w-5 h-3.5 object-cover rounded shadow-sm mb-1" />
-                          <img src={p.banderaVis} alt={p.visitante} className="w-5 h-3.5 object-cover rounded shadow-sm" />
+                          <img src={p.banderaLocal} alt={p.equipoLocal} className="w-5 h-3.5 object-cover rounded shadow-sm mb-1" />
+                          <img src={p.banderaVisitante} alt={p.equipoVisitante} className="w-5 h-3.5 object-cover rounded shadow-sm" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold text-slate-800 truncate">{p.local} vs {p.visitante}</p>
+                          <p className="text-xs font-bold text-slate-800 truncate">{p.equipoLocal} vs {p.equipoVisitante}</p>
                           <p className="text-[10px] text-slate-500">
-                            {p.fechaReal.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                            {new Date(p.fechaHoraInicio).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                           </p>
                         </div>
                         {isUrgent && (
