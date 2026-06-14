@@ -15,6 +15,7 @@ import Header from './components/Header';
 import InicioTab from './components/InicioTab';
 import ReglasTab from './components/ReglasTab';
 import PerfilTab from './components/PerfilTab';
+import RankingTab from './components/RankingTab';
 export default function App() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [partidos, setPartidos] = useState<Partido[]>(PARTIDOS_INICIALES);
@@ -351,6 +352,7 @@ export default function App() {
         usuario={usuario} 
         onLogout={handleLogout} 
         onChangeGroup={handleChangeGroup}
+        onOpenChat={() => setShowWhatsAppConfirm(true)}
         partidos={partidos}
       />
 
@@ -401,6 +403,15 @@ export default function App() {
             apuestas={apuestas}
             partidos={partidos}
             onUpdateWhatsapp={handleUpdateWhatsapp}
+          />
+        )}
+
+        {activeTab === 'ranking' && (
+          <RankingTab
+            usuarios={rankingLideres}
+            apuestas={apuestas}
+            partidos={partidos}
+            usuarioActualId={usuario.uid}
           />
         )}
       </main>
@@ -551,15 +562,19 @@ export default function App() {
           <span className="font-sans text-xs mt-0.5 font-semibold">Perfil</span>
         </button>
 
-        {/* Tab: WhatsApp */}
+        {/* Tab: Ranking */}
         <button
-          onClick={() => setShowWhatsAppConfirm(true)}
-          className="flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer text-[#c5c6d0] hover:text-[#25D366]"
+          onClick={() => setActiveTab('ranking')}
+          className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
+            activeTab === 'ranking' 
+              ? 'bg-[#ffe16d] text-[#121316] px-6 scale-105 font-bold shadow-lg shadow-[#ffe16d]/20' 
+              : 'text-[#c5c6d0] hover:text-[#ffe16d]'
+          }`}
         >
-          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 0" }}>
-            forum
+          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'ranking' ? "'FILL' 1" : "'FILL' 0" }}>
+            leaderboard
           </span>
-          <span className="font-sans text-xs mt-0.5 font-semibold">Grupo</span>
+          <span className="font-sans text-xs mt-0.5 font-semibold">Ranking</span>
         </button>
 
       </nav>

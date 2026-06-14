@@ -16,10 +16,11 @@ interface HeaderProps {
   };
   onLogout: () => void;
   onChangeGroup: () => void;
+  onOpenChat: () => void;
   partidos?: Partido[];
 }
 
-export default function Header({ usuario, onLogout, onChangeGroup, partidos = [] }: HeaderProps) {
+export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, partidos = [] }: HeaderProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
@@ -83,6 +84,15 @@ export default function Header({ usuario, onLogout, onChangeGroup, partidos = []
 
       {/* Actions container */}
       <div className="flex items-center gap-3">
+        {/* Chat Button */}
+        <button 
+          onClick={onOpenChat}
+          className="w-10 h-10 rounded-full flex items-center justify-center bg-[#25D366] border border-[#1ebd58] hover:bg-[#20b858] transition-colors cursor-pointer shadow-lg"
+          title="Grupo de WhatsApp"
+        >
+          <span className="material-symbols-outlined text-white text-[20px]">forum</span>
+        </button>
+
         {/* Notification Bell */}
         <div className="relative">
           <button 
@@ -144,12 +154,21 @@ export default function Header({ usuario, onLogout, onChangeGroup, partidos = []
               setShowDropdown(!showDropdown);
               setShowNotifications(false);
             }}
-          className="flex items-center gap-1.5 bg-[#02331d] hover:bg-[#012213] px-3.5 py-1.5 rounded-full border border-white/20 font-sans cursor-pointer text-xs md:text-sm transition-all shadow-inner"
+          className="flex items-center gap-2 bg-[#02331d] hover:bg-[#012213] pl-1.5 pr-2 py-1.5 rounded-full border border-white/20 font-sans cursor-pointer transition-all shadow-inner"
         >
-          <span className="text-white/80 font-medium font-sans">Puntaje Total: </span>
-          <span className="text-[#e1b12c] font-bold font-mono text-sm">
-            {usuario.puntosTotal} pts
-          </span>
+          {usuario.foto ? (
+            <img src={usuario.foto} alt="Perfil" className="w-6 h-6 rounded-full border border-white/20 object-cover" />
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+              <span className="material-symbols-outlined text-white/50 text-[14px]">person</span>
+            </div>
+          )}
+          <div className="flex flex-col items-start leading-none pr-1">
+            <span className="text-white/80 font-medium font-sans text-[10px]">Puntaje:</span>
+            <span className="text-[#e1b12c] font-bold font-mono text-xs">
+              {usuario.puntosTotal} pts
+            </span>
+          </div>
           <span className="material-symbols-outlined text-[#e1b12c] text-[20px] transition-transform duration-200" style={{ transform: showDropdown ? 'rotate(180deg)' : 'rotate(0)' }}>
             arrow_drop_down
           </span>
