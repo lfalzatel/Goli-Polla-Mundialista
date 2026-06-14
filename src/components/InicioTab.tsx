@@ -92,17 +92,20 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
     return a.fechaHoraInicio - b.fechaHoraInicio;
   });
 
-  // Group matches by phase, then by date
-  const partidosPorFaseYFecha: Record<string, Record<string, Partido[]>> = {};
+  // Group matches by estado, then by date
+  const partidosPorEstadoYFecha: Record<string, Record<string, Partido[]>> = {
+    'en_vivo': {},
+    'pendiente': {},
+    'finalizado': {}
+  };
   filteredPartidos.forEach(p => {
-    const faseName = p.fase === 'primera' ? 'Fase de Grupos' : 'Fase Eliminatoria';
-    if (!partidosPorFaseYFecha[faseName]) {
-      partidosPorFaseYFecha[faseName] = {};
+    if (!partidosPorEstadoYFecha[p.estado]) {
+      partidosPorEstadoYFecha[p.estado] = {};
     }
-    if (!partidosPorFaseYFecha[faseName][p.fecha]) {
-      partidosPorFaseYFecha[faseName][p.fecha] = [];
+    if (!partidosPorEstadoYFecha[p.estado][p.fecha]) {
+      partidosPorEstadoYFecha[p.estado][p.fecha] = [];
     }
-    partidosPorFaseYFecha[faseName][p.fecha].push(p);
+    partidosPorEstadoYFecha[p.estado][p.fecha].push(p);
   });
 
   const getApuestaForPartido = (partidoId: string) => {
@@ -480,24 +483,33 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
         </div>
       </div>
 
-      {/* Group listings of matches by phase and date */}
-      {Object.entries(partidosPorFaseYFecha).map(([fase, fechasObj]) => (
-        <div key={fase} className="space-y-6">
-          <div className="bg-[#034226] py-3 px-4 rounded-xl shadow-md border border-[#e1b12c]">
-            <h2 className="font-display text-2xl text-[#e1b12c] uppercase tracking-widest text-center">
-              {fase}
-            </h2>
-          </div>
+      {/* Group listings of matches by state and date */}
+      {[
+        { estadoKey: 'en_vivo', titulo: 'EN VIVO', colorCls: 'text-red-500 border-red-500 bg-red-500/10 flex gap-2 justify-center items-center', icon: true },
+        { estadoKey: 'pendiente', titulo: 'PRÓXIMOS PARTIDOS', colorCls: 'text-[#e1b12c] border-[#e1b12c] bg-[#034226]', icon: false },
+        { estadoKey: 'finalizado', titulo: 'FINALIZADOS', colorCls: 'text-slate-400 border-slate-600 bg-[#121316]', icon: false }
+      ].map(({ estadoKey, titulo, colorCls, icon }) => {
+        const fechasObj = partidosPorEstadoYFecha[estadoKey];
+        if (!fechasObj || Object.keys(fechasObj).length === 0) return null;
 
-          {Object.entries(fechasObj).map(([fecha, partidosEstrella]) => (
-            <section key={fecha} className="space-y-4">
-              <div className="flex items-center gap-4 mt-6">
-                <h3 className="font-display text-3xl text-slate-200 uppercase tracking-wide leading-none">{fecha}</h3>
-                <div className="h-[1px] flex-grow bg-white/15"></div>
-              </div>
+        return (
+          <div key={estadoKey} className="space-y-6 mt-8 first:mt-2">
+            <div className={`py-3 px-4 rounded-xl shadow-md border ${colorCls}`}>
+              {icon && <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div>}
+              <h2 className="font-display text-2xl uppercase tracking-widest text-center">
+                {titulo}
+              </h2>
+            </div>
 
-              <div className="flex flex-col gap-4">
-                {partidosEstrella.map(match => {
+            {Object.entries(fechasObj).map(([fecha, partidosEstrella]) => (
+              <section key={fecha} className="space-y-4">
+                <div className="flex items-center gap-4 mt-6">
+                  <h3 className="font-display text-3xl text-slate-200 uppercase tracking-wide leading-none">{fecha}</h3>
+                  <div className="h-[1px] flex-grow bg-white/15"></div>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  {partidosEstrella.map(match => {
               const apuesta = getApuestaForPartido(match.partidoId);
               let pointsEarned: number | null = null;
               if (match.estado === 'finalizado' && apuesta) {
@@ -709,7 +721,8 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
         </section>
         ))}
       </div>
-      ))}
+      );
+    })}
 
     </div>
   );
