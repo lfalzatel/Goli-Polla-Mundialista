@@ -518,16 +518,6 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                       : 'bg-white border-2 border-[#034226]/15 hover:border-[#034226]/45 shadow-[0_4px_20px_rgba(0,0,0,0.02)]'
                   }`}
                 >
-                  {/* Lock Indicator / Points badge */}
-                  {match.estado === 'finalizado' && (
-                    <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-1">
-                      <span className="bg-[#e1b12c] text-[#034226] px-3 py-1 rounded-full font-sans text-xs uppercase font-extrabold flex items-center gap-1 shadow-md border border-[#e1b12c]/40">
-                        <span className="material-symbols-outlined text-[14px] font-bold">workspace_premium</span>
-                        +{pointsEarned} pts
-                      </span>
-                    </div>
-                  )}
-
                   <div className="p-5">
                     {/* Header info */}
                     <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
@@ -644,16 +634,23 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                     {/* Footer Lock state/Prediction notification message */}
                     <div className="mt-4 pt-3 border-t border-slate-150 flex flex-col items-center justify-between text-xs text-slate-600">
                       {yaBloqueado ? (
-                        <div className="w-full flex items-center gap-2 text-slate-500 font-sans justify-center bg-slate-100 py-2.5 rounded-xl border border-slate-200/40">
-                          <span className="material-symbols-outlined text-[16px] text-[#e1b12c] font-bold">lock</span>
-                          <span className="font-medium text-xs">
-                            {apuesta 
-                              ? `Tu Pronóstico: ${apuesta.golesLocalApuesta} - ${apuesta.golesVisitanteApuesta}` 
-                              : 'No ingresaste predicción para este encuentro'}
-                          </span>
-                          {apuesta?.totalGolesApuesta && (
-                            <span className="bg-slate-200 text-slate-500 px-2 py-0.5 rounded font-bold text-[10px] ml-1">
-                              {apuesta.totalGolesApuesta === 'mas25' ? '+2.5 Goles' : '-2.5 Goles'}
+                        <div className="w-full flex items-center justify-between px-4 py-2.5 bg-slate-100 rounded-xl border border-slate-200/40">
+                          <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-[16px] text-[#e1b12c] font-bold">lock</span>
+                            <span className="font-medium text-xs">
+                              {apuesta 
+                                ? `Tu Pronóstico: ${apuesta.golesLocalApuesta} - ${apuesta.golesVisitanteApuesta}` 
+                                : 'Sin predicción'}
+                            </span>
+                            {apuesta?.totalGolesApuesta && (
+                              <span className="bg-slate-200 text-slate-500 px-2 py-0.5 rounded font-bold text-[10px] ml-1">
+                                {apuesta.totalGolesApuesta === 'mas25' ? '+2.5 Goles' : '-2.5 Goles'}
+                              </span>
+                            )}
+                          </div>
+                          {match.estado === 'finalizado' && pointsEarned !== null && (
+                            <span className="bg-[#e1b12c]/20 text-[#034226] px-2 py-1 rounded font-bold text-[10px] uppercase border border-[#e1b12c]/40">
+                              +{pointsEarned} pts obtenidos
                             </span>
                           )}
                         </div>
