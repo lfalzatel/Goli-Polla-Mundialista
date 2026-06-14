@@ -76,6 +76,20 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
            p.grupoTorneo.toLowerCase().includes(term) ||
            p.fecha.toLowerCase().includes(term) ||
            p.estadio.toLowerCase().includes(term);
+  }).sort((a, b) => {
+    // Ordenar primero en_vivo, luego pendiente, luego finalizado
+    const estadoOrder: Record<string, number> = {
+      'en_vivo': 1,
+      'pendiente': 2,
+      'finalizado': 3
+    };
+    
+    if (estadoOrder[a.estado] !== estadoOrder[b.estado]) {
+      return estadoOrder[a.estado] - estadoOrder[b.estado];
+    }
+    
+    // Si tienen el mismo estado, ordenar por fecha (cronológico)
+    return a.fechaHoraInicio - b.fechaHoraInicio;
   });
 
   // Group matches by phase, then by date
