@@ -1,0 +1,428 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState, useEffect } from 'react';
+import { Partido, Apuesta, RankedUser, Usuario } from './types';
+import { PARTIDOS_INICIALES, RANKING_INICIAL, APUESTAS_INICIALES_PRESETS, calcularPuntosPartido } from './data';
+import { db, auth } from './lib/firebase';
+import { collection, onSnapshot, doc, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
+import SplashLogin from './components/SplashLogin';
+import Header from './components/Header';
+import InicioTab from './components/InicioTab';
+import ReglasTab from './components/ReglasTab';
+import PerfilTab from './components/PerfilTab';
+export default function App() {
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [partidos, setPartidos] = useState<Partido[]>(PARTIDOS_INICIALES);
+  const [apuestas, setApuestas] = useState<Apuesta[]>([]);
+  const [rankingLideres, setRankingLideres] = useState<RankedUser[]>(RANKING_INICIAL);
+  const [bonificaciones, setBonificaciones] = useState<BonificacionesEspeciales | null>(null);
+  const [activeTab, setActiveTab] = useState<'inicio' | 'reglas' | 'perfil'>('inicio');
+  const [showFloatingRanking, setShowFloatingRanking] = useState(false);
+  const [showWhatsAppConfirm, setShowWhatsAppConfirm] = useState(false);
+
+  // Load configuration from Firebase on mount (only when user is authenticated)
+  useEffect(() => {
+    if (!usuario) return;
+
+    // Listen to Matches
+    const unsubPartidos = onSnapshot(collection(db, 'pm_partidos'), (snapshot) => {
+      if (!snapshot.empty) {
+        const p: Partido[] = [];
+        snapshot.forEach(doc => p.push(doc.data() as Partido));
+        // Sort if needed, assuming API sends them ordered or we order by fecha/hora
+        setPartidos(p);
+      } else {
+        // Fallback to initial if db is completely empty
+        setPartidos(PARTIDOS_INICIALES);
+      }
+    });
+
+    // Listen to User's own bets
+    const unsubApuestas = onSnapshot(collection(db, 'pm_apuestas'), (snapshot) => {
+      const ap: Apuesta[] = [];
+      snapshot.forEach(doc => {
+        const data = doc.data() as Apuesta;
+        // Solo guardamos en estado las apuestas del usuario actual (en producción se haría con query)
+        if (data.uid === usuario.uid) {
+          ap.push(data);
+        }
+      });
+      setApuestas(ap);
+    });
+
+    // Listen to User's own special bonuses
+    const unsubBonos = onSnapshot(doc(db, 'pm_bonificaciones', usuario.uid), (docSnap) => {
+      if (docSnap.exists()) {
+        setBonificaciones(docSnap.data() as BonificacionesEspeciales);
+      } else {
+        setBonificaciones(null);
+      }
+    });
+
+      const unsubUsuarios = onSnapshot(collection(db, 'pm_usuarios'), (snapshot) => {
+        const ranking: RankedUser[] = [];
+        snapshot.forEach(doc => {
+          const data = doc.data() as Usuario;
+          ranking.push({
+            uid: doc.id,
+            nombre: data.nombre,
+            foto: data.foto,
+          puntosTotal: data.puntosTotal || 0,
+          posicion: 0
+        });
+        // Update local user's total points if it changed in DB
+        if (doc.id === usuario.uid && data.puntosTotal !== usuario.puntosTotal) {
+           setUsuario(prev => prev ? { ...prev, puntosTotal: data.puntosTotal } : prev);
+        }
+      });
+      
+      // Sort and assign positions
+      ranking.sort((a, b) => b.puntosTotal - a.puntosTotal);
+      ranking.forEach((r, idx) => r.posicion = idx + 1);
+      setRankingLideres(ranking);
+    });
+
+    return () => {
+      unsubPartidos();
+      unsubApuestas();
+      unsubBonos();
+      unsubUsuarios();
+    };
+  }, [usuario?.uid]);
+
+  // Sync state functions
+  const handleLoginSuccess = (nombre: string, email: string, whatsapp: string, codigoGrupo: string, uid: string, fotoUrl?: string) => {
+    const newUser: Usuario = {
+      uid,
+      nombre,
+      email,
+      foto: fotoUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuB51HhLfnZaDiGtKYp7MwISidlkzLIvjuKRkqP-Z4Ht2dfgJK3G8Ve2q4QdXolTh7pung4KkLRXjVW-wEb_4UESxWciOP6HrVq2_JhM1XYhDssQTl7p5-ey-rgv2tfQCzfManWqd5WgZ8rShV-0IJFalxgyqdM5DuGNi-aMWPgI2fDBTcvn1bDgPNRX6YlC9MMlGEC_qv3OozOdRzTAWf5n3njxyzJz_10pMEEW1tGZ9t6OAaoy2zhSTVl1dQ10KnYavNUUhU2_0RU',
+      whatsapp,
+      codigoGrupo,
+      puntosTotal: 0,
+      createdAt: new Date().toISOString()
+    };
+    
+    setUsuario(newUser);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.error(e);
+    }
+    setUsuario(null);
+    setPartidos([]);
+    setApuestas([]);
+    setRankingLideres([]);
+    setActiveTab('inicio');
+  };
+
+  const handleChangeGroup = () => {
+    const newGroup = prompt('Ingresa el nuevo código de acceso de grupo:', usuario?.codigoGrupo || '');
+    if (newGroup && newGroup.trim() && usuario) {
+      const updatedUser = { ...usuario, codigoGrupo: newGroup.toUpperCase() };
+      setUsuario(updatedUser);
+      localStorage.setItem('polla_usuario', JSON.stringify(updatedUser));
+    }
+  };
+
+  const handleUpdateWhatsapp = async (newPhone: string) => {
+    if (usuario) {
+      const updatedUser = { ...usuario, whatsapp: newPhone };
+      setUsuario(updatedUser);
+      // Guardar también en Firestore con merge para evitar errores si el documento es nuevo
+      try {
+        await setDoc(doc(db, 'pm_usuarios', usuario.uid), { whatsapp: newPhone }, { merge: true });
+      } catch (e) {
+        console.error("Error al actualizar WhatsApp", e);
+      }
+    }
+  };
+
+  const handleGuardarApuesta = async (partidoId: string, golesLocal: number, golesVisitante: number, totalGolesApuesta?: "mas25" | "menos25" | null) => {
+    if (!usuario) return;
+
+    const key = `${usuario.uid}_${partidoId}`;
+    const targetMatch = partidos.find(p => p.partidoId === partidoId);
+    
+    const calcPuntaje = targetMatch && targetMatch.estado === 'finalizado' && targetMatch.golesLocal !== null && targetMatch.golesVisitante !== null
+      ? calcularPuntosPartido(targetMatch.golesLocal, targetMatch.golesVisitante, golesLocal, golesVisitante, totalGolesApuesta)
+      : 0;
+
+    const localApuesta: Apuesta = {
+      id: key,
+      uid: usuario.uid,
+      partidoId,
+      golesLocalApuesta: golesLocal,
+      golesVisitanteApuesta: golesVisitante,
+      equipoGanadorApuesta: golesLocal > golesVisitante ? 'local' : golesLocal < golesVisitante ? 'visitante' : 'empate',
+      empateApuesta: (golesLocal === golesVisitante), // Derived
+      totalGolesApuesta: totalGolesApuesta || null,
+      puntosObtenidos: calcPuntaje,
+      bloqueada: targetMatch ? (targetMatch.estado === 'finalizado' || targetMatch.estado === 'en_vivo') : false
+    };
+
+    try {
+      await setDoc(doc(db, 'pm_apuestas', key), localApuesta);
+    } catch (e) {
+      console.error("Error guardando apuesta", e);
+    }
+  };
+
+  const handleGuardarBonificaciones = async (bonos: Partial<BonificacionesEspeciales>) => {
+    if (!usuario) return;
+    const newBonos = {
+      ...bonos,
+      uid: usuario.uid,
+      puntosObtenidos: bonos.puntosObtenidos || 0
+    } as BonificacionesEspeciales;
+    try {
+      await setDoc(doc(db, 'pm_bonificaciones', usuario.uid), newBonos);
+    } catch (e) {
+      console.error("Error guardando bonificaciones", e);
+    }
+  };
+
+  // Simulate schedule cloud function matches finalized
+  const handleSimularPartidos = async (resultados: Record<string, { golesLocal: number; golesVisitante: number }>) => {
+    if (!usuario) return;
+    try {
+      const batch = writeBatch(db);
+      for (const match of partidos) {
+        if (resultados[match.partidoId]) {
+          const matchRef = doc(db, 'pm_partidos', match.partidoId);
+          batch.update(matchRef, {
+            golesLocal: resultados[match.partidoId].golesLocal,
+            golesVisitante: resultados[match.partidoId].golesVisitante,
+            estado: 'finalizado'
+          });
+        }
+      }
+      await batch.commit();
+      alert("Partidos simulados en la base de datos.");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // If the user isn't logged in, show the Splash and Google sign-in
+  if (!usuario) {
+    return <SplashLogin onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-[#121316] text-[#e3e2e6] pb-28 pt-20">
+      
+      {/* Background aesthetics layer */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-tr from-[#121316] via-[#0d0e11] to-[#001b44]/20"></div>
+      <div className="fixed inset-0 -z-10 stadium-mesh opacity-30"></div>
+
+      {/* Main navigation header */}
+      <Header 
+        usuario={usuario} 
+        onLogout={handleLogout} 
+        onChangeGroup={handleChangeGroup}
+        partidos={partidos}
+      />
+
+      {/* Active Tab rendering layout viewport */}
+      <main className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
+        {activeTab === 'inicio' && (
+          <InicioTab 
+            partidos={partidos} 
+            apuestas={apuestas} 
+            bonificaciones={bonificaciones}
+            isAdmin={usuario.esAdmin || usuario.email === 'lfalzatel@gmail.com'}
+            onGuardarApuesta={handleGuardarApuesta}
+            onGuardarBonificaciones={handleGuardarBonificaciones}
+            onSimularPartidos={handleSimularPartidos}
+          />
+        )}
+
+        {activeTab === 'reglas' && (
+          <ReglasTab />
+        )}
+
+        {activeTab === 'perfil' && (
+          <PerfilTab 
+            nombre={usuario.nombre}
+            foto={usuario.foto || ''}
+            email={usuario.email}
+            whatsapp={usuario.whatsapp}
+            codigoGrupo={usuario.codigoGrupo}
+            puntosTotal={usuario.puntosTotal}
+            rankingLideres={rankingLideres}
+            apuestas={apuestas}
+            partidos={partidos}
+            onUpdateWhatsapp={handleUpdateWhatsapp}
+          />
+        )}
+      </main>
+
+      {/* Floating Leaderboard Action Button (Contextual quick tool) */}
+      <button 
+        onClick={() => setShowFloatingRanking(!showFloatingRanking)}
+        className="fixed bottom-24 right-4 w-12 h-12 bg-[#ffe16d] text-[#121316] hover:bg-[#e9c400] rounded-full shadow-2xl flex items-center justify-center border border-[#ffe16d]/30 active:scale-90 transition-transform cursor-pointer z-40"
+        title="Mostrar tabla de posiciones del grupo"
+        aria-haspopup="dialog"
+      >
+        <span className="material-symbols-outlined font-bold text-xl">leaderboard</span>
+      </button>
+
+      {/* Floating Leaderboard Overview Dialogue Modal */}
+      {showFloatingRanking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowFloatingRanking(false)}></div>
+          <div className="relative w-full max-w-[340px] bg-[#1f1f23] border border-white/10 rounded-2xl p-5 shadow-2xl animate-in font-sans">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="font-display text-xl text-[#b1c6f9] tracking-wider uppercase flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#ffe16d]">workspace_premium</span>
+                Tabla del Grupo
+              </h4>
+              <button onClick={() => setShowFloatingRanking(false)} className="text-[#8e9099] hover:text-white p-1">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+              {rankingLideres.map(lead => {
+                const isSelf = lead.uid === 'me';
+                return (
+                  <div 
+                    key={lead.uid} 
+                    className={`flex justify-between items-center p-2.5 rounded-xl ${
+                      isSelf ? 'bg-[#79ff5b]/15 border border-[#79ff5b]/30' : 'bg-[#121316]/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-mono text-xs text-[#8e9099] w-4 text-center">#{lead.posicion}</span>
+                      <img alt={lead.nombre} className="w-8 h-8 rounded-full border border-white/5" src={lead.foto} />
+                      <span className={`text-xs font-semibold ${isSelf ? 'text-[#79ff5b]' : 'text-slate-200'}`}>
+                        {lead.nombre} {isSelf && '(Tú)'}
+                      </span>
+                    </div>
+                    <span className="font-mono text-xs text-[#ffe16d] font-bold">{lead.puntosTotal} PTS</span>
+                  </div>
+                );
+              })}
+            </div>
+            
+            <button 
+              onClick={() => {
+                setActiveTab('perfil');
+                setShowFloatingRanking(false);
+              }}
+              className="mt-4 w-full bg-[#192f59] hover:bg-[#314671] text-[#b1c6f9] py-2 rounded-xl text-xs font-bold transition-all uppercase"
+            >
+              Ir a Desglose Completo
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* WhatsApp Confirmation Modal */}
+      {showWhatsAppConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowWhatsAppConfirm(false)}></div>
+          <div className="relative w-full max-w-[320px] bg-[#1f1f23] border border-white/10 rounded-2xl p-6 shadow-2xl animate-in font-sans text-center">
+            
+            <div className="w-16 h-16 bg-[#25D366]/20 text-[#25D366] rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg border-2 border-[#25D366]/50">
+              <span className="material-symbols-outlined text-[32px]">forum</span>
+            </div>
+
+            <h3 className="font-display text-2xl text-white mb-2">¿Ir a WhatsApp?</h3>
+            
+            <p className="text-sm text-slate-300 mb-6 leading-relaxed">
+              Estás a punto de salir de la aplicación para abrir el chat del grupo en WhatsApp.
+            </p>
+
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowWhatsAppConfirm(false)}
+                className="flex-1 bg-white/10 text-white font-bold py-3 rounded-xl hover:bg-white/20 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={() => {
+                  setShowWhatsAppConfirm(false);
+                  window.open("https://chat.whatsapp.com/HWD3dsmIIQJIUAMylKVOND", "_blank");
+                }}
+                className="flex-1 bg-[#25D366] text-[#022100] font-bold py-3 rounded-xl hover:bg-[#20b858] transition-colors"
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Styled Premium Bottom Tab Bar Navigation navigation */}
+      <nav className="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-4 pt-2.5 bg-[#1b1b1f] border-t border-white/10 shadow-[0_-5px_20px_rgba(0,0,0,0.5)] rounded-t-3xl">
+        
+        {/* Tab: Inicio */}
+        <button
+          onClick={() => setActiveTab('inicio')}
+          className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
+            activeTab === 'inicio' 
+              ? 'bg-[#79ff5b] text-[#022100] px-6 scale-105 font-bold shadow-lg shadow-[#79ff5b]/10' 
+              : 'text-[#c5c6d0] hover:text-[#79ff5b]'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'inicio' ? "'FILL' 1" : "'FILL' 0" }}>
+            home
+          </span>
+          <span className="font-sans text-xs mt-0.5 font-semibold">Inicio</span>
+        </button>
+
+        {/* Tab: Reglas */}
+        <button
+          onClick={() => setActiveTab('reglas')}
+          className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
+            activeTab === 'reglas' 
+              ? 'bg-[#79ff5b] text-[#022100] px-6 scale-105 font-bold shadow-lg shadow-[#79ff5b]/10' 
+              : 'text-[#c5c6d0] hover:text-[#79ff5b]'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'reglas' ? "'FILL' 1" : "'FILL' 0" }}>
+            gavel
+          </span>
+          <span className="font-sans text-xs mt-0.5 font-semibold">Reglas</span>
+        </button>
+
+        {/* Tab: Perfil */}
+        <button
+          onClick={() => setActiveTab('perfil')}
+          className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
+            activeTab === 'perfil' 
+              ? 'bg-[#79ff5b] text-[#022100] px-6 scale-105 font-bold shadow-lg shadow-[#79ff5b]/10' 
+              : 'text-[#c5c6d0] hover:text-[#79ff5b]'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'perfil' ? "'FILL' 1" : "'FILL' 0" }}>
+            person
+          </span>
+          <span className="font-sans text-xs mt-0.5 font-semibold">Perfil</span>
+        </button>
+
+        {/* Tab: WhatsApp */}
+        <button
+          onClick={() => setShowWhatsAppConfirm(true)}
+          className="flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer text-[#c5c6d0] hover:text-[#25D366]"
+        >
+          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 0" }}>
+            forum
+          </span>
+          <span className="font-sans text-xs mt-0.5 font-semibold">Grupo</span>
+        </button>
+
+      </nav>
+    </div>
+  );
+}
