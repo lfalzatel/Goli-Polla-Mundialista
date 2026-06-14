@@ -466,7 +466,7 @@ export default function App() {
             
             <button 
               onClick={() => {
-                setActiveTab('perfil');
+                setActiveTab('ranking');
                 setShowFloatingRanking(false);
               }}
               className="mt-4 w-full bg-[#192f59] hover:bg-[#314671] text-[#b1c6f9] py-2 rounded-xl text-xs font-bold transition-all uppercase"
