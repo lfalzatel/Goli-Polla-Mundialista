@@ -289,15 +289,26 @@ export default function App() {
             };
             
             // Calcular puntos reales
-            const pts = calcularPuntosPartido(apuesta, partidoActualizado);
+            const puntosObj = calcularPuntosPartido(
+              partidoActualizado.golesLocal!,
+              partidoActualizado.golesVisitante!,
+              apuesta.golesLocalApuesta,
+              apuesta.golesVisitanteApuesta,
+              apuesta.totalGolesApuesta
+            );
+            
+            const ptsTotal = puntosObj.total;
+            const ptsAnteriores = typeof apuesta.puntosObtenidos === 'number' 
+                                  ? apuesta.puntosObtenidos 
+                                  : (apuesta.puntosObtenidos?.total || 0);
             
             // Si hay diferencia, actualizar apuesta y sumar al acumulado del usuario
-            if (pts !== (apuesta.puntosObtenidos || 0)) {
-                const diff = pts - (apuesta.puntosObtenidos || 0);
+            if (ptsTotal !== ptsAnteriores) {
+                const diff = ptsTotal - ptsAnteriores;
                 userPointsDiff[apuesta.uid] = (userPointsDiff[apuesta.uid] || 0) + diff;
                 
                 batch.update(doc(db, 'pm_apuestas', apuesta.id), {
-                   puntosObtenidos: pts
+                   puntosObtenidos: ptsTotal
                 });
             }
          }
