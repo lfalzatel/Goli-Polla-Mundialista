@@ -100,7 +100,7 @@ export default function Header({ usuario, onLogout, onChangeGroup, partidos = []
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 mt-2 w-[280px] bg-white border border-slate-200 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200">
+            <div className="fixed left-4 right-4 top-[70px] sm:top-auto sm:absolute sm:right-auto sm:left-1/2 sm:-translate-x-1/2 sm:mt-2 sm:w-[280px] bg-white border border-slate-200 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200">
               <div className="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
                 <h4 className="font-bold text-slate-800 text-sm">Próximos Partidos</h4>
               </div>
@@ -157,7 +157,7 @@ export default function Header({ usuario, onLogout, onChangeGroup, partidos = []
 
         {/* Dropdown Menu block in professional light design */}
         {showDropdown && (
-          <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200 text-slate-800">
+          <div className="fixed left-4 right-4 top-[70px] sm:top-auto sm:absolute sm:left-auto sm:right-0 sm:mt-2 sm:w-56 bg-white border border-slate-200 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200 text-slate-800">
             <div className="px-4 py-2 border-b border-slate-100">
               <p className="font-sans text-sm font-bold text-slate-800 truncate">
                 {usuario.nombre}
