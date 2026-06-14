@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Partido, Apuesta, RankedUser, Usuario } from './types';
 import { PARTIDOS_INICIALES, RANKING_INICIAL, APUESTAS_INICIALES_PRESETS, calcularPuntosPartido } from './data';
 import { db, auth, messagingPromise } from './lib/firebase';
-import { collection, onSnapshot, doc, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { getToken, onMessage } from 'firebase/messaging';
 import SplashLogin from './components/SplashLogin';
@@ -90,8 +90,14 @@ export default function App() {
       if (!snapshot.empty) {
         const p: Partido[] = [];
         snapshot.forEach(doc => p.push(doc.data() as Partido));
-        // Sort if needed, assuming API sends them ordered or we order by fecha/hora
-        setPartidos(p);
+        
+        // Merge with initial matches so we don't lose unplayed matches that aren't in DB yet
+        const mergedPartidos = PARTIDOS_INICIALES.map(inicial => {
+          const dbMatch = p.find(m => m.partidoId === inicial.partidoId);
+          return dbMatch ? dbMatch : inicial;
+        });
+        
+        setPartidos(mergedPartidos);
       } else {
         // Fallback to initial if db is completely empty
         setPartidos(PARTIDOS_INICIALES);
@@ -251,20 +257,69 @@ export default function App() {
     if (!usuario) return;
     try {
       const batch = writeBatch(db);
+      
+      // 1. Guardar resultados de partidos en la base de datos (con merge por si no existían)
       for (const match of partidos) {
         if (resultados[match.partidoId]) {
           const matchRef = doc(db, 'pm_partidos', match.partidoId);
-          batch.update(matchRef, {
-            golesLocal: resultados[match.partidoId].golesLocal,
-            golesVisitante: resultados[match.partidoId].golesVisitante,
+          const res = resultados[match.partidoId];
+          batch.set(matchRef, {
+            ...match,
+            golesLocal: res.golesLocal,
+            golesVisitante: res.golesVisitante,
             estado: 'finalizado'
-          });
+          }, { merge: true });
         }
       }
+
+      // 2. Traer todas las apuestas para recalcular puntajes
+      const apuestasSnap = await getDocs(collection(db, 'pm_apuestas'));
+      const apuestasList = apuestasSnap.docs.map(d => ({id: d.id, ...d.data()})) as (Apuesta & {id: string})[];
+      
+      const userPointsDiff: Record<string, number> = {};
+
+      apuestasList.forEach(apuesta => {
+         if (resultados[apuesta.partidoId]) {
+            // Recrear el partido con el resultado final simulado
+            const partidoActualizado = {
+                ...partidos.find(p => p.partidoId === apuesta.partidoId)!,
+                golesLocal: resultados[apuesta.partidoId].golesLocal,
+                golesVisitante: resultados[apuesta.partidoId].golesVisitante,
+                estado: 'finalizado' as const
+            };
+            
+            // Calcular puntos reales
+            const pts = calcularPuntosPartido(apuesta, partidoActualizado);
+            
+            // Si hay diferencia, actualizar apuesta y sumar al acumulado del usuario
+            if (pts !== (apuesta.puntosObtenidos || 0)) {
+                const diff = pts - (apuesta.puntosObtenidos || 0);
+                userPointsDiff[apuesta.uid] = (userPointsDiff[apuesta.uid] || 0) + diff;
+                
+                batch.update(doc(db, 'pm_apuestas', apuesta.id), {
+                   puntosObtenidos: pts
+                });
+            }
+         }
+      });
+
+      // 3. Actualizar el total de puntos de cada usuario
+      const usersSnap = await getDocs(collection(db, 'pm_usuarios'));
+      usersSnap.docs.forEach(uDoc => {
+         const uid = uDoc.id;
+         if (userPointsDiff[uid]) {
+            const currentPoints = uDoc.data().puntosTotal || 0;
+            batch.update(doc(db, 'pm_usuarios', uid), {
+               puntosTotal: currentPoints + userPointsDiff[uid]
+            });
+         }
+      });
+
       await batch.commit();
-      alert("Partidos simulados en la base de datos.");
+      alert("Partidos simulados exitosamente y puntos calculados.");
     } catch (e) {
       console.error(e);
+      alert("Ocurrió un error simulando los partidos y calculando puntos.");
     }
   };
 
