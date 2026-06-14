@@ -6,9 +6,10 @@
 import React, { useState, useEffect } from 'react';
 import { Partido, Apuesta, RankedUser, Usuario } from './types';
 import { PARTIDOS_INICIALES, RANKING_INICIAL, APUESTAS_INICIALES_PRESETS, calcularPuntosPartido } from './data';
-import { db, auth } from './lib/firebase';
+import { db, auth, messagingPromise } from './lib/firebase';
 import { collection, onSnapshot, doc, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
+import { getToken, onMessage } from 'firebase/messaging';
 import SplashLogin from './components/SplashLogin';
 import Header from './components/Header';
 import InicioTab from './components/InicioTab';
@@ -23,6 +24,62 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'inicio' | 'reglas' | 'perfil'>('inicio');
   const [showFloatingRanking, setShowFloatingRanking] = useState(false);
   const [showWhatsAppConfirm, setShowWhatsAppConfirm] = useState(false);
+  const [notificationToast, setNotificationToast] = useState<{title: string, body: string} | null>(null);
+
+  // Setup foreground notifications
+  useEffect(() => {
+    let unsubscribe = () => {};
+    const setupMessaging = async () => {
+      const messaging = await messagingPromise;
+      if (messaging) {
+        unsubscribe = onMessage(messaging, (payload) => {
+          console.log('[App.tsx] Foreground message received. ', payload);
+          // Play sound
+          const audio = new Audio('/assets/sounds/notification.mp3');
+          audio.play().catch(e => console.log('Audio play failed', e));
+          
+          // Show toast
+          if (payload.notification) {
+             setNotificationToast({
+               title: payload.notification.title || 'Nueva Notificación',
+               body: payload.notification.body || ''
+             });
+             setTimeout(() => setNotificationToast(null), 5000);
+          }
+        });
+      }
+    };
+    setupMessaging();
+    return () => unsubscribe();
+  }, []);
+
+  // Request Notification Permissions and save Token
+  useEffect(() => {
+    if (!usuario?.uid) return;
+    
+    const requestPermission = async () => {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const messaging = await messagingPromise;
+          if (messaging) {
+            // Importante: Aquí se usa la llave VAPID real generada en Firebase.
+            const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY });
+            if (token) {
+              await setDoc(doc(db, 'users', usuario.uid), { fcmToken: token }, { merge: true });
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Push notification permission error', e);
+      }
+    };
+    
+    // Si ya está concedido, renueva el token, si no está denegado, lo pide
+    if (Notification.permission !== 'denied') {
+      requestPermission();
+    }
+  }, [usuario?.uid]);
 
   // Load configuration from Firebase on mount (only when user is authenticated)
   useEffect(() => {
@@ -231,8 +288,25 @@ export default function App() {
         partidos={partidos}
       />
 
-      {/* Active Tab rendering layout viewport */}
-      <main className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
+      {/* In-App Notification Toast */}
+      {notificationToast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-white border-2 border-[#e1b12c] rounded-2xl p-4 shadow-2xl z-[100] animate-in fade-in slide-in-from-top-10 duration-300 w-11/12 max-w-sm flex items-start gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#034226] flex items-center justify-center shrink-0 border border-white relative">
+            <span className="material-symbols-outlined text-[#e1b12c] text-[20px]">notifications_active</span>
+            <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>
+          </div>
+          <div>
+            <h4 className="font-bold text-[#034226] text-sm font-sans">{notificationToast.title}</h4>
+            <p className="text-slate-600 text-xs font-sans mt-0.5 leading-snug">{notificationToast.body}</p>
+          </div>
+          <button onClick={() => setNotificationToast(null)} className="ml-auto text-slate-400 hover:text-slate-700">
+            <span className="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+      )}
+
+      {/* Main Content View with extra bottom padding for navbar */}
+      <main className="pt-20 pb-24 md:pb-20 max-w-4xl mx-auto p-4 md:p-6 min-h-[calc(100vh-64px)] overflow-x-hidden">
         {activeTab === 'inicio' && (
           <InicioTab 
             partidos={partidos} 

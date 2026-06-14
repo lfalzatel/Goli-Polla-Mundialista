@@ -246,6 +246,47 @@ export default function ReglasTab() {
 
           </div>
         </div>
+        {/* Premios y Ganadores Card */}
+        <div className="md:col-span-12 bg-gradient-to-br from-[#034226] to-[#045c36] border border-[#e1b12c]/40 p-6 rounded-2xl shadow-lg relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <span className="material-symbols-outlined text-[100px] text-[#e1b12c]" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
+          </div>
+          
+          <h3 className="font-display text-2xl text-[#e1b12c] mb-5 flex items-center gap-2 uppercase tracking-wide relative z-10">
+            <span className="material-symbols-outlined text-[24px]">emoji_events</span>
+            Distribución de Premios
+          </h3>
+          
+          <p className="text-white/80 font-sans text-sm mb-6 max-w-2xl relative z-10">
+            Al finalizar el torneo, el pozo acumulado será distribuido entre los 3 mejores pronosticadores de la tabla general, garantizando una competencia emocionante hasta el último partido:
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+            {/* 1er Puesto */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-5 rounded-xl flex flex-col items-center justify-center text-center hover:bg-white/15 transition-all">
+              <span className="material-symbols-outlined text-[40px] text-[#e1b12c] mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>trophy</span>
+              <p className="font-sans text-white font-bold text-sm">1er Puesto (Campeón)</p>
+              <p className="font-display text-4xl text-[#e1b12c] font-black mt-2">70%</p>
+              <p className="font-sans text-[10px] text-white/60 mt-1 uppercase tracking-wider">Del Pozo Acumulado</p>
+            </div>
+
+            {/* 2do Puesto */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-5 rounded-xl flex flex-col items-center justify-center text-center hover:bg-white/15 transition-all">
+              <span className="material-symbols-outlined text-[32px] text-slate-300 mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>military_tech</span>
+              <p className="font-sans text-white font-bold text-sm">2do Puesto (Subcampeón)</p>
+              <p className="font-display text-3xl text-slate-300 font-black mt-2">20%</p>
+              <p className="font-sans text-[10px] text-white/60 mt-1 uppercase tracking-wider">Del Pozo Acumulado</p>
+            </div>
+
+            {/* 3er Puesto */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-5 rounded-xl flex flex-col items-center justify-center text-center hover:bg-white/15 transition-all">
+              <span className="material-symbols-outlined text-[32px] text-[#cd7f32] mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>military_tech</span>
+              <p className="font-sans text-white font-bold text-sm">3er Puesto</p>
+              <p className="font-display text-3xl text-[#cd7f32] font-black mt-2">10%</p>
+              <p className="font-sans text-[10px] text-white/60 mt-1 uppercase tracking-wider">Del Pozo Acumulado</p>
+            </div>
+          </div>
+        </div>
 
         {/* Stadium Aesthetic Visual Card */}
         <div className="md:col-span-12 h-52 rounded-2xl relative overflow-hidden border border-slate-200 shadow-lg group">
