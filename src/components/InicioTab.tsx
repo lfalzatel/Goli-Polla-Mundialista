@@ -645,28 +645,52 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
 
                     {/* Footer Lock state/Prediction notification message */}
                     <div className="mt-4 pt-3 border-t border-slate-150 flex flex-col items-center justify-between text-xs text-slate-600">
-                      {yaBloqueado ? (
-                        <div className="w-full flex items-center justify-between px-4 py-2.5 bg-slate-100 rounded-xl border border-slate-200/40">
-                          <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-[16px] text-[#e1b12c] font-bold">lock</span>
-                            <span className="font-medium text-xs">
-                              {apuesta 
-                                ? `Tu Pronóstico: ${apuesta.golesLocalApuesta} - ${apuesta.golesVisitanteApuesta}` 
-                                : 'Sin predicción'}
-                            </span>
-                            {apuesta?.totalGolesApuesta && (
-                              <span className="bg-slate-200 text-slate-500 px-2 py-0.5 rounded font-bold text-[10px] ml-1">
-                                {apuesta.totalGolesApuesta === 'mas25' ? '+2.5 Goles' : '-2.5 Goles'}
+                      {yaBloqueado ? (() => {
+                        const ptsObj = apuesta && typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos !== null 
+                                       ? apuesta.puntosObtenidos : null;
+                        return (
+                        <div className="w-full flex flex-col gap-2">
+                          <div className="w-full flex items-center justify-between px-4 py-2.5 bg-slate-100 rounded-xl border border-slate-200/40">
+                            <div className="flex items-center gap-2">
+                              <span className="material-symbols-outlined text-[16px] text-[#e1b12c] font-bold">lock</span>
+                              <span className="font-medium text-xs">
+                                {apuesta 
+                                  ? `Tu Pronóstico: ${apuesta.golesLocalApuesta} - ${apuesta.golesVisitanteApuesta}` 
+                                  : 'Sin predicción'}
+                              </span>
+                              {apuesta?.totalGolesApuesta && (
+                                <span className="bg-slate-200 text-slate-500 px-2 py-0.5 rounded font-bold text-[10px] ml-1">
+                                  {apuesta.totalGolesApuesta === 'mas25' ? '+2.5 Goles' : '-2.5 Goles'}
+                                </span>
+                              )}
+                            </div>
+                            {match.estado === 'finalizado' && pointsEarned !== null && !ptsObj && (
+                              <span className="bg-[#e1b12c]/20 text-[#034226] px-2 py-1 rounded font-bold text-[10px] uppercase border border-[#e1b12c]/40">
+                                +{pointsEarned} pts obtenidos
                               </span>
                             )}
                           </div>
-                          {match.estado === 'finalizado' && pointsEarned !== null && (
-                            <span className="bg-[#e1b12c]/20 text-[#034226] px-2 py-1 rounded font-bold text-[10px] uppercase border border-[#e1b12c]/40">
-                              +{pointsEarned} pts obtenidos
-                            </span>
+                          
+                          {/* Breakdown UI */}
+                          {match.estado === 'finalizado' && ptsObj && (
+                            <div className="bg-[#034226]/5 rounded-xl border border-[#034226]/10 p-3 mx-1 flex flex-col gap-1.5 text-[11px]">
+                              <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Desglose de puntos</div>
+                              
+                              {ptsObj.marcador > 0 && <div className="flex justify-between items-center text-slate-600"><span>Marcador Exacto:</span> <span className="font-bold bg-white px-2 py-0.5 rounded border border-slate-200">+{ptsObj.marcador} pts</span></div>}
+                              
+                              {ptsObj.ganador > 0 && <div className="flex justify-between items-center text-slate-600"><span>Equipo Ganador:</span> <span className="font-bold bg-white px-2 py-0.5 rounded border border-slate-200">+{ptsObj.ganador} pts</span></div>}
+                              
+                              {ptsObj.empate > 0 && <div className="flex justify-between items-center text-slate-600"><span>Empate Acertado:</span> <span className="font-bold bg-white px-2 py-0.5 rounded border border-slate-200">+{ptsObj.empate} pts</span></div>}
+                              
+                              {ptsObj.totalGoles > 0 && <div className="flex justify-between items-center text-slate-600"><span>Opcional ({apuesta.totalGolesApuesta === 'mas25' ? '+2.5' : '-2.5'} Goles):</span> <span className="font-bold bg-white px-2 py-0.5 rounded border border-slate-200">+{ptsObj.totalGoles} pts</span></div>}
+                              
+                              <div className="flex justify-between items-center border-t border-[#034226]/10 pt-2 mt-1 font-black text-[#034226] text-xs">
+                                <span className="uppercase tracking-wider">Puntos Obtenidos:</span> <span className="bg-[#e1b12c]/20 px-2.5 py-1 rounded-md border border-[#e1b12c]/40">+{ptsObj.total} pts</span>
+                              </div>
+                            </div>
                           )}
                         </div>
-                      ) : (
+                      )})() : (
                         <div className="w-full flex flex-col gap-3 items-center">
                           {/* Over/Under Selection */}
                           <div className="flex w-full items-center gap-2 mb-1 justify-center">

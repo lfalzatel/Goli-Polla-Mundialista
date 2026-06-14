@@ -298,33 +298,33 @@ export default function App() {
               apuesta.totalGolesApuesta
             );
             
-            const ptsTotal = puntosObj.total;
-            const ptsAnteriores = typeof apuesta.puntosObtenidos === 'number' 
-                                  ? apuesta.puntosObtenidos 
-                                  : (apuesta.puntosObtenidos?.total || 0);
+            // Guardar el objeto completo para tener el desglose
+            batch.update(doc(db, 'pm_apuestas', apuesta.id), {
+               puntosObtenidos: puntosObj
+            });
             
-            // Si hay diferencia, actualizar apuesta y sumar al acumulado del usuario
-            if (ptsTotal !== ptsAnteriores) {
-                const diff = ptsTotal - ptsAnteriores;
-                userPointsDiff[apuesta.uid] = (userPointsDiff[apuesta.uid] || 0) + diff;
-                
-                batch.update(doc(db, 'pm_apuestas', apuesta.id), {
-                   puntosObtenidos: ptsTotal
-                });
-            }
+            // Actualizar la lista en memoria para poder sumar todo después
+            apuesta.puntosObtenidos = puntosObj;
          }
       });
 
-      // 3. Actualizar el total de puntos de cada usuario
+      // 3. Recalcular el total de puntos de CADA usuario desde cero para garantizar sincronía perfecta
       const usersSnap = await getDocs(collection(db, 'pm_usuarios'));
+      
       usersSnap.docs.forEach(uDoc => {
          const uid = uDoc.id;
-         if (userPointsDiff[uid]) {
-            const currentPoints = uDoc.data().puntosTotal || 0;
-            batch.update(doc(db, 'pm_usuarios', uid), {
-               puntosTotal: currentPoints + userPointsDiff[uid]
-            });
-         }
+         // Encontrar todas las apuestas de este usuario y sumar sus puntosTotales
+         let totalUsuario = 0;
+         apuestasList.filter(a => a.uid === uid).forEach(a => {
+            const pts = typeof a.puntosObtenidos === 'number' 
+                        ? a.puntosObtenidos 
+                        : (a.puntosObtenidos?.total || 0);
+            totalUsuario += pts;
+         });
+         
+         batch.update(doc(db, 'pm_usuarios', uid), {
+            puntosTotal: totalUsuario
+         });
       });
 
       await batch.commit();
