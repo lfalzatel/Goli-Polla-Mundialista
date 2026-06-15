@@ -159,18 +159,23 @@ export default function SplashLogin({ onLoginSuccess }: SplashLoginProps) {
 
       <div className="relative w-full max-w-[400px] flex flex-col items-center">
         
-        <div className="mb-8 text-center animate-float">
+        <div className="mb-10 mt-4 text-center animate-float">
           <div className="relative inline-block mb-4">
-            <div className="absolute inset-0 bg-[#034226]/10 blur-2xl rounded-full"></div>
-            <div className="relative w-28 h-28 flex items-center justify-center bg-[#034226] rounded-full border-4 border-[#e1b12c] shadow-[0_10px_25px_rgba(3,66,38,0.25)]">
-              <span className="material-symbols-outlined text-[56px] text-[#e1b12c]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                sports_soccer
-              </span>
+            <div className="absolute inset-0 bg-[#034226]/20 blur-2xl rounded-full"></div>
+            
+            {/* The rotating rings */}
+            <svg className="absolute inset-[-10%] w-[120%] h-[120%] animate-spin text-[#e1b12c] -z-10" style={{ animationDuration: '6s' }} viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="70 30" strokeLinecap="round" />
+            </svg>
+            <svg className="absolute inset-[-20%] w-[140%] h-[140%] animate-spin text-[#034226] -z-10" style={{ animationDuration: '9s', animationDirection: 'reverse' }} viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="2.5" strokeDasharray="50 150" strokeLinecap="round" />
+            </svg>
+
+            {/* The Logo */}
+            <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-full shadow-[0_10px_35px_rgba(3,66,38,0.4)] z-10 overflow-hidden bg-[#034226]">
+              <img src="/logo.png" alt="GOLI Polla Mundialista" className="w-full h-full object-contain rounded-full" />
             </div>
           </div>
-          <h1 className="font-display text-5xl text-[#034226] tracking-wider mb-1 leading-none uppercase text-center">
-            GOLI <br/> POLLA MUNDIALISTA
-          </h1>
         </div>
 
         {!showCompleteProfile ? (
