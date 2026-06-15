@@ -33,8 +33,9 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
   // Admin Users States
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [allGroups, setAllGroups] = useState<any[]>([]);
   const [editingUser, setEditingUser] = useState<any | null>(null);
-  const [editFormData, setEditFormData] = useState({ esAdmin: false, codigoGrupo: '', whatsapp: '' });
+  const [editFormData, setEditFormData] = useState({ esAdmin: false, codigoGrupo: '', whatsapp: '', gruposPermitidos: [] as string[] });
 
   useEffect(() => {
     if (!usuario.esAdmin && usuario.email !== 'lfalzatel@gmail.com') return;
@@ -45,6 +46,13 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       const g: any[] = [];
       snapshot.forEach(doc => g.push({ id: doc.id, ...doc.data() }));
       setMisGrupos(g);
+    });
+
+    // 1.5 Fetch All Groups for Checklist
+    const unsubAllGroups = onSnapshot(collection(db, 'pm_grupos'), (snapshot) => {
+      const gList: any[] = [];
+      snapshot.forEach(doc => gList.push({ id: doc.id, ...doc.data() }));
+      setAllGroups(gList);
     });
 
     // 2. Fetch All Users
@@ -62,7 +70,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
     };
     fetchUsers();
 
-    return () => unsub();
+    return () => { unsub(); unsubAllGroups(); };
   }, [usuario.esAdmin, usuario.email]);
 
   const handleToggleTheme = (themeId: string) => {
@@ -121,7 +129,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
     setEditFormData({ 
       esAdmin: !!u.esAdmin, 
       codigoGrupo: u.codigoGrupo || '', 
-      whatsapp: u.whatsapp || '' 
+      whatsapp: u.whatsapp || '',
+      gruposPermitidos: u.gruposPermitidos || [u.codigoGrupo || '']
     });
   };
 
@@ -131,7 +140,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       await updateDoc(doc(db, 'pm_usuarios', editingUser.id), {
         esAdmin: editFormData.esAdmin,
         codigoGrupo: editFormData.codigoGrupo,
-        whatsapp: editFormData.whatsapp
+        whatsapp: editFormData.whatsapp,
+        gruposPermitidos: editFormData.gruposPermitidos
       });
       setAllUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, ...editFormData } : u));
       setEditingUser(null);
@@ -372,15 +382,13 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       {/* Modal de Edición de Usuario */}
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setEditingUser(null)}></div>
-          <div className="relative w-full max-w-[340px] bg-[#121316] border border-[#034226] rounded-3xl p-6 shadow-2xl animate-in fade-in slide-in-from-bottom-4 font-sans">
-            
-            <div className="flex justify-between items-center mb-5">
-              <h3 className="font-display text-xl text-[#e1b12c]">Editar Usuario</h3>
-              <button onClick={() => setEditingUser(null)} className="text-slate-400 hover:text-white">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setEditingUser(null)}></div>
+          <div className="relative w-full max-w-[340px] bg-[#034226] border border-[#e1b12c]/30 rounded-3xl p-6 shadow-2xl animate-in fade-in slide-in-from-bottom-4 font-sans">
+                        <div className="flex justify-between items-center">
+                      <p className="font-mono text-xl text-[#e1b12c] font-bold tracking-widest">
+                        {editingUser.codigoGrupo}
+                      </p>
+                    </div>
             
             <div className="flex items-center gap-3 mb-6 bg-white/5 p-3 rounded-xl border border-white/10">
               <img src={editingUser.foto || "https://ui-avatars.com/api/?name=" + editingUser.nombre} className="w-10 h-10 rounded-full bg-slate-200" alt="" />
@@ -392,17 +400,17 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">Rol</label>
+                <label className="block text-xs font-bold text-[#e1b12c] mb-1.5 uppercase">Rol</label>
                 <div className="flex gap-2">
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: false})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-700 text-white border border-slate-500' : 'bg-slate-800/50 text-slate-500 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-100 text-slate-800 border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
                   >
                     Usuario
                   </button>
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: true})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-[#034226] text-[#e1b12c] border border-[#e1b12c]/50' : 'bg-slate-800/50 text-slate-500 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-slate-100 text-slate-800 border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
                   >
                     Administrador
                   </button>
@@ -410,18 +418,49 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">Grupo Activo</label>
-                <input 
-                  type="text"
+                <label className="block text-xs font-bold text-[#e1b12c] mb-1.5 uppercase">Grupo Activo (Principal)</label>
+                <select 
                   value={editFormData.codigoGrupo}
-                  onChange={(e) => setEditFormData({...editFormData, codigoGrupo: e.target.value.toUpperCase()})}
-                  className="w-full bg-black/30 border border-white/10 rounded-lg py-2.5 px-3 text-white font-mono focus:border-[#e1b12c] outline-none transition-colors"
-                  placeholder="Ej. GOLI2026"
-                />
+                  onChange={(e) => setEditFormData({...editFormData, codigoGrupo: e.target.value})}
+                  className="w-full bg-black/30 border border-white/10 rounded-lg py-2.5 px-3 text-white font-mono focus:border-[#e1b12c] outline-none transition-colors appearance-none"
+                >
+                  <option value="">Seleccionar grupo...</option>
+                  {allGroups.map(g => (
+                    <option key={g.id} value={g.codigoGrupo} className="bg-[#034226] text-white">
+                      {g.nombre} ({g.codigoGrupo})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">WhatsApp</label>
+                <label className="block text-xs font-bold text-[#e1b12c] mb-1.5 uppercase">Grupos Permitidos</label>
+                <div className="max-h-32 overflow-y-auto bg-black/20 border border-white/10 rounded-lg p-2 space-y-1">
+                  {allGroups.map(g => (
+                    <label key={g.id} className="flex items-center gap-3 text-white text-sm cursor-pointer hover:bg-white/5 p-1.5 rounded-md transition-colors">
+                      <input 
+                        type="checkbox" 
+                        checked={editFormData.gruposPermitidos.includes(g.codigoGrupo)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setEditFormData(prev => ({
+                            ...prev,
+                            gruposPermitidos: checked 
+                              ? [...prev.gruposPermitidos, g.codigoGrupo]
+                              : prev.gruposPermitidos.filter(id => id !== g.codigoGrupo)
+                          }));
+                        }}
+                        className="accent-[#e1b12c] w-4 h-4 cursor-pointer"
+                      />
+                      <span>{g.nombre} <span className="text-slate-400 text-xs ml-1 font-mono">({g.codigoGrupo})</span></span>
+                    </label>
+                  ))}
+                  {allGroups.length === 0 && <p className="text-xs text-slate-400 p-2 text-center">No hay grupos disponibles</p>}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#e1b12c] mb-1.5 uppercase">WhatsApp</label>
                 <input 
                   type="text"
                   value={editFormData.whatsapp}

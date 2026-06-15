@@ -5,6 +5,7 @@
 
 export interface Grupo {
   codigoGrupo: string;
+  gruposPermitidos?: string[];
   nombre: string;
   activo: boolean;
   creadoPor: string;
