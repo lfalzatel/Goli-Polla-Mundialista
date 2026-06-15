@@ -328,10 +328,10 @@ export default function App() {
       });
 
       await batch.commit();
-      alert("Partidos simulados exitosamente y puntos calculados.");
+      // Silently succeed, InicioTab handles notification
     } catch (e) {
       console.error(e);
-      alert("Ocurrió un error simulando los partidos y calculando puntos.");
+      // Silently fail, or could use a toast mechanism in the future
     }
   };
 

@@ -252,8 +252,11 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
       )}
 
       {notifText && (
-        <div className="bg-[#034226] text-white border-2 border-[#e1b12c] p-3.5 rounded-xl text-center font-sans text-xs font-bold animate-pulse shadow-lg">
-          {notifText}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-[#034226] text-white border border-[#e1b12c] p-6 rounded-2xl text-center font-sans animate-bounce shadow-2xl max-w-sm w-full flex flex-col items-center gap-3">
+            <span className="material-symbols-outlined text-4xl text-[#e1b12c]">check_circle</span>
+            <span className="text-sm font-bold leading-relaxed">{notifText}</span>
+          </div>
         </div>
       )}
 
