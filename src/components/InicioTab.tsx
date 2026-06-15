@@ -227,22 +227,22 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
       
       {/* Simulation Console Card mimicking Cloud Function cron job */}
       {isAdmin && (
-        <div className="bg-[#034226] border-2 border-[#e1b12c] rounded-2xl p-5 shadow-xl text-white">
+        <div className="premium-card border-2 border-[#e1b12c] rounded-2xl p-5 shadow-xl">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <span className="font-mono text-[9px] text-[#034226] bg-[#e1b12c] px-2.5 py-1 rounded-full uppercase tracking-widest font-extrabold shadow-sm">
+              <span className="font-mono text-[9px] premium-button-accent text-[#034226] px-2.5 py-1 rounded-full uppercase tracking-widest font-extrabold shadow-sm">
                 Panel de Administrador
               </span>
-              <h3 className="font-display text-xl text-white mt-2 tracking-wide uppercase">
+              <h3 className="font-display text-xl premium-text mt-2 tracking-wide uppercase">
                 Obtener Resultados Reales
               </h3>
-              <p className="font-sans text-xs theme-text-card opacity-70 mt-1 leading-relaxed">
+              <p className="font-sans text-xs premium-text opacity-70 mt-1 leading-relaxed">
                 Esta herramienta consulta los partidos finalizados y actualiza los puntajes.
               </p>
             </div>
             <button
               onClick={runCloudFunctionSync}
-              className="bg-[#e1b12c] hover:bg-[#cda024] text-[#034226] font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md self-stretch sm:self-auto justify-center"
+              className="premium-button-accent hover:opacity-90 text-[#034226] font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md self-stretch sm:self-auto justify-center"
             >
               <span className="material-symbols-outlined text-[16px] font-bold">cloud_download</span>
               <span>ACTUALIZAR RESULTADOS (API)</span>
@@ -253,33 +253,33 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
 
       {notifText && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-          <div className="bg-[#034226] text-white border border-[#e1b12c] p-6 rounded-2xl text-center font-sans animate-bounce shadow-2xl max-w-sm w-full flex flex-col items-center gap-3">
-            <span className="material-symbols-outlined text-4xl text-[#e1b12c]">check_circle</span>
-            <span className="text-sm font-bold leading-relaxed">{notifText}</span>
+          <div className="premium-card border border-[#e1b12c] p-6 rounded-2xl text-center font-sans animate-bounce shadow-2xl max-w-sm w-full flex flex-col items-center gap-3">
+            <span className="material-symbols-outlined text-4xl premium-accent">check_circle</span>
+            <span className="text-sm font-bold leading-relaxed premium-text">{notifText}</span>
           </div>
         </div>
       )}
 
       {/* Bonificaciones Especiales (Global Picks) Card */}
-      <div className="theme-card border-2 border-[#e1b12c]/40 rounded-2xl overflow-hidden shadow-sm">
+      <div className="premium-card border-2 border-[#e1b12c]/40 rounded-2xl overflow-hidden shadow-sm">
         <button 
           onClick={() => setIsBonosExpanded(!isBonosExpanded)}
-          className="w-full bg-gradient-to-r from-[#034226] to-[#045c36] py-3 px-5 flex justify-between items-center cursor-pointer hover:brightness-110 transition-all text-left"
+          className="w-full premium-card py-3 px-5 flex justify-between items-center cursor-pointer hover:brightness-110 transition-all text-left"
         >
           <div>
-            <h2 className="font-display text-xl text-[#e1b12c] flex items-center gap-2 tracking-wide uppercase">
+            <h2 className="font-display text-xl premium-accent flex items-center gap-2 tracking-wide uppercase">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
               Pronósticos Globales
             </h2>
-            <p className="text-white/80 font-sans text-xs mt-0.5">
+            <p className="premium-text font-sans text-xs mt-0.5">
               {!isBonosExpanded && !bonificaciones ? "Realiza tus apuestas aquí para recibir bonificaciones extra." : "Toca para expandir / contraer"}
             </p>
           </div>
           <div className="flex items-center gap-3">
             {isBonosLocked && (
-              <span className="material-symbols-outlined text-[#e1b12c]">lock</span>
+              <span className="material-symbols-outlined premium-accent">lock</span>
             )}
-            <span className={`material-symbols-outlined text-[#e1b12c] transition-transform duration-300 ${isBonosExpanded ? 'rotate-180' : ''}`}>
+            <span className={`material-symbols-outlined premium-accent transition-transform duration-300 ${isBonosExpanded ? 'rotate-180' : ''}`}>
               expand_more
             </span>
           </div>

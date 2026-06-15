@@ -113,3 +113,48 @@
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
+
+/* Premium elements that default to dark green but adopt console styling */
+.premium-card {
+  background-color: #034226;
+  color: white;
+  border-color: rgba(225, 177, 44, 0.3);
+}
+
+.premium-text {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.premium-accent {
+  color: #e1b12c;
+}
+
+.premium-button-accent {
+  background-color: #e1b12c;
+  color: #034226;
+}
+
+[data-theme='cyberpunk'] .premium-card, [data-theme='kilocode'] .premium-card {
+  background-color: var(--bg-card) !important;
+  color: var(--text-card) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 0 10px var(--border-card) !important;
+  border-color: var(--border-card) !important;
+  font-family: var(--font-mono) !important;
+}
+
+[data-theme='cyberpunk'] .premium-text, [data-theme='kilocode'] .premium-text {
+  color: var(--text-card) !important;
+  opacity: 0.7 !important;
+}
+
+[data-theme='cyberpunk'] .premium-accent, [data-theme='kilocode'] .premium-accent {
+  color: var(--text-primary) !important;
+}
+
+[data-theme='cyberpunk'] .premium-button-accent, [data-theme='kilocode'] .premium-button-accent {
+  background-color: var(--border-card) !important;
+  color: var(--bg-app) !important;
+  border-radius: 0 !important;
+  font-weight: bold;
+}
