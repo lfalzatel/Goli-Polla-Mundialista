@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { db } from '../lib/firebase';
+import { collection, query, where, onSnapshot, doc, setDoc, getDocs, updateDoc } from 'firebase/firestore';
 
 interface ConfiguracionTabProps {
   usuario: any;
@@ -20,6 +22,46 @@ const AVAILABLE_THEMES = [
 
 export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, activeThemes, setActiveThemes, onLogout }: ConfiguracionTabProps) {
   const [resetSent, setResetSent] = useState(false);
+  
+  // Admin Group States
+  const [misGrupos, setMisGrupos] = useState<any[]>([]);
+  const [newGroupName, setNewGroupName] = useState('');
+  const [newGroupCode, setNewGroupCode] = useState('');
+  const [groupCreateMsg, setGroupCreateMsg] = useState('');
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  // Admin Users States
+  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
+  useEffect(() => {
+    if (!usuario.esAdmin && usuario.email !== 'lfalzatel@gmail.com') return;
+
+    // 1. Fetch Admin Groups
+    const qGrupos = query(collection(db, 'pm_grupos'), where("creadoPor", "==", usuario.email));
+    const unsub = onSnapshot(qGrupos, (snapshot) => {
+      const g: any[] = [];
+      snapshot.forEach(doc => g.push({ id: doc.id, ...doc.data() }));
+      setMisGrupos(g);
+    });
+
+    // 2. Fetch All Users
+    const fetchUsers = async () => {
+      setLoadingUsers(true);
+      try {
+        const usersSnap = await getDocs(collection(db, 'pm_usuarios'));
+        const uList: any[] = [];
+        usersSnap.forEach(d => uList.push({ id: d.id, ...d.data() }));
+        setAllUsers(uList);
+      } catch(e) {
+        console.error("Error fetching users:", e);
+      }
+      setLoadingUsers(false);
+    };
+    fetchUsers();
+
+    return () => unsub();
+  }, [usuario.esAdmin, usuario.email]);
 
   const handleToggleTheme = (themeId: string) => {
     if (activeThemes.includes(themeId)) {
@@ -38,6 +80,58 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
     } catch (e) {
       console.error(e);
       alert('Error al enviar el correo');
+    }
+  };
+
+  const handleCreateGroup = async () => {
+    if (!newGroupCode.trim() || !newGroupName.trim()) {
+      setGroupCreateMsg("Por favor, llena ambos campos.");
+      return;
+    }
+    try {
+      const codigoStr = newGroupCode.trim().toUpperCase();
+      const docRef = doc(db, 'pm_grupos', codigoStr);
+      await setDoc(docRef, {
+        codigo: codigoStr,
+        nombre: newGroupName,
+        creadoPor: usuario.email,
+        activo: true,
+        createdAt: new Date().toISOString()
+      });
+      setGroupCreateMsg(`¡Grupo ${codigoStr} creado exitosamente!`);
+      setNewGroupName('');
+      setNewGroupCode('');
+      setTimeout(() => setGroupCreateMsg(''), 4000);
+    } catch (e) {
+      console.error(e);
+      setGroupCreateMsg("Error creando grupo.");
+    }
+  };
+
+  const handleCopyCode = (codigo: string) => {
+    navigator.clipboard.writeText(codigo);
+    setCopiedCode(codigo);
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
+
+  const handleChangeUserRole = async (uid: string, esAdmin: boolean) => {
+    try {
+      await updateDoc(doc(db, 'pm_usuarios', uid), { esAdmin });
+      setAllUsers(prev => prev.map(u => u.id === uid ? { ...u, esAdmin } : u));
+    } catch (e) {
+      console.error("Error updating user role", e);
+    }
+  };
+
+  const handleShareApp = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Goli Polla Mundialista',
+        text: '¡Únete a mi grupo en la Polla Mundialista y demuestra que sabes de fútbol!',
+        url: window.location.href,
+      }).catch(console.error);
+    } else {
+      alert("La función de compartir no está disponible en este navegador.");
     }
   };
 
@@ -114,19 +208,107 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       </section>
 
       {/* SECCIÓN GESTIÓN (ADMIN) */}
-      {usuario.esAdmin && (
+      {(usuario.esAdmin || usuario.email === 'lfalzatel@gmail.com') && (
         <section className="bg-gradient-to-br from-[#034226] to-[#045c36] border border-[#e1b12c]/40 rounded-2xl p-5 shadow-xl">
           <h2 className="text-[#e1b12c] font-display text-xl mb-4 flex items-center gap-2">
             <span className="material-symbols-outlined">admin_panel_settings</span>
-            GESTIÓN DE USUARIOS
+            PANEL DE ADMINISTRADOR
           </h2>
-          <p className="text-sm text-white/80 mb-4 font-sans">Aquí podrás listar y editar todos los usuarios de la plataforma.</p>
           
-          {/* Admin User List Placeholder */}
-          <div className="p-6 border-2 border-dashed border-[#e1b12c]/40 rounded-xl text-center bg-black/20">
-            <span className="material-symbols-outlined text-[#e1b12c] text-4xl mb-2 opacity-80 animate-pulse">group_search</span>
-            <p className="text-sm text-[#e1b12c] font-bold">Listado de Usuarios</p>
-            <p className="text-xs text-white/60 mt-1">Próximamente disponible vía panel Firebase</p>
+          <div className="bg-black/20 rounded-xl p-4 mb-4 border border-white/10">
+            <h4 className="font-sans font-bold text-[#e1b12c] mb-3 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px]">group_add</span>
+              Crear Nuevo Grupo
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+              <input 
+                type="text" 
+                placeholder="Nombre del Grupo (Ej. Empresa X)" 
+                value={newGroupName}
+                onChange={e => setNewGroupName(e.target.value)}
+                className="w-full bg-white border border-[#034226] rounded-lg py-2 px-3 text-sm text-slate-800 font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none"
+              />
+              <input 
+                type="text" 
+                placeholder="Código Único (Ej. GOLI2026)" 
+                value={newGroupCode}
+                onChange={e => setNewGroupCode(e.target.value)}
+                className="w-full bg-white border border-[#034226] rounded-lg py-2 px-3 text-sm text-slate-800 font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none uppercase"
+              />
+            </div>
+            <button
+              onClick={handleCreateGroup}
+              className="bg-[#e1b12c] hover:bg-[#cda023] text-[#034226] font-sans text-sm font-bold py-2.5 px-5 rounded-xl transition-all shadow-md active:scale-95 w-full md:w-auto"
+            >
+              Crear Grupo
+            </button>
+            {groupCreateMsg && <p className="text-green-300 text-xs font-bold mt-2">{groupCreateMsg}</p>}
+          </div>
+
+          {/* Lista de Grupos */}
+          {misGrupos.length > 0 && (
+            <div className="bg-black/20 rounded-xl p-4 mb-4 border border-white/10">
+              <h4 className="font-sans font-bold text-[#e1b12c] mb-3 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px]">group</span>
+                Tus Grupos Creados
+              </h4>
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
+                {misGrupos.map(g => (
+                  <div key={g.id} className="bg-white/5 border border-white/10 rounded-lg p-3 flex justify-between items-center shadow-sm">
+                    <div>
+                      <p className="font-bold text-white text-sm leading-tight">{g.nombre}</p>
+                      <p className="text-[10px] text-green-300 uppercase tracking-widest font-semibold mt-0.5">Activo</p>
+                    </div>
+                    <button 
+                      onClick={() => handleCopyCode(g.codigo)}
+                      className={`font-mono font-bold text-xs px-3 py-1.5 rounded border transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
+                        copiedCode === g.codigo 
+                          ? 'bg-[#e1b12c] text-[#034226] border-[#cda023]' 
+                          : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                      }`}
+                      title="Copiar código"
+                    >
+                      {copiedCode === g.codigo ? '¡COPIADO!' : g.codigo}
+                      {copiedCode !== g.codigo && <span className="material-symbols-outlined text-[14px]">content_copy</span>}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Listado de Usuarios */}
+          <div className="bg-black/20 rounded-xl p-4 border border-white/10">
+            <h4 className="font-sans font-bold text-[#e1b12c] mb-3 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px]">manage_accounts</span>
+              Gestión de Usuarios
+            </h4>
+            
+            {loadingUsers ? (
+              <p className="text-white text-xs text-center py-4 opacity-50 animate-pulse">Cargando usuarios...</p>
+            ) : (
+              <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
+                {allUsers.map(u => (
+                  <div key={u.id} className="bg-white/5 border border-white/10 rounded-lg p-3 shadow-sm flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <img src={u.foto || "https://ui-avatars.com/api/?name=" + u.nombre} className="w-8 h-8 rounded-full bg-slate-200" alt={u.nombre} />
+                      <div>
+                        <p className="font-bold text-white text-xs">{u.nombre}</p>
+                        <p className="text-[10px] text-slate-300">{u.email} • Grupo: <span className="text-[#e1b12c] font-mono">{u.codigoGrupo || 'N/A'}</span></p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => handleChangeUserRole(u.id, !u.esAdmin)}
+                        className={`text-[10px] px-2 py-1 rounded font-bold uppercase transition-colors ${u.esAdmin ? 'bg-red-500/20 text-red-300 hover:bg-red-500/40' : 'bg-[#e1b12c]/20 text-[#e1b12c] hover:bg-[#e1b12c]/40'}`}
+                      >
+                        {u.esAdmin ? 'Quitar Admin' : 'Hacer Admin'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -146,7 +328,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             </div>
           </button>
           
-          <button className="w-full flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 hover:bg-black/50 transition-colors">
+          <button onClick={handleShareApp} className="w-full flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 hover:bg-black/50 transition-colors">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[#e1b12c]">share</span>
               <span className="font-bold text-slate-200 text-sm">Compartir App</span>
