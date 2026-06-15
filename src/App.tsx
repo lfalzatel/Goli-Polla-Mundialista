@@ -16,6 +16,8 @@ import InicioTab from './components/InicioTab';
 import ReglasTab from './components/ReglasTab';
 import PerfilTab from './components/PerfilTab';
 import RankingTab from './components/RankingTab';
+import ConfiguracionTab from './components/ConfiguracionTab';
+
 export default function App() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [partidos, setPartidos] = useState<Partido[]>(PARTIDOS_INICIALES);
@@ -44,7 +46,7 @@ export default function App() {
     localStorage.setItem('goli_active_themes', JSON.stringify(activeThemes));
   }, [activeThemes]);
 
-  const handleTabClick = (tab: 'inicio' | 'reglas' | 'perfil' | 'ranking') => {
+  const handleTabClick = (tab: 'inicio' | 'reglas' | 'perfil' | 'ranking' | 'configuracion') => {
     if (activeTab === tab) {
       setTabRotationToggle(!tabRotationToggle);
     } else {
@@ -559,6 +561,17 @@ export default function App() {
             apuestas={apuestas}
             partidos={partidos}
             usuarioActualId={usuario.uid}
+          />
+        )}
+
+        {activeTab === 'configuracion' && (
+          <ConfiguracionTab 
+            usuario={usuario}
+            themeMode={themeMode}
+            setThemeMode={setThemeMode}
+            activeThemes={activeThemes}
+            setActiveThemes={setActiveThemes}
+            onLogout={handleLogout}
           />
         )}
       </main>
