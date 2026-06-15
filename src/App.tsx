@@ -53,6 +53,19 @@ export default function App() {
   const consoleBgClass = themeMode === 'cyberpunk' ? 'bg-[#00FFB2]' : 'bg-[#e1b12c]';
   const consoleBorderClass = themeMode === 'cyberpunk' ? 'border-[#00FFB2]' : 'border-[#e1b12c]';
   const consoleShadowClass = themeMode === 'cyberpunk' ? 'shadow-[#00FFB2]/20' : 'shadow-[#e1b12c]/20';
+  const isGlassMode = themeMode === 'glass';
+      
+  const activeTabClass = isConsoleMode 
+    ? `${consoleBgClass} text-black w-16 h-14 rounded-none -translate-y-4 ${tabRotationToggle ? 'rotate-3' : '-rotate-3'} scale-110 border border-black shadow-lg ${consoleShadowClass} scanlines-bg` 
+    : isGlassMode
+      ? `bg-[#0ea5e9] text-white w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#0ea5e9]/40 border-2 border-[#0284c7]`
+      : `bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]`;
+
+  const inactiveTabClass = isConsoleMode 
+    ? `py-2.5 px-4 ${consoleTextClass} opacity-60 hover:opacity-100 hover:bg-white/5` 
+    : isGlassMode
+      ? `py-2.5 px-4 text-white/70 hover:text-white`
+      : `py-2.5 px-4 text-white/60 hover:text-white`;
 
   const handleTabClick = (tab: 'inicio' | 'reglas' | 'perfil' | 'ranking' | 'configuracion') => {
     setTabRotationToggle(!tabRotationToggle);
@@ -769,9 +782,7 @@ export default function App() {
         <button
           onClick={() => handleTabClick('inicio')}
           className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
-            activeTab === 'inicio' 
-                ? (isConsoleMode ? `${consoleBgClass} text-black w-16 h-14 rounded-none -translate-y-4 ${tabRotationToggle ? 'rotate-3' : '-rotate-3'} scale-110 border border-black shadow-lg ${consoleShadowClass} scanlines-bg` : `bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]`)
-                : (isConsoleMode ? `py-2.5 px-4 ${consoleTextClass} opacity-60 hover:opacity-100 hover:bg-white/5` : 'py-2.5 px-4 text-white/60 hover:text-white')
+            activeTab === 'inicio' ? activeTabClass : inactiveTabClass
           }`}
         >
           <span className={`material-symbols-outlined text-[24px] ${activeTab === 'inicio' ? 'animate-bounce mt-1' : 'transition-transform duration-300'}`} style={{ fontVariationSettings: activeTab === 'inicio' ? "'FILL' 1" : "'FILL' 0" }}>
@@ -784,9 +795,7 @@ export default function App() {
         <button
           onClick={() => handleTabClick('reglas')}
           className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
-            activeTab === 'reglas' 
-                ? (isConsoleMode ? `${consoleBgClass} text-black w-16 h-14 rounded-none -translate-y-4 ${tabRotationToggle ? 'rotate-3' : '-rotate-3'} scale-110 border border-black shadow-lg ${consoleShadowClass} scanlines-bg` : `bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]`)
-                : (isConsoleMode ? `py-2.5 px-4 ${consoleTextClass} opacity-60 hover:opacity-100 hover:bg-white/5` : 'py-2.5 px-4 text-white/60 hover:text-white')
+            activeTab === 'reglas' ? activeTabClass : inactiveTabClass
           }`}
         >
           <span className={`material-symbols-outlined text-[24px] ${activeTab === 'reglas' ? 'animate-bounce mt-1' : 'transition-transform duration-300'}`} style={{ fontVariationSettings: activeTab === 'reglas' ? "'FILL' 1" : "'FILL' 0" }}>
@@ -799,9 +808,7 @@ export default function App() {
         <button
           onClick={() => handleTabClick('perfil')}
           className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
-            activeTab === 'perfil' 
-                ? (isConsoleMode ? `${consoleBgClass} text-black w-16 h-14 rounded-none -translate-y-4 ${tabRotationToggle ? 'rotate-3' : '-rotate-3'} scale-110 border border-black shadow-lg ${consoleShadowClass} scanlines-bg` : `bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]`)
-                : (isConsoleMode ? `py-2.5 px-4 ${consoleTextClass} opacity-60 hover:opacity-100 hover:bg-white/5` : 'py-2.5 px-4 text-white/60 hover:text-white')
+            activeTab === 'perfil' ? activeTabClass : inactiveTabClass
           }`}
         >
           <span className={`material-symbols-outlined text-[24px] ${activeTab === 'perfil' ? 'animate-bounce mt-1' : 'transition-transform duration-300'}`} style={{ fontVariationSettings: activeTab === 'perfil' ? "'FILL' 1" : "'FILL' 0" }}>
@@ -814,9 +821,7 @@ export default function App() {
         <button
           onClick={() => handleTabClick('ranking')}
           className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
-            activeTab === 'ranking' 
-                ? (isConsoleMode ? `${consoleBgClass} text-black w-16 h-14 rounded-none -translate-y-4 ${tabRotationToggle ? 'rotate-3' : '-rotate-3'} scale-110 border border-black shadow-lg ${consoleShadowClass} scanlines-bg` : `bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]`)
-                : (isConsoleMode ? `py-2.5 px-4 ${consoleTextClass} opacity-60 hover:opacity-100 hover:bg-white/5` : 'py-2.5 px-4 text-white/60 hover:text-white')
+            activeTab === 'ranking' ? activeTabClass : inactiveTabClass
           }`}
         >
           <span className={`material-symbols-outlined text-[24px] ${activeTab === 'ranking' ? 'animate-bounce mt-1' : 'transition-transform duration-300'}`} style={{ fontVariationSettings: activeTab === 'ranking' ? "'FILL' 1" : "'FILL' 0" }}>

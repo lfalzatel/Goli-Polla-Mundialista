@@ -19,12 +19,12 @@
 }
 
 [data-theme="glass"] {
-  --bg-app: #0f172a;
-  --bg-app-grad: #1e1b4b;
-  --text-primary: #0ea5e9;
-  --bg-card: rgba(8, 47, 73, 0.4);
-  --text-card: #38bdf8;
-  --border-card: rgba(255, 255, 255, 0.15);
+  --bg-app: #f0f9ff;
+  --bg-app-grad: #e0f2fe;
+  --text-primary: #0284c7;
+  --bg-card: rgba(255, 255, 255, 0.6);
+  --text-card: #0f172a;
+  --border-card: rgba(14, 165, 233, 0.3);
 }
 
 [data-theme="cyberpunk"] {
