@@ -18,13 +18,13 @@ export interface Usuario {
   foto: string;
   whatsapp: string;
   codigoGrupo: string;
-  puntosTotal: number;
+  puntosTotal: number;\n  puntosPorGrupo?: Record<string, number>;
   createdAt: string;
   esAdmin?: boolean;
 }
 
 export interface Partido {
-  partidoId: string;
+  partidoId: string;\n  codigoGrupo?: string;
   fecha: string;      // Formato legible "JUE 11-06", "VIE 12-06", etc.
   hora: string;       // "10:00 AM", "03:00 PM"
   fechaHoraInicio: number; // Timestamp en ms (Date.now())

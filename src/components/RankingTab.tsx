@@ -226,20 +226,28 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
                               </div>
                               
                               <div className="flex-1 flex flex-col items-center">
-                                {/* Predicción o Candado */}
                                 {isSecret ? (
-                                  <div className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex items-center justify-center mb-1">
-                                    <span className="material-symbols-outlined text-slate-500">lock</span>
+                                  <div className="flex flex-col items-center mb-1">
+                                    <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-0.5 opacity-0">PRONÓSTICO</span>
+                                    <div className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex items-center justify-center">
+                                      <span className="material-symbols-outlined text-slate-500">lock</span>
+                                    </div>
                                   </div>
                                 ) : apuesta ? (
-                                  <div className="bg-white border border-[#e1b12c]/30 rounded-lg px-3 sm:px-5 py-1.5 flex items-center justify-center gap-2 sm:gap-4 shadow-inner mb-1">
-                                    <span className="font-mono text-xl sm:text-2xl font-bold text-slate-800">{apuesta.golesLocalApuesta}</span>
-                                    <span className="text-slate-500">-</span>
-                                    <span className="font-mono text-xl sm:text-2xl font-bold text-slate-800">{apuesta.golesVisitanteApuesta}</span>
+                                  <div className="flex flex-col items-center mb-1">
+                                    <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-0.5 uppercase">Pronóstico</span>
+                                    <div className="bg-white border border-[#e1b12c]/30 rounded-lg px-3 sm:px-5 py-1.5 flex items-center justify-center gap-2 sm:gap-4 shadow-inner">
+                                      <span className="font-mono text-xl sm:text-2xl font-bold text-slate-800">{apuesta.golesLocalApuesta}</span>
+                                      <span className="text-slate-500">-</span>
+                                      <span className="font-mono text-xl sm:text-2xl font-bold text-slate-800">{apuesta.golesVisitanteApuesta}</span>
+                                    </div>
                                   </div>
                                 ) : (
-                                  <div className="bg-white border border-red-500/20 rounded-lg px-3 py-1 flex items-center justify-center mb-1">
-                                    <span className="text-xs text-red-400">Sin predicción</span>
+                                  <div className="flex flex-col items-center mb-1">
+                                    <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-0.5 opacity-0">PRONÓSTICO</span>
+                                    <div className="bg-white border border-red-500/20 rounded-lg px-3 py-1 flex items-center justify-center">
+                                      <span className="text-xs text-red-400">Sin predicción</span>
+                                    </div>
                                   </div>
                                 )}
                                 

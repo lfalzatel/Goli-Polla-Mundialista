@@ -137,13 +137,13 @@ export default function App() {
       }
     });
 
-    // Listen to User's own bets
+    // Listen to User's own bets for the active group
     const unsubApuestas = onSnapshot(collection(db, 'pm_apuestas'), (snapshot) => {
       const ap: Apuesta[] = [];
       snapshot.forEach(doc => {
         const data = doc.data() as Apuesta;
-        // Solo guardamos en estado las apuestas del usuario actual (en producción se haría con query)
-        if (data.uid === usuario.uid) {
+        // Filtrar apuestas: del usuario actual Y del grupo actual
+        if (data.uid === usuario.uid && data.codigoGrupo === usuario.codigoGrupo) {
           ap.push(data);
         }
       });
@@ -163,24 +163,38 @@ export default function App() {
         const ranking: RankedUser[] = [];
         snapshot.forEach(doc => {
           const data = doc.data() as Usuario;
-          ranking.push({
-            uid: doc.id,
-            nombre: data.nombre,
-            foto: data.foto,
-          puntosTotal: data.puntosTotal || 0,
-          posicion: 0
+          
+          // Solo incluir usuarios que pertenezcan al grupo activo (o si es su grupo principal)
+          const belongsToGroup = data.codigoGrupo === usuario.codigoGrupo || 
+                                (data.gruposPermitidos && data.gruposPermitidos.includes(usuario.codigoGrupo));
+          
+          if (belongsToGroup) {
+            const ptGlobal = data.puntosTotal || 0;
+            const ptGrupo = data.puntosPorGrupo ? (data.puntosPorGrupo[usuario.codigoGrupo] || 0) : ptGlobal;
+
+            ranking.push({
+              uid: doc.id,
+              nombre: data.nombre,
+              foto: data.foto,
+              puntosTotal: ptGrupo,
+              posicion: 0,
+              isMe: doc.id === usuario.uid,
+              tendencia: "estable"
+            });
+          }
         });
-        // Update local user's total points if it changed in DB
-        if (doc.id === usuario.uid && data.puntosTotal !== usuario.puntosTotal) {
-           setUsuario(prev => prev ? { ...prev, puntosTotal: data.puntosTotal } : prev);
+        
+        // Update local user's total points if it changed in DB (for this group)
+        const myRank = ranking.find(r => r.uid === usuario.uid);
+        if (myRank && myRank.puntosTotal !== usuario.puntosTotal) {
+           setUsuario(prev => prev ? { ...prev, puntosTotal: myRank.puntosTotal } : prev);
         }
+        
+        // Sort and assign positions
+        ranking.sort((a, b) => b.puntosTotal - a.puntosTotal);
+        ranking.forEach((r, idx) => r.posicion = idx + 1);
+        setRankingLideres(ranking);
       });
-      
-      // Sort and assign positions
-      ranking.sort((a, b) => b.puntosTotal - a.puntosTotal);
-      ranking.forEach((r, idx) => r.posicion = idx + 1);
-      setRankingLideres(ranking);
-    });
 
     return () => {
       unsubPartidos();
@@ -279,24 +293,32 @@ export default function App() {
   const handleGuardarApuesta = async (partidoId: string, golesLocal: number, golesVisitante: number, totalGolesApuesta?: "mas25" | "menos25" | null) => {
     if (!usuario) return;
 
-    const key = `${usuario.uid}_${partidoId}`;
+    const activeGroup = usuario.codigoGrupo || 'LACURVA1';
+    const key = `${usuario.uid}_${partidoId}_${activeGroup}`;
     const targetMatch = partidos.find(p => p.partidoId === partidoId);
     
-    const calcPuntaje = targetMatch && targetMatch.estado === 'finalizado' && targetMatch.golesLocal !== null && targetMatch.golesVisitante !== null
-      ? calcularPuntosPartido(targetMatch.golesLocal, targetMatch.golesVisitante, golesLocal, golesVisitante, totalGolesApuesta)
-      : 0;
+    // Validar si el partido ya inició o fue bloqueado
+    if (targetMatch && (targetMatch.estado !== 'pendiente' || Date.now() > new Date(targetMatch.fechaHoraInicio).getTime())) {
+      alert("No puedes apostar en un partido que ya comenzó o ha finalizado.");
+      return;
+    }
+
+    let equipoGanadorApuesta = "empate";
+    if (golesLocal > golesVisitante) equipoGanadorApuesta = "local";
+    else if (golesVisitante > golesLocal) equipoGanadorApuesta = "visitante";
 
     const localApuesta: Apuesta = {
+      codigoGrupo: activeGroup,
       id: key,
       uid: usuario.uid,
       partidoId,
       golesLocalApuesta: golesLocal,
       golesVisitanteApuesta: golesVisitante,
-      equipoGanadorApuesta: golesLocal > golesVisitante ? 'local' : golesLocal < golesVisitante ? 'visitante' : 'empate',
-      empateApuesta: (golesLocal === golesVisitante), // Derived
+      equipoGanadorApuesta,
+      empateApuesta: equipoGanadorApuesta === "empate",
       totalGolesApuesta: totalGolesApuesta || null,
-      puntosObtenidos: calcPuntaje,
-      bloqueada: targetMatch ? (targetMatch.estado === 'finalizado' || targetMatch.estado === 'en_vivo') : false
+      puntosObtenidos: 0,
+      bloqueada: false
     };
 
     try {
@@ -344,7 +366,7 @@ export default function App() {
       const apuestasSnap = await getDocs(collection(db, 'pm_apuestas'));
       const apuestasList = apuestasSnap.docs.map(d => ({id: d.id, ...d.data()})) as (Apuesta & {id: string})[];
       
-      const userPointsDiff: Record<string, number> = {};
+      const userPointsByGroup: Record<string, Record<string, number>> = {};
 
       apuestasList.forEach(apuesta => {
          if (resultados[apuesta.partidoId]) {
@@ -365,33 +387,41 @@ export default function App() {
               apuesta.totalGolesApuesta
             );
             
+            const puntosGanados = typeof puntosObj === 'number' ? puntosObj : (puntosObj.total || 0);
+
             // Guardar el objeto completo para tener el desglose
             batch.update(doc(db, 'pm_apuestas', apuesta.id), {
                puntosObtenidos: puntosObj
             });
             
-            // Actualizar la lista en memoria para poder sumar todo después
-            apuesta.puntosObtenidos = puntosObj;
+            const grupoBet = apuesta.codigoGrupo || 'LACURVA1';
+            if (!userPointsByGroup[apuesta.uid]) userPointsByGroup[apuesta.uid] = {};
+            userPointsByGroup[apuesta.uid][grupoBet] = (userPointsByGroup[apuesta.uid][grupoBet] || 0) + puntosGanados;
          }
       });
 
       // 3. Recalcular el total de puntos de CADA usuario desde cero para garantizar sincronía perfecta
       const usersSnap = await getDocs(collection(db, 'pm_usuarios'));
       
-      usersSnap.docs.forEach(uDoc => {
-         const uid = uDoc.id;
-         // Encontrar todas las apuestas de este usuario y sumar sus puntosTotales
-         let totalUsuario = 0;
-         apuestasList.filter(a => a.uid === uid).forEach(a => {
-            const pts = typeof a.puntosObtenidos === 'number' 
-                        ? a.puntosObtenidos 
-                        : (a.puntosObtenidos?.total || 0);
-            totalUsuario += pts;
-         });
-         
-         batch.update(doc(db, 'pm_usuarios', uid), {
-            puntosTotal: totalUsuario
-         });
+      usersSnap.forEach(uDoc => {
+          const uid = uDoc.id;
+          if (userPointsByGroup[uid]) {
+            const uData = uDoc.data();
+            const currentPointsGroupMap = uData.puntosPorGrupo || {};
+            let changed = false;
+            for (const [gCode, newPoints] of Object.entries(userPointsByGroup[uid])) {
+               if (currentPointsGroupMap[gCode] !== newPoints) {
+                 currentPointsGroupMap[gCode] = newPoints;
+                 changed = true;
+               }
+            }
+            if (changed) {
+              batch.update(doc(db, 'pm_usuarios', uid), { 
+                puntosPorGrupo: currentPointsGroupMap,
+                puntosTotal: currentPointsGroupMap[uData.codigoGrupo || 'LACURVA1'] || 0
+              });
+            }
+          }
       });
 
       await batch.commit();
@@ -580,6 +610,7 @@ export default function App() {
             apuestas={apuestas}
             partidos={partidos}
             usuarioActualId={usuario.uid}
+            activeGrupo={usuario.codigoGrupo}
           />
         )}
 
