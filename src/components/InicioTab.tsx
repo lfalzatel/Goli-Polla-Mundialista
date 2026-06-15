@@ -688,7 +688,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                                 </span>
                               )}
                             </div>
-                            {match.estado === 'finalizado' && pointsEarned !== null && !ptsObj && (
+                            {match.estado === 'finalizado' && match.golesLocal !== null && pointsEarned !== null && !ptsObj && (
                               <span className="bg-[#e1b12c]/20 text-[#034226] px-2 py-1 rounded font-bold text-[10px] uppercase border border-[#e1b12c]/40">
                                 +{pointsEarned} pts obtenidos
                               </span>
@@ -696,7 +696,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                           </div>
                           
                           {/* Breakdown UI */}
-                          {match.estado === 'finalizado' && ptsObj && (
+                          {match.estado === 'finalizado' && match.golesLocal !== null && ptsObj && (
                             <div className="bg-[#034226]/5 rounded-xl border border-[#034226]/10 p-3 mx-1 flex flex-col gap-1.5 text-[11px]">
                               <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Desglose de puntos</div>
                               
