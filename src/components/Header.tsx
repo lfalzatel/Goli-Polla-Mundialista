@@ -70,7 +70,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-[#034226] text-white border-b-4 border-[#e1b12c] shadow-md flex justify-between items-center px-4 h-16 shrink-0">
+    <header className={`fixed top-0 left-0 w-full z-50 ${isConsoleMode ? 'theme-bg border-b-2 theme-border' : 'bg-[#034226] text-white border-b-4 border-[#e1b12c]'} shadow-md flex justify-between items-center px-4 h-16 shrink-0`}>
       {/* Profil capsule and title */}
       <div className="flex items-center gap-2">
         <div className="relative w-11 h-11 shrink-0">
@@ -162,13 +162,13 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
 
         {/* Points indicator cap with dropdown */}
         <div className="relative" ref={profileRef}>
-          <button
-            onClick={() => {
-              setShowDropdown(!showDropdown);
-              setShowNotifications(false);
-            }}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-[999px] border border-white/10 font-sans cursor-pointer transition-colors duration-200 min-h-[44px] bg-white/5 hover:bg-white/15 active:bg-white/15"
-          >
+            <button
+              onClick={() => {
+                setShowDropdown(!showDropdown);
+                setShowNotifications(false);
+              }}
+              className={`flex items-center gap-2 px-3 py-1.5 cursor-pointer transition-colors duration-200 min-h-[44px] ${isConsoleMode ? 'theme-card hover:bg-white/5' : 'rounded-[999px] border border-white/10 font-sans bg-white/5 hover:bg-white/15 active:bg-white/15'}`}
+            >
             {usuario.foto ? (
               <img src={usuario.foto} alt="Perfil" className="w-10 h-10 rounded-full border-2 border-[#e1b12c] object-cover shrink-0" />
             ) : (

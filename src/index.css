@@ -145,6 +145,11 @@
   background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px) !important;
 }
 
+[data-theme='cyberpunk'] .premium-pill-container, [data-theme='kilocode'] .premium-pill-container {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
 [data-theme='cyberpunk'] .premium-text, [data-theme='kilocode'] .premium-text {
   color: var(--text-card) !important;
   opacity: 0.7 !important;

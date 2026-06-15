@@ -578,20 +578,20 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                         
                         {/* Interactive Prediction Controls */}
                         {!yaBloqueado && (
-                          <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1">
+                          <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1 premium-pill-container">
                             <button
                               onClick={() => setLocalScore(match.partidoId, getEditingLocalScore(match.partidoId, 0) - 1)}
-                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Disminuir goles local"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">remove</span>
                             </button>
-                            <span className="font-display text-2xl text-[#034226] w-6 text-center font-bold">
+                            <span className="font-display text-2xl theme-text-card w-6 text-center font-bold">
                               {getEditingLocalScore(match.partidoId, 0)}
                             </span>
                             <button
                               onClick={() => setLocalScore(match.partidoId, getEditingLocalScore(match.partidoId, 0) + 1)}
-                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Aumentar goles local"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">add</span>
@@ -646,20 +646,20 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                         </span>
 
                         {!yaBloqueado && (
-                          <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1">
+                          <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1 premium-pill-container">
                             <button
                               onClick={() => setVisitanteScore(match.partidoId, getEditingVisitanteScore(match.partidoId, 0) - 1)}
-                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Disminuir goles visitante"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">remove</span>
                             </button>
-                            <span className="font-display text-2xl text-[#034226] w-6 text-center font-bold">
+                            <span className="font-display text-2xl theme-text-card w-6 text-center font-bold">
                               {getEditingVisitanteScore(match.partidoId, 0)}
                             </span>
                             <button
                               onClick={() => setVisitanteScore(match.partidoId, getEditingVisitanteScore(match.partidoId, 0) + 1)}
-                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Aumentar goles visitante"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">add</span>
