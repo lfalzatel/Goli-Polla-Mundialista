@@ -414,7 +414,7 @@ export default function PerfilTab({
                         referrerPolicy="no-referrer"
                       />
                     </div>
-                    <span className="font-sans text-[9px] font-bold theme-text opacity-90 truncate max-w-[60px]">{item.local}</span>
+                    <span className="font-sans text-[9px] font-bold theme-text-card opacity-90 truncate max-w-[60px]">{item.local}</span>
                   </div>
 
                   {/* Bet vs Real scores detail */}
@@ -442,7 +442,7 @@ export default function PerfilTab({
                         referrerPolicy="no-referrer"
                       />
                     </div>
-                    <span className="font-sans text-[9px] font-bold theme-text opacity-90 truncate max-w-[60px]">{item.visitante}</span>
+                    <span className="font-sans text-[9px] font-bold theme-text-card opacity-90 truncate max-w-[60px]">{item.visitante}</span>
                   </div>
 
                 </div>
