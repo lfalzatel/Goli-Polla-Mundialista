@@ -128,8 +128,8 @@ export default function PerfilTab({
         puntosLabel: `${pts} PUNTOS`,
         puntosColor: pts > 0 ? (pts === 5 ? "text-green-700 bg-green-50 border-green-200" : "text-amber-700 bg-amber-50 border-amber-200") : "text-red-700 bg-red-50 border-red-200",
         colorLeft: pts > 0 ? (pts === 5 ? "border-green-600" : "border-amber-500") : "border-red-500",
-        local: p.equipoLocal.substring(0, 3).toUpperCase(),
-        visitante: p.equipoVisitante.substring(0, 3).toUpperCase(),
+        local: p.equipoLocal,
+        visitante: p.equipoVisitante,
         golesLocApuesta: ap.golesLocalApuesta,
         golesVisApuesta: ap.golesVisitanteApuesta,
         golesLocReal: p.golesLocal,
@@ -393,7 +393,7 @@ export default function PerfilTab({
                 {/* Header row */}
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                   <span className="font-sans text-[10px] text-slate-400 font-bold uppercase tracking-wider">{item.fase}</span>
-                  <div className={`flex items-center gap-1 px-2.5 py-0.5 rounded font-sans text-[10px] font-extrabold tracking-wide uppercase ${item.badgeColor}`}>
+                  <div className={`flex items-center gap-1 px-2.5 py-0.5 rounded font-sans text-[10px] font-extrabold tracking-wide uppercase ${item.badgeColor} premium-pill-container`}>
                     <span className="material-symbols-outlined text-[13px] font-bold">
                       {item.icon}
                     </span>
@@ -414,7 +414,7 @@ export default function PerfilTab({
                         referrerPolicy="no-referrer"
                       />
                     </div>
-                    <span className="font-sans text-xs font-bold text-slate-700">{item.local}</span>
+                    <span className="font-sans text-[9px] font-bold theme-text opacity-90 truncate max-w-[60px]">{item.local}</span>
                   </div>
 
                   {/* Bet vs Real scores detail */}
@@ -422,12 +422,12 @@ export default function PerfilTab({
                     <div className="flex items-center gap-2">
                       <div className="flex flex-col items-center">
                         <span className="font-sans text-[8px] text-slate-400 font-bold uppercase theme-text-card opacity-80">Tu Polla</span>
-                        <span className="font-display text-xl theme-text-card text-[#034226] font-bold whitespace-nowrap">{item.golesLocApuesta} - {item.golesVisApuesta}</span>
+                        <span className="font-display text-base theme-text-card text-[#034226] font-bold whitespace-nowrap">{item.golesLocApuesta} - {item.golesVisApuesta}</span>
                       </div>
                       <div className="h-6 w-[1px] bg-slate-200 mx-1 opacity-50"></div>
                       <div className="flex flex-col items-center">
                         <span className="font-sans text-[8px] text-slate-400 font-bold uppercase theme-text-card opacity-80">Real</span>
-                        <span className="font-display text-xl text-[#e1b12c] font-bold whitespace-nowrap">{item.golesLocReal} - {item.golesVisReal}</span>
+                        <span className="font-display text-base text-[#e1b12c] font-bold whitespace-nowrap">{item.golesLocReal} - {item.golesVisReal}</span>
                       </div>
                     </div>
                   </div>
@@ -442,14 +442,14 @@ export default function PerfilTab({
                         referrerPolicy="no-referrer"
                       />
                     </div>
-                    <span className="font-sans text-xs font-bold text-slate-700">{item.visitante}</span>
+                    <span className="font-sans text-[9px] font-bold theme-text opacity-90 truncate max-w-[60px]">{item.visitante}</span>
                   </div>
 
                 </div>
 
                 {/* Obtained Points badge info on foot */}
                 <div className="flex justify-center mt-1">
-                  <div className={`px-4 py-1 rounded-full font-sans text-xs font-bold border shadow-sm ${item.puntosColor}`}>
+                  <div className={`px-4 py-1 rounded-full font-sans text-xs font-bold border shadow-sm ${item.puntosColor} premium-pill-container`}>
                     {item.puntosLabel}
                   </div>
                 </div>
