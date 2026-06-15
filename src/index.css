@@ -21,19 +21,19 @@
 [data-theme="glass"] {
   --bg-app: #0f172a;
   --bg-app-grad: #1e1b4b;
-  --text-primary: #f8fafc;
-  --bg-card: rgba(255, 255, 255, 0.05);
-  --text-card: #f8fafc;
-  --border-card: rgba(255, 255, 255, 0.1);
+  --text-primary: #0ea5e9;
+  --bg-card: rgba(8, 47, 73, 0.4);
+  --text-card: #38bdf8;
+  --border-card: rgba(255, 255, 255, 0.15);
 }
 
 [data-theme="cyberpunk"] {
   --bg-app: #09090b;
   --bg-app-grad: #18181b;
-  --text-primary: #0ea5e9;
-  --bg-card: rgba(8, 47, 73, 0.6);
-  --text-card: #38bdf8;
-  --border-card: #0284c7;
+  --text-primary: #00FFB2;
+  --bg-card: rgba(0, 255, 178, 0.08);
+  --text-card: #00FFB2;
+  --border-card: #008f63;
 }
 
 [data-theme="kilocode"] {

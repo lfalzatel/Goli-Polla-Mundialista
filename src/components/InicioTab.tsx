@@ -678,22 +678,22 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                         
                         return (
                         <div className="w-full flex flex-col gap-2">
-                          <div className="w-full flex items-center justify-between px-4 py-2.5 bg-slate-100 rounded-xl border /40">
+                          <div className="w-full flex items-center justify-between px-4 py-2.5 theme-card premium-pill-container rounded-xl border /40">
                             <div className="flex items-center gap-2">
-                              <span className="material-symbols-outlined text-[16px] text-[#e1b12c] font-bold">lock</span>
-                              <span className="font-medium text-xs">
+                              <span className="material-symbols-outlined text-[16px] theme-text-card font-bold">lock</span>
+                              <span className="font-medium text-xs theme-text-card">
                                 {apuesta 
                                   ? `Tu Pronóstico: ${apuesta.golesLocalApuesta} - ${apuesta.golesVisitanteApuesta}` 
                                   : 'Sin predicción'}
                               </span>
                               {apuesta?.totalGolesApuesta && (
-                                <span className="bg-slate-200 text-slate-500 px-2 py-0.5 rounded font-bold text-[10px] ml-1">
+                                <span className="theme-card premium-pill-container px-2 py-0.5 rounded font-bold text-[10px] ml-1">
                                   {apuesta.totalGolesApuesta === 'mas25' ? '+2.5 Goles' : '-2.5 Goles'}
                                 </span>
                               )}
                             </div>
                             {match.estado === 'finalizado' && match.golesLocal !== null && pointsEarned !== null && !ptsObj && (
-                              <span className="bg-[#e1b12c]/20 text-[#034226] px-2 py-1 rounded font-bold text-[10px] uppercase border border-[#e1b12c]/40">
+                              <span className="theme-card premium-pill-container px-2 py-1 rounded font-bold text-[10px] uppercase border">
                                 +{pointsEarned} pts obtenidos
                               </span>
                             )}
@@ -712,8 +712,8 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                               
                               {ptsObj.totalGoles > 0 && <div className="flex justify-between items-center theme-text-card"><span>Opcional ({apuesta.totalGolesApuesta === 'mas25' ? '+2.5' : '-2.5'} Goles):</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.totalGoles} pts</span></div>}
                               
-                              <div className="flex justify-between items-center border-t border-[#034226]/10 pt-2 mt-1 font-black text-[#034226] text-xs">
-                                <span className="uppercase tracking-wider">Puntos Obtenidos:</span> <span className="bg-[#e1b12c]/20 px-2.5 py-1 rounded-md border border-[#e1b12c]/40">+{ptsObj.total} pts</span>
+                              <div className="flex justify-between items-center border-t border-[#034226]/10 pt-2 mt-1 font-black theme-text-card text-xs">
+                                <span className="uppercase tracking-wider">Puntos Obtenidos:</span> <span className="theme-card premium-pill-container px-2.5 py-1 rounded-md border">+{ptsObj.total} pts</span>
                               </div>
                             </div>
                           )}
