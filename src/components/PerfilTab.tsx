@@ -421,13 +421,13 @@ export default function PerfilTab({
                   <div className="flex flex-col items-center justify-center">
                     <div className="flex items-center gap-2">
                       <div className="flex flex-col items-center">
-                        <span className="font-sans text-[8px] text-slate-400 font-bold uppercase">Tu Polla</span>
-                        <span className="font-display text-xl text-[#034226] font-bold">{item.golesLocApuesta} - {item.golesVisApuesta}</span>
+                        <span className="font-sans text-[8px] text-slate-400 font-bold uppercase theme-text-card opacity-80">Tu Polla</span>
+                        <span className="font-display text-xl theme-text-card text-[#034226] font-bold whitespace-nowrap">{item.golesLocApuesta} - {item.golesVisApuesta}</span>
                       </div>
-                      <div className="h-6 w-[1px] bg-slate-200 mx-1"></div>
+                      <div className="h-6 w-[1px] bg-slate-200 mx-1 opacity-50"></div>
                       <div className="flex flex-col items-center">
-                        <span className="font-sans text-[8px] text-slate-400 font-bold uppercase">Real</span>
-                        <span className="font-display text-xl text-[#e1b12c] font-black">{item.golesLocReal} - {item.golesVisReal}</span>
+                        <span className="font-sans text-[8px] text-slate-400 font-bold uppercase theme-text-card opacity-80">Real</span>
+                        <span className="font-display text-xl text-[#e1b12c] font-bold whitespace-nowrap">{item.golesLocReal} - {item.golesVisReal}</span>
                       </div>
                     </div>
                   </div>
