@@ -158,3 +158,8 @@
   border-radius: 0 !important;
   font-weight: bold;
 }
+
+/* Add scanlines background utility */
+.scanlines-bg {
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px) !important;
+}
