@@ -484,8 +484,9 @@ export default function App() {
       <main className="pt-20 pb-24 md:pb-20 max-w-4xl mx-auto p-4 md:p-6 min-h-[calc(100vh-64px)] overflow-x-hidden">
         
         {/* Global Page Header */}
-        <div className="mb-6 border-b border-white/5 pb-3">
-          <h1 className="font-display text-3xl md:text-4xl tracking-wider text-white leading-none select-none uppercase">
+        <div className="mb-6 border border-[#e1b12c]/30 bg-[#034226] p-4 rounded-2xl shadow-xl flex items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0 stadium-mesh opacity-20"></div>
+          <h1 className="font-display text-3xl md:text-4xl tracking-wider text-white leading-none select-none uppercase text-center relative z-10">
             GOLI <span className="text-[#e1b12c]">POLLA MUNDIALISTA</span>
           </h1>
         </div>
@@ -641,7 +642,7 @@ export default function App() {
               : 'text-white/60 hover:text-white'
           }`}
         >
-          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'inicio' ? "'FILL' 1" : "'FILL' 0" }}>
+          <span className={`material-symbols-outlined text-[22px] ${activeTab === 'inicio' ? 'animate-bounce' : ''}`} style={{ fontVariationSettings: activeTab === 'inicio' ? "'FILL' 1" : "'FILL' 0" }}>
             home
           </span>
           <span className="font-sans text-xs mt-0.5 font-semibold">Inicio</span>
@@ -656,7 +657,7 @@ export default function App() {
               : 'text-white/60 hover:text-white'
           }`}
         >
-          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'reglas' ? "'FILL' 1" : "'FILL' 0" }}>
+          <span className={`material-symbols-outlined text-[22px] ${activeTab === 'reglas' ? 'animate-bounce' : ''}`} style={{ fontVariationSettings: activeTab === 'reglas' ? "'FILL' 1" : "'FILL' 0" }}>
             gavel
           </span>
           <span className="font-sans text-xs mt-0.5 font-semibold">Reglas</span>
@@ -671,7 +672,7 @@ export default function App() {
               : 'text-white/60 hover:text-white'
           }`}
         >
-          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'perfil' ? "'FILL' 1" : "'FILL' 0" }}>
+          <span className={`material-symbols-outlined text-[22px] ${activeTab === 'perfil' ? 'animate-bounce' : ''}`} style={{ fontVariationSettings: activeTab === 'perfil' ? "'FILL' 1" : "'FILL' 0" }}>
             person
           </span>
           <span className="font-sans text-xs mt-0.5 font-semibold">Perfil</span>
@@ -686,7 +687,7 @@ export default function App() {
               : 'text-white/60 hover:text-white'
           }`}
         >
-          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'ranking' ? "'FILL' 1" : "'FILL' 0" }}>
+          <span className={`material-symbols-outlined text-[22px] ${activeTab === 'ranking' ? 'animate-bounce' : ''}`} style={{ fontVariationSettings: activeTab === 'ranking' ? "'FILL' 1" : "'FILL' 0" }}>
             leaderboard
           </span>
           <span className="font-sans text-xs mt-0.5 font-semibold">Ranking</span>
