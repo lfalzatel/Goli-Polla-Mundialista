@@ -536,13 +536,6 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                   : apuesta.puntosObtenidos.total;
               } else if (match.estado === 'finalizado') {
                 pointsEarned = 0;
-              } else if (match.estado === 'en_vivo' && apuesta && match.golesLocal !== null && match.golesVisitante !== null) {
-                const livePtsObj = calcularPuntosPartido(
-                  match.golesLocal, match.golesVisitante,
-                  apuesta.golesLocalApuesta, apuesta.golesVisitanteApuesta,
-                  apuesta.totalGolesApuesta
-                );
-                pointsEarned = livePtsObj.total;
               }
               const yaBloqueado = match.estado === 'finalizado' || match.estado === 'en_vivo' || Date.now() >= match.fechaHoraInicio;
 
@@ -609,7 +602,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
 
                       {/* VS Divider or Real Final scores */}
                       <div className="flex flex-col items-center justify-center px-1 flex-shrink-0">
-                        {match.estado === 'finalizado' ? (
+                        {match.estado === 'finalizado' || match.estado === 'en_vivo' ? (
                           match.golesLocal !== null && match.golesLocal !== undefined ? (
                             <div className="flex flex-col items-center bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/50">
                               <span className="font-sans text-[8px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Real</span>
@@ -680,17 +673,8 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                     {/* Footer Lock state/Prediction notification message */}
                     <div className="mt-4 pt-3 border-t border-slate-150 flex flex-col items-center justify-between text-xs text-slate-600">
                       {yaBloqueado ? (() => {
-                        let ptsObj = apuesta && typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos !== null 
+                        const ptsObj = apuesta && typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos !== null 
                                        ? apuesta.puntosObtenidos : null;
-                        
-                        // Calculate live points if en_vivo
-                        if (!ptsObj && match.estado === 'en_vivo' && apuesta && match.golesLocal !== null && match.golesVisitante !== null) {
-                          ptsObj = calcularPuntosPartido(
-                            match.golesLocal, match.golesVisitante,
-                            apuesta.golesLocalApuesta, apuesta.golesVisitanteApuesta,
-                            apuesta.totalGolesApuesta
-                          );
-                        }
                         
                         return (
                         <div className="w-full flex flex-col gap-2">
@@ -708,7 +692,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                                 </span>
                               )}
                             </div>
-                            {(match.estado === 'finalizado' || match.estado === 'en_vivo') && match.golesLocal !== null && pointsEarned !== null && !ptsObj && (
+                            {match.estado === 'finalizado' && match.golesLocal !== null && pointsEarned !== null && !ptsObj && (
                               <span className="bg-[#e1b12c]/20 text-[#034226] px-2 py-1 rounded font-bold text-[10px] uppercase border border-[#e1b12c]/40">
                                 +{pointsEarned} pts obtenidos
                               </span>
@@ -716,7 +700,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                           </div>
                           
                           {/* Breakdown UI */}
-                          {(match.estado === 'finalizado' || match.estado === 'en_vivo') && match.golesLocal !== null && ptsObj && (
+                          {match.estado === 'finalizado' && match.golesLocal !== null && ptsObj && (
                             <div className="bg-[#034226]/5 rounded-xl border border-[#034226]/10 p-3 mx-1 flex flex-col gap-1.5 text-[11px]">
                               <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Desglose de puntos</div>
                               
