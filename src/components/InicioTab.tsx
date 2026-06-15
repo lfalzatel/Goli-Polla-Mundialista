@@ -68,10 +68,15 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
 
   // Ajuste dinámico de estado: Si es "pendiente" pero la hora ya pasó, tratarlo como "en_vivo" en la interfaz
   const now = Date.now();
+  const TRES_HORAS = 3 * 60 * 60 * 1000;
   const partidosComputados = partidos.map(p => {
     let computedEstado = p.estado;
     if (computedEstado === 'pendiente' && p.fechaHoraInicio <= now) {
-      computedEstado = 'en_vivo';
+      if (now - p.fechaHoraInicio >= TRES_HORAS) {
+        computedEstado = 'finalizado';
+      } else {
+        computedEstado = 'en_vivo';
+      }
     }
     return { ...p, estado: computedEstado };
   });
@@ -595,18 +600,27 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                       {/* VS Divider or Real Final scores */}
                       <div className="flex flex-col items-center justify-center px-1 flex-shrink-0">
                         {match.estado === 'finalizado' ? (
-                          <div className="flex flex-col items-center bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/50">
-                            <span className="font-sans text-[8px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Real</span>
-                            <div className="flex items-center gap-2">
-                              <span className="font-display text-3xl text-[#034226] font-black">
-                                {match.golesLocal}
-                              </span>
-                              <span className="font-mono text-xs text-slate-400">-</span>
-                              <span className="font-display text-3xl text-[#034226] font-black">
-                                {match.golesVisitante}
-                              </span>
+                          match.golesLocal !== null && match.golesLocal !== undefined ? (
+                            <div className="flex flex-col items-center bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/50">
+                              <span className="font-sans text-[8px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Real</span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-display text-3xl text-[#034226] font-black">
+                                  {match.golesLocal}
+                                </span>
+                                <span className="font-mono text-xs text-slate-400">-</span>
+                                <span className="font-display text-3xl text-[#034226] font-black">
+                                  {match.golesVisitante}
+                                </span>
+                              </div>
                             </div>
-                          </div>
+                          ) : (
+                            <div className="flex flex-col items-center bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/50">
+                              <span className="font-sans text-[8px] text-slate-400 font-bold uppercase tracking-wider mb-0.5 text-center">Por<br/>Act.</span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-display text-lg text-slate-400 font-black">VS</span>
+                              </div>
+                            </div>
+                          )
                         ) : (
                           <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center font-bold text-[10px] text-slate-400 border border-slate-200 shadow-inner">
                             VS

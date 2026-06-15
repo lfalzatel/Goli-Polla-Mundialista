@@ -51,10 +51,15 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
   };
 
   const now = Date.now();
+  const TRES_HORAS = 3 * 60 * 60 * 1000;
   const partidosComputados = partidos.map(p => {
     let computedEstado = p.estado;
     if (computedEstado === 'pendiente' && p.fechaHoraInicio <= now) {
-      computedEstado = 'en_vivo';
+      if (now - p.fechaHoraInicio >= TRES_HORAS) {
+        computedEstado = 'finalizado';
+      } else {
+        computedEstado = 'en_vivo';
+      }
     }
     return { ...p, estado: computedEstado };
   });
