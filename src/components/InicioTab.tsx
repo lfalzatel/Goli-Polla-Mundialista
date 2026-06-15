@@ -391,7 +391,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 className={`w-full font-sans font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer shadow-md ${
                   bonificaciones 
                     ? 'bg-slate-100 hover:bg-slate-200 text-[#034226] border border-slate-300' 
-                    : 'bg-[#034226] hover:bg-[#02331d] text-white'
+                    : 'premium-card hover:opacity-90 text-white'
                 }`}
               >
                 <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -440,9 +440,9 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
             )}
           </div>
           <button
-            onClick={() => setShowCalendar(!showCalendar)}
-            className={`w-14 shrink-0 rounded-xl flex items-center justify-center border-2 transition-all shadow-sm ${showCalendar || selectedDate ? 'bg-[#034226] text-white border-[#034226]' : 'theme-card text-slate-500  hover:bg-slate-50'}`}
-          >
+              onClick={() => setShowCalendar(!showCalendar)}
+              className={`w-14 shrink-0 rounded-xl flex items-center justify-center border-2 transition-all shadow-sm ${showCalendar || selectedDate ? 'premium-card text-white border-transparent' : 'theme-card text-slate-500  hover:bg-slate-50'}`}
+            >
             <span className="material-symbols-outlined text-[24px]">calendar_month</span>
           </button>
         </div>
@@ -504,7 +504,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
       {/* Group listings of matches by state and date */}
       {[
         { estadoKey: 'en_vivo', titulo: 'EN VIVO', colorCls: 'text-red-500 border-red-500 bg-red-500/10 flex gap-2 justify-center items-center', icon: true },
-        { estadoKey: 'pendiente', titulo: 'PRÓXIMOS PARTIDOS', colorCls: 'text-[#e1b12c] border-[#e1b12c] bg-[#034226]', icon: false },
+        { estadoKey: 'pendiente', titulo: 'PRÓXIMOS PARTIDOS', colorCls: 'premium-card premium-accent border-2 border-current shadow-lg', icon: false },
         { estadoKey: 'finalizado', titulo: 'FINALIZADOS', colorCls: 'text-slate-400 border-slate-600 bg-[#121316]', icon: false }
       ].map(({ estadoKey, titulo, colorCls, icon }) => {
         const fechasObj = partidosPorEstadoYFecha[estadoKey];
@@ -581,7 +581,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                           <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1 premium-pill-container">
                             <button
                               onClick={() => setLocalScore(match.partidoId, getEditingLocalScore(match.partidoId, 0) - 1)}
-                              className="w-8 h-8 rounded-full premium-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Disminuir goles local"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">remove</span>
@@ -591,7 +591,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             </span>
                             <button
                               onClick={() => setLocalScore(match.partidoId, getEditingLocalScore(match.partidoId, 0) + 1)}
-                              className="w-8 h-8 rounded-full premium-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Aumentar goles local"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">add</span>
@@ -649,7 +649,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                           <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1 premium-pill-container">
                             <button
                               onClick={() => setVisitanteScore(match.partidoId, getEditingVisitanteScore(match.partidoId, 0) - 1)}
-                              className="w-8 h-8 rounded-full premium-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Disminuir goles visitante"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">remove</span>
@@ -659,7 +659,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             </span>
                             <button
                               onClick={() => setVisitanteScore(match.partidoId, getEditingVisitanteScore(match.partidoId, 0) + 1)}
-                              className="w-8 h-8 rounded-full premium-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Aumentar goles visitante"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">add</span>
@@ -727,7 +727,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                               onClick={() => setOverUnderScore(match.partidoId, getEditingOverUnder(match.partidoId) === 'mas25' ? null : 'mas25')}
                               className={`px-3 py-1.5 rounded-full text-[10px] font-bold border transition-colors ${
                                 getEditingOverUnder(match.partidoId) === 'mas25' 
-                                  ? 'bg-[#034226] text-white border-[#034226]' 
+                                  ? 'premium-card text-white border-transparent' 
                                   : 'theme-card theme-text-card border-slate-300 hover:bg-slate-50'
                               }`}
                             >
@@ -750,7 +750,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             className={`w-full font-sans font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer shadow-md ${
                               apuesta 
                                 ? 'bg-slate-100 hover:bg-slate-200 text-[#034226] border border-slate-300' 
-                                : 'bg-[#034226] hover:bg-[#02331d] text-white'
+                                : 'premium-card hover:opacity-90 text-white'
                             }`}
                           >
                             <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>

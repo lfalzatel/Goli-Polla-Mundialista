@@ -26,6 +26,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
 
   const isConsoleMode = themeMode === 'kilocode' || themeMode === 'cyberpunk';
   const consoleColor = themeMode === 'cyberpunk' ? 'text-[#00FFB2]' : 'text-[#e1b12c]';
+  const consoleBorderClass = themeMode === 'cyberpunk' ? 'border-[#00FFB2]' : 'border-[#e1b12c]';
 
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
