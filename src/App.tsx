@@ -25,6 +25,7 @@ export default function App() {
   const [rankingLideres, setRankingLideres] = useState<RankedUser[]>(RANKING_INICIAL);
   const [bonificaciones, setBonificaciones] = useState<BonificacionesEspeciales | null>(null);
   const [activeTab, setActiveTab] = useState<'inicio' | 'reglas' | 'perfil' | 'ranking' | 'configuracion'>('inicio');
+  const [gruposData, setGruposData] = useState<Record<string, string>>({});
   const [tabRotationToggle, setTabRotationToggle] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
   const [showFloatingRanking, setShowFloatingRanking] = useState(false);
@@ -214,13 +215,22 @@ export default function App() {
         }
       });
 
+    const unsubGrupos = onSnapshot(collection(db, 'pm_grupos'), (snapshot) => {
+      const gData: Record<string, string> = {};
+      snapshot.forEach(doc => {
+        gData[doc.id] = doc.data().nombre || doc.id;
+      });
+      setGruposData(gData);
+    });
+
     return () => {
       unsubPartidos();
       unsubApuestas();
       unsubBonos();
       unsubUsuarios();
+      unsubGrupos();
     };
-  }, [usuario?.uid]);
+  }, [usuario?.uid, usuario?.codigoGrupo]);
 
   // Sync state functions
   const handleLoginSuccess = (nombre: string, email: string, whatsapp: string, codigoGrupo: string, uid: string, fotoUrl?: string, gruposPermitidos?: string[]) => {
@@ -470,6 +480,7 @@ export default function App() {
       {/* Main navigation header */}
       <Header 
         usuario={usuario} 
+        grupoNombre={gruposData[usuario.codigoGrupo] || usuario.codigoGrupo}
         onLogout={handleLogout} 
         onChangeGroup={handleOpenGroupModal}
         onOpenChat={() => setShowWhatsAppConfirm(true)}
@@ -507,7 +518,7 @@ export default function App() {
                         onClick={() => setNewGroupCode(gCode)}
                         className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border ${newGroupCode.toUpperCase() === gCode ? 'bg-[#034226] text-white border-[#034226]' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'}`}
                       >
-                        {gCode}
+                        {gruposData[gCode] || gCode} <span className="text-[10px] font-mono opacity-70 ml-1">({gCode})</span>
                       </button>
                     ))}
                   </div>
@@ -613,8 +624,9 @@ export default function App() {
             nombre={usuario.nombre}
             foto={usuario.foto || ''}
             email={usuario.email}
-            whatsapp={usuario.whatsapp}
+            whatsapp={usuario.whatsapp || ''}
             codigoGrupo={usuario.codigoGrupo}
+            grupoNombre={gruposData[usuario.codigoGrupo]}
             puntosTotal={usuario.puntosTotal}
             rankingLideres={rankingLideres}
             apuestas={apuestas}

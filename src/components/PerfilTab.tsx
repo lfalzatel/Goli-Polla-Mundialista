@@ -15,6 +15,7 @@ interface PerfilTabProps {
   email: string;
   whatsapp: string;
   codigoGrupo: string;
+  grupoNombre?: string;
   puntosTotal: number;
   rankingLideres: RankedUser[];
   apuestas: Apuesta[];
@@ -28,6 +29,7 @@ export default function PerfilTab({
   email,
   whatsapp,
   codigoGrupo,
+  grupoNombre,
   puntosTotal,
   rankingLideres,
   apuestas,
@@ -219,7 +221,7 @@ export default function PerfilTab({
                   Ranking Global: #14
                 </span>
               </div>
-              <p className="font-sans text-xs text-slate-400 font-semibold uppercase">Grupo Activo: {codigoGrupo}</p>
+              <p className="font-sans text-xs text-slate-400 font-semibold uppercase">Grupo Activo: {grupoNombre || codigoGrupo}</p>
             </div>
           </div>
 

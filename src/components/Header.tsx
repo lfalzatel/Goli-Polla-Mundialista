@@ -8,6 +8,7 @@ import { Partido } from '../types';
 
 interface HeaderProps {
   usuario: any;
+  grupoNombre?: string;
   onLogout: () => void;
   onChangeGroup: () => void;
   onOpenChat: () => void;
@@ -18,7 +19,7 @@ interface HeaderProps {
   activeThemes?: string[];
 }
 
-export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, partidos = [], onGoToSettings, themeMode, setThemeMode, activeThemes = [] }: HeaderProps) {
+export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, onOpenChat, partidos = [], onGoToSettings, themeMode, setThemeMode, activeThemes = [] }: HeaderProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
@@ -79,12 +80,13 @@ export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, p
           <img src="/logo.png" alt="GOLI" className="w-full h-full object-contain rounded-full shadow-lg bg-[#034226]" />
         </div>
         <div className="flex flex-col justify-center">
-          <span className="font-mono text-[9px] text-[#e1b12c] tracking-widest uppercase leading-none font-bold">
-            GRUPO
-          </span>
-          <span className="font-display text-[13px] tracking-wider text-white leading-none uppercase mt-0.5">
-            {usuario.codigoGrupo || 'FOE'}
-          </span>
+            <span className="text-[10px] text-[#e1b12c] font-bold tracking-widest uppercase mb-[-2px] flex items-center gap-1">
+              <span className="material-symbols-outlined text-[12px]">group</span>
+              GRUPO
+            </span>
+            <span className="font-display text-[13px] tracking-wider text-white leading-none uppercase mt-0.5 truncate max-w-[120px]">
+              {grupoNombre || usuario.codigoGrupo || 'FOE'}
+            </span>
         </div>
       </div>
 
