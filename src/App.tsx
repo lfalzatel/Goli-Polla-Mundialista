@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Partido, Apuesta, RankedUser, Usuario } from './types';
 import { PARTIDOS_INICIALES, RANKING_INICIAL, APUESTAS_INICIALES_PRESETS, calcularPuntosPartido } from './data';
 import { db, auth, messagingPromise } from './lib/firebase';
-import { collection, onSnapshot, doc, setDoc, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, updateDoc, writeBatch, getDocs, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { getToken, onMessage } from 'firebase/messaging';
 import SplashLogin from './components/SplashLogin';
@@ -26,6 +26,10 @@ export default function App() {
   const [showFloatingRanking, setShowFloatingRanking] = useState(false);
   const [showWhatsAppConfirm, setShowWhatsAppConfirm] = useState(false);
   const [notificationToast, setNotificationToast] = useState<{title: string, body: string} | null>(null);
+  const [showGroupModal, setShowGroupModal] = useState(false);
+  const [newGroupCode, setNewGroupCode] = useState('');
+  const [groupError, setGroupError] = useState('');
+  const [isJoiningGroup, setIsJoiningGroup] = useState(false);
 
   // Setup foreground notifications
   useEffect(() => {
@@ -187,12 +191,42 @@ export default function App() {
     setActiveTab('inicio');
   };
 
-  const handleChangeGroup = () => {
-    const newGroup = prompt('Ingresa el nuevo código de acceso de grupo:', usuario?.codigoGrupo || '');
-    if (newGroup && newGroup.trim() && usuario) {
-      const updatedUser = { ...usuario, codigoGrupo: newGroup.toUpperCase() };
-      setUsuario(updatedUser);
-      localStorage.setItem('polla_usuario', JSON.stringify(updatedUser));
+  const handleOpenGroupModal = () => {
+    setNewGroupCode(usuario?.codigoGrupo || '');
+    setGroupError('');
+    setShowGroupModal(true);
+  };
+
+  const handleJoinGroup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newGroupCode.trim() || !usuario) return;
+    
+    const codeUpper = newGroupCode.trim().toUpperCase();
+    if (codeUpper === usuario.codigoGrupo) {
+      setShowGroupModal(false);
+      return;
+    }
+
+    setIsJoiningGroup(true);
+    setGroupError('');
+    try {
+      const grupoSnap = await getDoc(doc(db, 'pm_grupos', codeUpper));
+      if (grupoSnap.exists() && grupoSnap.data().activo) {
+        await updateDoc(doc(db, 'pm_usuarios', usuario.uid), {
+          codigoGrupo: codeUpper
+        });
+        const updatedUser = { ...usuario, codigoGrupo: codeUpper };
+        setUsuario(updatedUser);
+        localStorage.setItem('polla_usuario', JSON.stringify(updatedUser));
+        setShowGroupModal(false);
+      } else {
+        setGroupError('El código de grupo no existe o está inactivo.');
+      }
+    } catch (err) {
+      console.error(err);
+      setGroupError('Error al verificar el grupo.');
+    } finally {
+      setIsJoiningGroup(false);
     }
   };
 
@@ -345,7 +379,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#121316] text-[#e3e2e6] pb-28 pt-20">
+    <div className="min-h-screen bg-[#121316] text-[#e3e2e6] pb-28">
       
       {/* Background aesthetics layer */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-tr from-[#121316] via-[#0d0e11] to-[#001b44]/20"></div>
@@ -355,10 +389,73 @@ export default function App() {
       <Header 
         usuario={usuario} 
         onLogout={handleLogout} 
-        onChangeGroup={handleChangeGroup}
+        onChangeGroup={handleOpenGroupModal}
         onOpenChat={() => setShowWhatsAppConfirm(true)}
         partidos={partidos}
       />
+
+      {/* Group Change Modal */}
+      {showGroupModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-gradient-to-r from-[#034226] to-[#045c36] p-5">
+              <h3 className="text-xl font-display text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#e1b12c]">group</span>
+                Cambiar de Grupo
+              </h3>
+              <p className="text-[#e1b12c] font-sans text-xs mt-1">Ingresa el código del nuevo grupo</p>
+            </div>
+            
+            <form onSubmit={handleJoinGroup} className="p-5 flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="font-sans text-xs font-bold text-slate-500 px-1 uppercase tracking-wider">
+                  Código de Acceso
+                </label>
+                <div className="relative group">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#034226] transition-colors">
+                    tag
+                  </span>
+                  <input
+                    required
+                    className="w-full bg-slate-50 border-2 border-slate-200 focus:border-[#034226] focus:ring-1 focus:ring-[#034226] rounded-xl py-3 pl-10 pr-4 font-mono text-sm text-slate-800 placeholder-slate-400 transition-all outline-none"
+                    placeholder="EJ: NUEVO-GRUPO"
+                    type="text"
+                    value={newGroupCode}
+                    onChange={(e) => setNewGroupCode(e.target.value)}
+                  />
+                </div>
+                {groupError && (
+                  <div className="flex items-center gap-1.5 text-red-500 bg-red-50 px-2 py-1.5 rounded-lg mt-1 border border-red-100">
+                    <span className="material-symbols-outlined text-[14px]">error</span>
+                    <span className="text-[11px] font-medium leading-tight">{groupError}</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex gap-3 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowGroupModal(false)}
+                  className="flex-1 py-3 rounded-xl font-bold font-sans text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isJoiningGroup || !newGroupCode.trim()}
+                  className="flex-1 py-3 rounded-xl font-bold font-sans text-sm text-[#034226] bg-[#e1b12c] hover:bg-[#cda024] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isJoiningGroup ? (
+                    <div className="w-5 h-5 border-2 border-[#034226] border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    'Unirme'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* In-App Notification Toast */}
       {notificationToast && (
