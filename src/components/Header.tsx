@@ -72,13 +72,19 @@ export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, p
       {/* Profil capsule and title */}
       <div className="flex items-center gap-3">
 
-        <div>
-          <span className="font-mono text-[9px] text-[#e1b12c] block tracking-widest uppercase leading-none font-bold">
+        <div className="flex flex-col items-start justify-center">
+          <span className="font-mono text-[9px] text-[#e1b12c] block tracking-widest uppercase leading-none font-bold mb-1.5 ml-2 z-10">
             GRUPO {usuario.codigoGrupo || 'FOE'}
           </span>
-          <h1 className="font-display text-2xl tracking-wider text-white leading-none select-none uppercase">
-            GOLI <span className="text-[#e1b12c]">POLLA MUNDIALISTA</span>
-          </h1>
+          <div className="relative w-10 h-10 ml-2">
+            <svg className="absolute inset-[-10%] w-[120%] h-[120%] animate-spin text-[#e1b12c] -z-10" style={{ animationDuration: '6s' }} viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="70 30" strokeLinecap="round" />
+            </svg>
+            <svg className="absolute inset-[-20%] w-[140%] h-[140%] animate-[spin_9s_linear_infinite_reverse] text-[#000000] opacity-30 -z-10" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="4" strokeDasharray="50 150" strokeLinecap="round" />
+            </svg>
+            <img src="/logo.png" alt="GOLI" className="w-full h-full object-contain rounded-full shadow-lg bg-[#034226]" />
+          </div>
         </div>
       </div>
 

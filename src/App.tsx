@@ -482,6 +482,14 @@ export default function App() {
 
       {/* Main Content View with extra bottom padding for navbar */}
       <main className="pt-20 pb-24 md:pb-20 max-w-4xl mx-auto p-4 md:p-6 min-h-[calc(100vh-64px)] overflow-x-hidden">
+        
+        {/* Global Page Header */}
+        <div className="mb-6 border-b border-white/5 pb-3">
+          <h1 className="font-display text-3xl md:text-4xl tracking-wider text-white leading-none select-none uppercase">
+            GOLI <span className="text-[#e1b12c]">POLLA MUNDIALISTA</span>
+          </h1>
+        </div>
+
         {activeTab === 'inicio' && (
           <InicioTab 
             partidos={partidos} 
