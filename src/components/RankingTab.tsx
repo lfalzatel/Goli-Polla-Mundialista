@@ -257,7 +257,7 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
                             </div>
 
                             {/* Puntaje info si finalizó */}
-                            {partido.estado === 'finalizado' && apuesta && (
+                            {partido.estado === 'finalizado' && partido.golesLocal !== null && apuesta && (
                               <div className="mt-3">
                                 {typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos !== null ? (
                                   <div className="bg-[#121316] rounded-xl p-3 border border-[#e1b12c]/20">
