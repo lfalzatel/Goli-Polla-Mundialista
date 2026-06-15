@@ -24,6 +24,9 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
 
+  const isConsoleMode = themeMode === 'kilocode' || themeMode === 'cyberpunk';
+  const consoleColor = themeMode === 'cyberpunk' ? 'text-[#00FFB2]' : 'text-[#e1b12c]';
+
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -194,12 +197,12 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
 
         {/* Dropdown Menu block in professional light design */}
         {showDropdown && (
-          <div className="fixed left-4 right-4 top-[70px] sm:top-auto sm:absolute sm:left-auto sm:right-0 sm:mt-2 sm:w-64 bg-[#0a0b0d] border border-white/5 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200 font-mono text-[#e1b12c]">
-            <div className="px-4 py-3 border-b border-white/10">
-              <p className="text-sm font-bold text-[#e1b12c] truncate uppercase tracking-widest">
+          <div className={`fixed left-4 right-4 top-[70px] sm:top-auto sm:absolute sm:left-auto sm:right-0 sm:mt-2 ${isConsoleMode ? 'sm:w-64 bg-[#0a0b0d] border border-white/5 font-mono rounded-2xl' : 'sm:w-56 bg-white border border-slate-100 rounded-xl'} shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200`}>
+            <div className={`px-4 ${isConsoleMode ? 'py-3 border-white/10' : 'py-2 border-slate-100'} border-b`}>
+              <p className={`${isConsoleMode ? 'text-sm font-bold truncate uppercase tracking-widest ' + consoleColor : 'font-sans text-sm font-bold text-slate-800 truncate'}`}>
                 {usuario.nombre}
               </p>
-              <p className="text-[10px] text-slate-400 truncate">
+              <p className={`font-mono text-[10px] ${isConsoleMode ? 'text-slate-400' : 'text-slate-500'} truncate`}>
                 {usuario.email}
               </p>
             </div>
@@ -210,16 +213,16 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                   setShowDropdown(false);
                   onChangeGroup();
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#e1b12c] hover:bg-white/5 rounded-lg transition-colors cursor-pointer text-left uppercase tracking-wider"
+                className={`w-full flex items-center gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider ' + consoleColor : 'px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-950 rounded-lg'} transition-colors cursor-pointer text-left`}
               >
-                <span className="material-symbols-outlined text-slate-400 text-[18px]">
+                <span className={`material-symbols-outlined text-[18px] ${isConsoleMode ? 'text-slate-400' : 'text-[#034226]'}`}>
                   group_work
                 </span>
                 <span className="font-sans font-medium">Cambiar de Grupo</span>
               </button>
 
               {activeThemes.length > 0 && setThemeMode && themeMode && (
-                <div className="mx-3 mt-2 mb-2 bg-white/5 border border-white/5 rounded-[14px] p-1 flex items-center justify-between shadow-inner">
+                <div className="mx-3 mt-1 mb-2 bg-black/10 rounded-[18px] p-1 flex items-center justify-between shadow-inner">
                   {activeThemes.slice(0, 3).map((themeName) => {
                     let icon = 'palette';
                     let label = themeName;
@@ -242,8 +245,8 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                             isSelected && themeName === 'kilocode' ? 'bg-[#e1b12c] text-black relative overflow-hidden' :
                             isSelected && themeName === 'dia' ? 'bg-[#e2e8f0] text-black' :
                             isSelected && themeName === 'cyberpunk' ? 'bg-[#0284c7] text-white' :
-                            isSelected ? 'bg-white/10 text-[#e1b12c] font-bold' :
-                            'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                            isSelected ? 'bg-black/10 theme-text font-bold' :
+                            'theme-text opacity-60 hover:opacity-100 hover:bg-black/5'
                           }`}
                       >
                         {isSelected && themeName === 'kilocode' && (
@@ -264,66 +267,66 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
               )}
 
               <button
-                onClick={() => {
-                  setShowDropdown(false);
-                  if (onGoToSettings) onGoToSettings();
-                }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#e1b12c] hover:bg-white/5 rounded-lg transition-colors cursor-pointer text-left uppercase tracking-wider"
-              >
-                <span className="material-symbols-outlined text-slate-400 text-[18px]">
-                  settings
-                </span>
-                <span className="font-sans font-medium">Configuración</span>
-              </button>
+                  onClick={() => {
+                    setShowDropdown(false);
+                    if (onGoToSettings) onGoToSettings();
+                  }}
+                  className={`w-full flex items-center gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider ' + consoleColor : 'px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-950 rounded-lg'} transition-colors cursor-pointer text-left`}
+                >
+                  <span className={`material-symbols-outlined text-[18px] ${isConsoleMode ? 'text-slate-400' : 'text-[#034226]'}`}>
+                    settings
+                  </span>
+                  <span className="font-sans font-medium">Configuración</span>
+                </button>
 
-              <div className="h-[1px] bg-white/5 my-1" />
+                <div className={`h-[1px] my-1 ${isConsoleMode ? 'bg-white/5' : 'bg-slate-100'}`} />
 
-              <button
-                onClick={() => {
-                  setShowInstallModal(true);
-                  setShowDropdown(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#e1b12c] hover:bg-white/5 rounded-lg transition-colors cursor-pointer text-left uppercase tracking-wider"
-              >
-                <span className="material-symbols-outlined text-slate-400 text-[18px]">download</span>
-                <span className="font-sans font-medium">Instalar App</span>
-              </button>
+                <button
+                  onClick={() => {
+                    setShowInstallModal(true);
+                    setShowDropdown(false);
+                  }}
+                  className={`w-full flex items-center gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider ' + consoleColor : 'px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-950 rounded-lg'} transition-colors cursor-pointer text-left`}
+                >
+                  <span className={`material-symbols-outlined text-[18px] ${isConsoleMode ? 'text-slate-400' : 'text-[#034226]'}`}>download</span>
+                  <span className="font-sans font-medium">Instalar App</span>
+                </button>
 
-              <button
-                onClick={handleShareApp}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#e1b12c] hover:bg-white/5 rounded-lg transition-colors cursor-pointer text-left uppercase tracking-wider"
-              >
-                <span className="material-symbols-outlined text-slate-400 text-[18px]">share</span>
-                <span className="font-sans font-medium">Compartir App</span>
-              </button>
+                <button
+                  onClick={handleShareApp}
+                  className={`w-full flex items-center gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider ' + consoleColor : 'px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-950 rounded-lg'} transition-colors cursor-pointer text-left`}
+                >
+                  <span className={`material-symbols-outlined text-[18px] ${isConsoleMode ? 'text-slate-400' : 'text-[#e1b12c]'}`}>share</span>
+                  <span className="font-sans font-medium">Compartir App</span>
+                </button>
 
-              <button
-                onClick={() => {
-                  setShowDropdown(false);
-                  onLogout();
-                }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#e1b12c] hover:bg-white/5 rounded-lg transition-colors cursor-pointer text-left uppercase tracking-wider"
-              >
-                <span className="material-symbols-outlined text-slate-400 text-[18px]">
-                  switch_account
-                </span>
-                <span className="font-sans font-medium">Cambiar / Añadir cuenta</span>
-              </button>
+                <button
+                  onClick={() => {
+                    setShowDropdown(false);
+                    onLogout();
+                  }}
+                  className={`w-full flex items-center gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider ' + consoleColor : 'px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg'} transition-colors cursor-pointer text-left`}
+                >
+                  <span className={`material-symbols-outlined text-[18px] ${isConsoleMode ? 'text-slate-400' : 'text-slate-400'}`}>
+                    switch_account
+                  </span>
+                  <span className="font-sans font-medium">Cambiar / Añadir cuenta</span>
+                </button>
 
-              <div className="h-[1px] bg-white/5 my-1" />
+                <div className={`h-[1px] my-1 ${isConsoleMode ? 'bg-white/5' : 'bg-slate-100'}`} />
 
-              <button
-                onClick={() => {
-                  setShowDropdown(false);
-                  onLogout();
-                }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-white/5 rounded-lg transition-colors cursor-pointer text-left uppercase tracking-wider"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  logout
-                </span>
-                <span className="font-sans font-bold">Cerrar Sesión</span>
-              </button>
+                <button
+                  onClick={() => {
+                    setShowDropdown(false);
+                    onLogout();
+                  }}
+                  className={`w-full flex items-center gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider text-red-500' : 'px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg'} transition-colors cursor-pointer text-left`}
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    logout
+                  </span>
+                  <span className="font-sans font-bold">Cerrar Sesión</span>
+                </button>
             </div>
           </div>
         )}
