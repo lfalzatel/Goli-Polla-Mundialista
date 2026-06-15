@@ -30,6 +30,7 @@ export default function App() {
   const [newGroupCode, setNewGroupCode] = useState('');
   const [groupError, setGroupError] = useState('');
   const [isJoiningGroup, setIsJoiningGroup] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Setup foreground notifications
   useEffect(() => {
@@ -180,11 +181,16 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       await signOut(auth);
-    } catch (e) {
-      console.error(e);
+      setUsuario(null);
+      localStorage.removeItem('polla_usuario');
+      // Delay resetting isLoggingOut so SplashLogin can pick it up
+      setTimeout(() => setIsLoggingOut(false), 3000);
+    } catch (error) {
+      console.error("Error al cerrar sesión", error);
+      setIsLoggingOut(false);
     }
-    setUsuario(null);
     setPartidos([]);
     setApuestas([]);
     setRankingLideres([]);
@@ -375,7 +381,7 @@ export default function App() {
 
   // If the user isn't logged in, show the Splash and Google sign-in
   if (!usuario) {
-    return <SplashLogin onLoginSuccess={handleLoginSuccess} />;
+    return <SplashLogin onLoginSuccess={handleLoginSuccess} isLoggingOut={isLoggingOut} />;
   }
 
   return (

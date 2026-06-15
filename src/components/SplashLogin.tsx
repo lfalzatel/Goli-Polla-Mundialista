@@ -7,66 +7,94 @@ import React, { useState, useEffect } from 'react';
 import { auth, googleProvider, db } from '../lib/firebase';
 import { signInWithPopup, onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import GlobalSplash from './GlobalSplash';
 
 interface SplashLoginProps {
   onLoginSuccess: (nombre: string, email: string, whatsapp: string, codigoGrupo: string, uid: string, fotoUrl?: string) => void;
+  isLoggingOut?: boolean;
 }
 
-export default function SplashLogin({ onLoginSuccess }: SplashLoginProps) {
+export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLoginProps) {
   const [loading, setLoading] = useState(true);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+  const [authResolved, setAuthResolved] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
   const [codigoGrupo, setCodigoGrupo] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [errorText, setErrorText] = useState('');
   const [pendingUser, setPendingUser] = useState<User | null>(null);
 
+  // 2.5s minimum splash duration
+  useEffect(() => {
+    const startTime = Date.now();
+    const duration = 2500;
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      setProgress(Math.min((elapsed / duration) * 100, 99));
+    }, 50);
+
+    const timer = setTimeout(() => {
+      setMinTimeElapsed(true);
+      setProgress(100);
+      clearInterval(interval);
+    }, duration);
+
+    return () => { clearTimeout(timer); clearInterval(interval); };
+  }, []);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
+      if (user && !isLoggingOut) {
         await handleUserAuth(user);
-      } else {
-        setLoading(false);
       }
+      setAuthResolved(true);
     });
     return () => unsubscribe();
-  }, []);
+  }, [isLoggingOut]);
+
+  useEffect(() => {
+    if (minTimeElapsed && authResolved) {
+      setLoading(false);
+    }
+  }, [minTimeElapsed, authResolved]);
 
   const handleUserAuth = async (user: User) => {
     try {
       setLoading(true);
-      // Check if user exists in Firestore
       const userRef = doc(db, 'pm_usuarios', user.uid);
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
-        // User already in DB, skip profile completion
         const data = userSnap.data();
-        onLoginSuccess(data.nombre, data.email, data.whatsapp, data.codigoGrupo, user.uid, data.foto || user.photoURL || undefined);
+        setPendingUser({ ...user, existingData: data } as any);
       } else {
-        // Admin bypass auto-creation
         if (user.email === 'lfalzatel@gmail.com') {
           await setDoc(userRef, {
             nombre: user.displayName || 'Admin',
             email: user.email,
             foto: user.photoURL,
             whatsapp: '3000000000',
-            codigoGrupo: 'ADMIN',
+            codigoGrupo: 'FOE',
             puntosTotal: 0,
-            createdAt: new Date().toISOString(),
-            esAdmin: true
+            esAdmin: true,
+            createdAt: new Date().toISOString()
           });
-          onLoginSuccess(user.displayName || 'Admin', user.email || '', '3000000000', 'ADMIN', user.uid, user.photoURL || undefined);
-          return;
+          setPendingUser({ ...user, existingData: {
+            nombre: user.displayName || 'Admin',
+            email: user.email,
+            foto: user.photoURL,
+            whatsapp: '3000000000',
+            codigoGrupo: 'FOE'
+          }} as any);
+        } else {
+          setPendingUser(user);
+          setShowCompleteProfile(true);
         }
-
-        // New user, need group code and whatsapp
-        setPendingUser(user);
-        setShowCompleteProfile(true);
-        setLoading(false);
       }
     } catch (error) {
-      console.error("Error validando usuario", error);
-      setErrorText("Error al validar el usuario.");
+      console.error('Error in handleUserAuth:', error);
+      setErrorText('Error de conexión.');
       setLoading(false);
     }
   };
@@ -144,12 +172,21 @@ export default function SplashLogin({ onLoginSuccess }: SplashLoginProps) {
     }
   };
 
+  useEffect(() => {
+    if (!loading && pendingUser && (pendingUser as any).existingData) {
+      const data = (pendingUser as any).existingData;
+      onLoginSuccess(data.nombre, data.email, data.whatsapp, data.codigoGrupo, pendingUser.uid, data.foto || pendingUser.photoURL || undefined);
+    }
+  }, [loading, pendingUser, onLoginSuccess]);
+
   if (loading) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-slate-100">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#034226] border-solid"></div>
-      </div>
-    );
+    const splashMessage = isLoggingOut ? 'Cerrando sesión segura...' : 'Conectando con GOLI...';
+    return <GlobalSplash message={splashMessage} progress={progress} />;
+  }
+
+  // If we are auto-logging in an existing user, return null while App.tsx catches up
+  if (pendingUser && (pendingUser as any).existingData) {
+    return null;
   }
 
   return (
