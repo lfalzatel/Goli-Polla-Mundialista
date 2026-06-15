@@ -239,7 +239,6 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                         key={themeName}
                         onClick={() => {
                           setThemeMode(themeName);
-                          setShowDropdown(false);
                         }}
                         className={`flex-1 py-2 flex flex-col items-center justify-center gap-0.5 rounded-[14px] transition-all duration-300 ${
                             isSelected && themeName === 'kilocode' ? 'bg-[#e1b12c] text-black relative overflow-hidden' :
