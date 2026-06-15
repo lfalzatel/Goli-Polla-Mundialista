@@ -70,7 +70,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
   };
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 border-b-4 border-[#e1b12c] ${isConsoleMode ? 'theme-bg' : 'bg-[#034226]'} text-white shadow-md flex justify-between items-center px-4 h-16 shrink-0`}>
+    <header className="fixed top-0 left-0 w-full z-50 border-b-4 app-nav-bar text-white shadow-md flex justify-between items-center px-4 h-16 shrink-0">
       {/* Profil capsule and title */}
       <div className="flex items-center gap-2">
         <div className="relative w-11 h-11 shrink-0">
@@ -197,7 +197,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
 
         {/* Dropdown Menu block in professional light design */}
         {showDropdown && (
-          <div className={`fixed left-4 right-4 top-[70px] sm:top-auto sm:absolute sm:left-auto sm:right-0 sm:mt-2 ${isConsoleMode ? 'sm:w-64 bg-[#0a0b0d] border border-white/5 font-mono rounded-2xl' : 'sm:w-56 bg-white border border-slate-100 rounded-xl'} shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200`}>
+          <div className={`fixed left-4 right-4 top-[70px] sm:top-auto sm:absolute sm:left-auto sm:right-0 sm:mt-2 ${isConsoleMode ? 'sm:w-64 bg-[#0a0b0d] border ' + consoleBorderClass + ' font-mono rounded-2xl' : 'sm:w-56 bg-white border border-slate-100 rounded-xl'} shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200`}>
             <div className={`px-4 ${isConsoleMode ? 'py-3 border-white/10' : 'py-2 border-slate-100'} border-b`}>
               <p className={`${isConsoleMode ? 'text-sm font-bold truncate uppercase tracking-widest ' + consoleColor : 'font-sans text-sm font-bold text-slate-800 truncate'}`}>
                 {usuario.nombre}

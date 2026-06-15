@@ -763,7 +763,7 @@ export default function App() {
       )}
 
       {/* Styled Premium Bottom Tab Bar Navigation navigation */}
-      <nav className={`fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-4 pt-2.5 shadow-[0_-5px_20px_rgba(0,0,0,0.5)] border-t-4 border-[#e1b12c] ${isConsoleMode ? "bg-[#0a0b0d] rounded-none" : "bg-[#034226] rounded-t-3xl"}`}>
+      <nav className="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-4 pt-2.5 shadow-[0_-5px_20px_rgba(0,0,0,0.5)] border-t-4 app-nav-bar rounded-t-3xl">
         
         {/* Tab: Inicio */}
         <button

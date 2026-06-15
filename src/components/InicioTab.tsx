@@ -572,7 +572,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             referrerPolicy="no-referrer"
                           />
                         </div>
-                        <span className="font-display text-lg theme-text-card text-slate-700 tracking-wider truncate max-w-[124px]">
+                        <span className="font-display text-base theme-text-card text-slate-700 tracking-wider truncate max-w-[124px]">
                           {match.equipoLocal}
                         </span>
                         
@@ -641,7 +641,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             referrerPolicy="no-referrer"
                           />
                         </div>
-                        <span className="font-display text-lg theme-text-card text-slate-700 tracking-wider truncate max-w-[124px]">
+                        <span className="font-display text-base theme-text-card text-slate-700 tracking-wider truncate max-w-[124px]">
                           {match.equipoVisitante}
                         </span>
 
