@@ -219,18 +219,18 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 Panel de Administrador
               </span>
               <h3 className="font-display text-xl text-white mt-2 tracking-wide uppercase">
-                Simulador de Actualización API
+                Obtener Resultados Reales
               </h3>
               <p className="font-sans text-xs text-slate-200 mt-1 leading-relaxed">
-                Esta herramienta simula la llegada de resultados en vivo.
+                Esta herramienta consulta los partidos finalizados y actualiza los puntajes.
               </p>
             </div>
             <button
               onClick={runCloudFunctionSync}
               className="bg-[#e1b12c] hover:bg-[#cda024] text-[#034226] font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md self-stretch sm:self-auto justify-center"
             >
-              <span className="material-symbols-outlined text-[16px] font-bold">sync</span>
-              <span>FINALIZAR PARTIDOS HOY</span>
+              <span className="material-symbols-outlined text-[16px] font-bold">cloud_download</span>
+              <span>ACTUALIZAR RESULTADOS (API)</span>
             </button>
           </div>
         </div>

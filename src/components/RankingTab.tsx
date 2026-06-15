@@ -59,6 +59,21 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
            p.grupoTorneo.toLowerCase().includes(term) ||
            p.fecha.toLowerCase().includes(term) ||
            p.estadio.toLowerCase().includes(term);
+  }).sort((a, b) => {
+    const order: Record<string, number> = {
+      'finalizado': 1,
+      'en_vivo': 2,
+      'pendiente': 3
+    };
+    if (order[a.estado] !== order[b.estado]) {
+      return order[a.estado] - order[b.estado];
+    }
+    // Dentro del mismo estado, los finalizados los mostramos del más reciente al más antiguo
+    if (a.estado === 'finalizado') {
+      return b.fechaHoraInicio - a.fechaHoraInicio;
+    }
+    // Pendientes y en vivo en orden cronológico normal
+    return a.fechaHoraInicio - b.fechaHoraInicio;
   });
 
   return (
@@ -228,11 +243,29 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
                             </div>
 
                             {/* Puntaje info si finalizó */}
-                            {partido.estado === 'finalizado' && apuesta && typeof apuesta.puntosObtenidos === 'object' && (
-                              <div className="mt-2 flex justify-center">
-                                <span className="bg-[#e1b12c]/10 text-[#e1b12c] text-[10px] px-2 py-1 rounded-md font-bold font-mono border border-[#e1b12c]/20">
-                                  +{apuesta.puntosObtenidos.total} pts en este partido
-                                </span>
+                            {partido.estado === 'finalizado' && apuesta && (
+                              <div className="mt-3">
+                                {typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos !== null ? (
+                                  <div className="bg-[#121316] rounded-xl p-3 border border-[#e1b12c]/20">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Desglose de Puntos</p>
+                                    <div className="space-y-1 text-[11px] font-sans">
+                                      {apuesta.puntosObtenidos.marcador > 0 && <div className="flex justify-between items-center text-slate-300"><span>Marcador Exacto:</span> <span className="font-bold text-[#00ff88]">+{apuesta.puntosObtenidos.marcador} pts</span></div>}
+                                      {apuesta.puntosObtenidos.ganador > 0 && <div className="flex justify-between items-center text-slate-300"><span>Equipo Ganador:</span> <span className="font-bold text-[#00ff88]">+{apuesta.puntosObtenidos.ganador} pts</span></div>}
+                                      {apuesta.puntosObtenidos.empate > 0 && <div className="flex justify-between items-center text-slate-300"><span>Empate Acertado:</span> <span className="font-bold text-[#00ff88]">+{apuesta.puntosObtenidos.empate} pts</span></div>}
+                                      {apuesta.puntosObtenidos.totalGoles > 0 && <div className="flex justify-between items-center text-slate-300"><span>Opcional (+/- 2.5 Goles):</span> <span className="font-bold text-[#00ff88]">+{apuesta.puntosObtenidos.totalGoles} pts</span></div>}
+                                    </div>
+                                    <div className="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
+                                      <span className="text-[11px] font-bold text-[#e1b12c] uppercase">Puntos Obtenidos:</span>
+                                      <span className="font-bold font-mono text-[#e1b12c] text-xs">+{apuesta.puntosObtenidos.total} pts</span>
+                                    </div>
+                                  </div>
+                                ) : typeof apuesta.puntosObtenidos === 'number' ? (
+                                  <div className="flex justify-center">
+                                    <span className="bg-[#e1b12c]/10 text-[#e1b12c] text-[10px] px-2 py-1 rounded-md font-bold font-mono border border-[#e1b12c]/20">
+                                      +{apuesta.puntosObtenidos} pts en este partido
+                                    </span>
+                                  </div>
+                                ) : null}
                               </div>
                             )}
                           </div>
