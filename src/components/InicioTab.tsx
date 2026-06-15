@@ -705,7 +705,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                               
                               {ptsObj.marcador > 0 && <div className="flex justify-between items-center text-slate-600"><span>Marcador Exacto:</span> <span className="font-bold bg-white px-2 py-0.5 rounded border border-slate-200">+{ptsObj.marcador} pts</span></div>}
                               
-                              {ptsObj.ganador > 0 && <div className="flex justify-between items-center text-slate-600"><span>Equipo Ganador:</span> <span className="font-bold bg-white px-2 py-0.5 rounded border border-slate-200">+{ptsObj.ganador} pts</span></div>}
+                              {ptsObj.ganador > 0 && <div className="flex justify-between items-center text-slate-600"><span>{ptsObj.ganador === 3 ? 'Ganador + Goles:' : 'Equipo Ganador:'}</span> <span className="font-bold bg-white px-2 py-0.5 rounded border border-slate-200">+{ptsObj.ganador} pts</span></div>}
                               
                               {ptsObj.empate > 0 && <div className="flex justify-between items-center text-slate-600"><span>Empate Acertado:</span> <span className="font-bold bg-white px-2 py-0.5 rounded border border-slate-200">+{ptsObj.empate} pts</span></div>}
                               
