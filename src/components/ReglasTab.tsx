@@ -40,7 +40,7 @@ export default function ReglasTab() {
             {/* Exact marcador row */}
             <div className="flex justify-between items-center p-4 bg-[#034226]/5 rounded-xl border-l-4 border-[#034226] shadow-sm">
               <div>
-                <p className="font-sans font-bold theme-text">Marcador Exacto</p>
+                <p className="font-sans font-bold theme-text-card">Marcador Exacto</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Si aciertas la cantidad exacta de goles que hizo cada equipo. <br/><span className="italic">Ejemplo: Apostaste 2-1 y el partido terminó exactamente 2-1.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
@@ -52,7 +52,7 @@ export default function ReglasTab() {
             {/* Winner + Goals row */}
             <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border-l-4 border-[#e1b12c] shadow-sm">
               <div>
-                <p className="font-sans font-bold theme-text">Ganador + Goles</p>
+                <p className="font-sans font-bold theme-text-card">Ganador + Goles</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Si aciertas al equipo ganador y además aciertas la cantidad exacta de goles que anotó alguno de los dos equipos. <br/><span className="italic">Ejemplo: Apostaste 3-0 y terminó 3-1.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
@@ -64,7 +64,7 @@ export default function ReglasTab() {
             {/* Winner row */}
             <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border-l-4 border-slate-300 shadow-sm">
               <div>
-                <p className="font-sans font-bold theme-text">Equipo Ganador</p>
+                <p className="font-sans font-bold theme-text-card">Equipo Ganador</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Si aciertas quién ganó el partido, o el empate, sin exactitud en goles. <br/><span className="italic">Ejemplo: Apostaste 2-0 y el partido terminó 1-0.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
@@ -76,7 +76,7 @@ export default function ReglasTab() {
             {/* Empate Bonus row */}
             <div className="flex justify-between items-center p-4 bg-[#034226]/5 rounded-xl border-l-4 border-[#034226] shadow-sm">
               <div>
-                <p className="font-sans font-bold theme-text">Empate Acertado (Bonus)</p>
+                <p className="font-sans font-bold theme-text-card">Empate Acertado (Bonus)</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Bonus especial si predices un empate y aciertas que el resultado fue empate, aunque falles el marcador exacto. <br/><span className="italic">Ejemplo: Apostaste 1-1 y terminó 2-2.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
@@ -88,7 +88,7 @@ export default function ReglasTab() {
             {/* Over/Under row */}
             <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border-l-4 border-[#e1b12c] shadow-sm">
               <div>
-                <p className="font-sans font-bold theme-text">Total de Goles (Over/Under)</p>
+                <p className="font-sans font-bold theme-text-card">Total de Goles (Over/Under)</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Si apuestas si la suma de goles de ambos equipos será mayor o menor a 2.5 y aciertas. <br/><span className="italic">Ejemplo: Elegiste "+2.5 goles" y el partido terminó 2-1 (Total 3).</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
@@ -117,7 +117,7 @@ export default function ReglasTab() {
                   <span className="font-mono font-bold text-xs text-[#034226]">01</span>
                 </div>
                 <div>
-                  <p className="font-sans font-bold text-sm theme-text">Fase de Grupos</p>
+                  <p className="font-sans font-bold text-sm theme-text-card">Fase de Grupos</p>
                   <p className="text-xs text-slate-400 font-medium">Predicción de encuentros ordinarios y cruces.</p>
                 </div>
               </li>
@@ -126,7 +126,7 @@ export default function ReglasTab() {
                   <span className="font-mono font-bold text-xs text-[#e1b12c]">02</span>
                 </div>
                 <div>
-                  <p className="font-sans font-bold text-sm theme-text">Eliminatorias</p>
+                  <p className="font-sans font-bold text-sm theme-text-card">Eliminatorias</p>
                   <p className="text-xs text-slate-400 font-medium font-sans">Play-offs selectivos, llaves directas y bonos.</p>
                 </div>
               </li>

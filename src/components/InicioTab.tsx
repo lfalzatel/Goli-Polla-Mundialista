@@ -236,7 +236,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
               <h3 className="font-display text-xl text-white mt-2 tracking-wide uppercase">
                 Obtener Resultados Reales
               </h3>
-              <p className="font-sans text-xs theme-text opacity-70 mt-1 leading-relaxed">
+              <p className="font-sans text-xs theme-text-card opacity-70 mt-1 leading-relaxed">
                 Esta herramienta consulta los partidos finalizados y actualiza los puntajes.
               </p>
             </div>
@@ -428,12 +428,12 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
               placeholder="Buscar equipo o grupo..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full theme-card border-2  rounded-xl py-3.5 pl-11 pr-4 theme-text placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#e1b12c]/30 focus:border-[#e1b12c] transition-all font-sans text-sm shadow-sm"
+              className="w-full theme-card border-2  rounded-xl py-3.5 pl-11 pr-4 theme-text-card placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#e1b12c]/30 focus:border-[#e1b12c] transition-all font-sans text-sm shadow-sm"
             />
             {searchTerm && (
               <button 
                 onClick={() => setSearchTerm('')}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:theme-text"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:theme-text-card"
               >
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
@@ -451,7 +451,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
         {showCalendar && (
           <div className="theme-card border  rounded-xl p-3 shadow-inner animate-in slide-in-from-top-2 fade-in">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold theme-text font-sans uppercase">Filtro por Fecha</span>
+              <span className="text-xs font-bold theme-text-card font-sans uppercase">Filtro por Fecha</span>
               {selectedDate && (
                 <button 
                   onClick={() => setSelectedDate(null)}
@@ -522,7 +522,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
             {Object.entries(fechasObj).map(([fecha, partidosEstrella]) => (
               <section key={fecha} className="space-y-4">
                 <div className="flex items-center gap-4 mt-6">
-                  <h3 className="font-display text-3xl theme-text opacity-70 uppercase tracking-wide leading-none">{fecha}</h3>
+                  <h3 className="font-display text-3xl theme-text-card opacity-70 uppercase tracking-wide leading-none">{fecha}</h3>
                   <div className="h-[1px] flex-grow theme-card/15"></div>
                 </div>
 
@@ -581,7 +581,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                           <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1">
                             <button
                               onClick={() => setLocalScore(match.partidoId, getEditingLocalScore(match.partidoId, 0) - 1)}
-                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Disminuir goles local"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">remove</span>
@@ -591,7 +591,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             </span>
                             <button
                               onClick={() => setLocalScore(match.partidoId, getEditingLocalScore(match.partidoId, 0) + 1)}
-                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Aumentar goles local"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">add</span>
@@ -649,7 +649,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                           <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1">
                             <button
                               onClick={() => setVisitanteScore(match.partidoId, getEditingVisitanteScore(match.partidoId, 0) - 1)}
-                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Disminuir goles visitante"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">remove</span>
@@ -659,7 +659,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             </span>
                             <button
                               onClick={() => setVisitanteScore(match.partidoId, getEditingVisitanteScore(match.partidoId, 0) + 1)}
-                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full theme-card hover:bg-[#034226] hover:text-white theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Aumentar goles visitante"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">add</span>
@@ -671,7 +671,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                     </div>
 
                     {/* Footer Lock state/Prediction notification message */}
-                    <div className="mt-4 pt-3 border-t border-slate-150 flex flex-col items-center justify-between text-xs theme-text">
+                    <div className="mt-4 pt-3 border-t border-slate-150 flex flex-col items-center justify-between text-xs theme-text-card">
                       {yaBloqueado ? (() => {
                         const ptsObj = apuesta && typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos !== null 
                                        ? apuesta.puntosObtenidos : null;
@@ -704,13 +704,13 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             <div className="bg-[#034226]/5 rounded-xl border border-[#034226]/10 p-3 mx-1 flex flex-col gap-1.5 text-[11px]">
                               <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Desglose de puntos</div>
                               
-                              {ptsObj.marcador > 0 && <div className="flex justify-between items-center theme-text"><span>Marcador Exacto:</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.marcador} pts</span></div>}
+                              {ptsObj.marcador > 0 && <div className="flex justify-between items-center theme-text-card"><span>Marcador Exacto:</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.marcador} pts</span></div>}
                               
-                              {ptsObj.ganador > 0 && <div className="flex justify-between items-center theme-text"><span>{ptsObj.ganador === 3 ? 'Ganador + Goles:' : 'Equipo Ganador:'}</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.ganador} pts</span></div>}
+                              {ptsObj.ganador > 0 && <div className="flex justify-between items-center theme-text-card"><span>{ptsObj.ganador === 3 ? 'Ganador + Goles:' : 'Equipo Ganador:'}</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.ganador} pts</span></div>}
                               
-                              {ptsObj.empate > 0 && <div className="flex justify-between items-center theme-text"><span>Empate Acertado:</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.empate} pts</span></div>}
+                              {ptsObj.empate > 0 && <div className="flex justify-between items-center theme-text-card"><span>Empate Acertado:</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.empate} pts</span></div>}
                               
-                              {ptsObj.totalGoles > 0 && <div className="flex justify-between items-center theme-text"><span>Opcional ({apuesta.totalGolesApuesta === 'mas25' ? '+2.5' : '-2.5'} Goles):</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.totalGoles} pts</span></div>}
+                              {ptsObj.totalGoles > 0 && <div className="flex justify-between items-center theme-text-card"><span>Opcional ({apuesta.totalGolesApuesta === 'mas25' ? '+2.5' : '-2.5'} Goles):</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.totalGoles} pts</span></div>}
                               
                               <div className="flex justify-between items-center border-t border-[#034226]/10 pt-2 mt-1 font-black text-[#034226] text-xs">
                                 <span className="uppercase tracking-wider">Puntos Obtenidos:</span> <span className="bg-[#e1b12c]/20 px-2.5 py-1 rounded-md border border-[#e1b12c]/40">+{ptsObj.total} pts</span>
@@ -728,7 +728,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                               className={`px-3 py-1.5 rounded-full text-[10px] font-bold border transition-colors ${
                                 getEditingOverUnder(match.partidoId) === 'mas25' 
                                   ? 'bg-[#034226] text-white border-[#034226]' 
-                                  : 'theme-card theme-text border-slate-300 hover:bg-slate-50'
+                                  : 'theme-card theme-text-card border-slate-300 hover:bg-slate-50'
                               }`}
                             >
                               +2.5 Goles
@@ -738,7 +738,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                               className={`px-3 py-1.5 rounded-full text-[10px] font-bold border transition-colors ${
                                 getEditingOverUnder(match.partidoId) === 'menos25' 
                                   ? 'bg-[#e1b12c] text-[#034226] border-[#e1b12c]' 
-                                  : 'theme-card theme-text border-slate-300 hover:bg-slate-50'
+                                  : 'theme-card theme-text-card border-slate-300 hover:bg-slate-50'
                               }`}
                             >
                               -2.5 Goles

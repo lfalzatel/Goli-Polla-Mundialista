@@ -183,7 +183,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           GESTIÓN DE TEMAS
         </h2>
         
-        <p className="text-sm text-slate-200 font-sans mb-4 relative z-10">Tema Visual Activo</p>
+        <p className="text-sm theme-text opacity-70 font-sans mb-4 relative z-10">Tema Visual Activo</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 relative z-10">
           {AVAILABLE_THEMES.map(theme => (
             <button
@@ -199,7 +199,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
         <div className="h-[1px] bg-[#e1b12c]/20 my-4 relative z-10"></div>
 
-        <p className="text-sm text-slate-200 font-sans mb-4 relative z-10">Modos en Menú Desplegable</p>
+        <p className="text-sm theme-text opacity-70 font-sans mb-4 relative z-10">Modos en Menú Desplegable</p>
         <div className="space-y-3 relative z-10">
           {AVAILABLE_THEMES.map(theme => (
             <label key={`toggle-${theme.id}`} className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-slate-500/30 cursor-pointer hover:bg-black/30 transition-colors">
@@ -224,7 +224,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
         
         <div className="flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 mb-3">
           <div>
-            <p className="font-bold text-slate-200 text-sm">Rol de Cuenta</p>
+            <p className="font-bold theme-text opacity-70 text-sm">Rol de Cuenta</p>
             <p className="text-xs text-slate-400 mt-1">{usuario.esAdmin ? 'Administrador' : 'Usuario General'}</p>
           </div>
           <span className="material-symbols-outlined text-[#e1b12c]">shield_person</span>
@@ -232,7 +232,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
         <div className="flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 mb-3">
           <div>
-            <p className="font-bold text-slate-200 text-sm">Contraseña</p>
+            <p className="font-bold theme-text opacity-70 text-sm">Contraseña</p>
             <p className="text-xs text-slate-400 mt-1">Enviar enlace de recuperación a tu correo</p>
           </div>
           <button 
@@ -263,14 +263,14 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 placeholder="Nombre del Grupo (Ej. Empresa X)" 
                 value={newGroupName}
                 onChange={e => setNewGroupName(e.target.value)}
-                className="w-full theme-card border border-[#034226] rounded-lg py-2 px-3 text-sm theme-text font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none"
+                className="w-full theme-card border border-[#034226] rounded-lg py-2 px-3 text-sm theme-text-card font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none"
               />
               <input 
                 type="text" 
                 placeholder="Código Único (Ej. GOLI2026)" 
                 value={newGroupCode}
                 onChange={e => setNewGroupCode(e.target.value)}
-                className="w-full theme-card border border-[#034226] rounded-lg py-2 px-3 text-sm theme-text font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none uppercase"
+                className="w-full theme-card border border-[#034226] rounded-lg py-2 px-3 text-sm theme-text-card font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none uppercase"
               />
             </div>
             <button
@@ -392,14 +392,14 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           <button className="w-full flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 hover:bg-black/50 transition-colors">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[#e1b12c]">download</span>
-              <span className="font-bold text-slate-200 text-sm">Instalar Aplicación (PWA)</span>
+              <span className="font-bold theme-text opacity-70 text-sm">Instalar Aplicación (PWA)</span>
             </div>
           </button>
           
           <button onClick={handleShareApp} className="w-full flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 hover:bg-black/50 transition-colors">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[#e1b12c]">share</span>
-              <span className="font-bold text-slate-200 text-sm">Compartir App</span>
+              <span className="font-bold theme-text opacity-70 text-sm">Compartir App</span>
             </div>
           </button>
           
@@ -434,13 +434,13 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 <div className="flex gap-2">
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: false})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-100 theme-text border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-100 theme-text-card border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
                   >
                     Usuario
                   </button>
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: true})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-slate-100 theme-text border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-slate-100 theme-text-card border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
                   >
                     Administrador
                   </button>

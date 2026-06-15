@@ -212,7 +212,7 @@ export default function PerfilTab({
             </div>
             
             <div className="space-y-1">
-              <h2 className="font-display text-2xl theme-text tracking-wide leading-none">{nombre}</h2>
+              <h2 className="font-display text-2xl theme-text-card tracking-wide leading-none">{nombre}</h2>
               <div className="flex items-center gap-1.5 text-slate-500">
                 <span className="material-symbols-outlined text-[16px] text-[#e1b12c]" style={{ fontVariationSettings: "'FILL' 1" }}>
                   verified
@@ -245,7 +245,7 @@ export default function PerfilTab({
               </span>
               
               <input
-                className="w-full theme-card border border-[#034226]/50 rounded-full py-3 pl-12 pr-12 theme-text font-sans text-sm focus:ring-2 focus:ring-[#034226] focus:border-transparent transition-all outline-none"
+                className="w-full theme-card border border-[#034226]/50 rounded-full py-3 pl-12 pr-12 theme-text-card font-sans text-sm focus:ring-2 focus:ring-[#034226] focus:border-transparent transition-all outline-none"
                 type="text"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
@@ -294,7 +294,7 @@ export default function PerfilTab({
       {/* Leaderboard standing block */}
       <section className="space-y-4">
         <div className="flex items-center justify-between px-1">
-          <h3 className="font-display text-2xl text-slate-200 flex items-center gap-2 uppercase tracking-wide">
+          <h3 className="font-display text-2xl text-[#e1b12c] flex items-center gap-2 uppercase tracking-wide">
             <span className="material-symbols-outlined text-[#e1b12c]" style={{ fontVariationSettings: "'FILL' 1" }}>
               leaderboard
             </span>
@@ -330,7 +330,7 @@ export default function PerfilTab({
                       1
                     </div>
                   ) : user.posicion === 2 ? (
-                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-300 theme-text font-display text-lg font-black">
+                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-300 theme-text-card font-display text-lg font-black">
                       2
                     </div>
                   ) : user.posicion === 3 ? (
@@ -352,7 +352,7 @@ export default function PerfilTab({
                   </div>
 
                   <div>
-                    <span className={`font-sans text-sm font-bold block ${isSelf ? 'text-[#034226]' : 'theme-text'}`}>
+                    <span className={`font-sans text-sm font-bold block ${isSelf ? 'text-[#034226]' : 'theme-text-card'}`}>
                       {user.nombre} {isSelf && '(Tú)'}
                     </span>
                     <span className="font-sans text-[10px] text-slate-500 font-semibold leading-none">
@@ -373,7 +373,7 @@ export default function PerfilTab({
 
       {/* Bets Breakdowns historic details */}
       <section className="space-y-4 pb-10">
-        <h3 className="font-display text-2xl text-slate-200 flex items-center gap-2 uppercase tracking-wide px-1">
+        <h3 className="font-display text-2xl text-[#79ff5b] flex items-center gap-2 uppercase tracking-wide px-1">
           <span className="material-symbols-outlined text-[#79ff5b]">history</span>
           Desglose de Apuestas
         </h3>
@@ -470,7 +470,7 @@ export default function PerfilTab({
               <span className="material-symbols-outlined text-[32px]">download_for_offline</span>
             </div>
 
-            <h3 className="font-display text-2xl theme-text mb-2">Instalar Goli Polla</h3>
+            <h3 className="font-display text-2xl theme-text-card mb-2">Instalar Goli Polla</h3>
             
             <p className="text-sm text-slate-500 mb-6 leading-relaxed">
               Para tener la mejor experiencia y acceso rápido, instala esta aplicación en tu pantalla de inicio:
@@ -496,7 +496,7 @@ export default function PerfilTab({
 
             <button 
               onClick={() => setShowInstallModal(false)}
-              className="mt-6 w-full bg-slate-100 theme-text font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors"
+              className="mt-6 w-full bg-slate-100 theme-text-card font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors"
             >
               Cerrar
             </button>

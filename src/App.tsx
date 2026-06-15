@@ -695,7 +695,7 @@ export default function App() {
                     <div className="flex items-center gap-2.5">
                       <span className="font-mono text-xs text-[#8e9099] w-4 text-center">#{lead.posicion}</span>
                       <img alt={lead.nombre} className="w-8 h-8 rounded-full border border-white/5" src={lead.foto} />
-                      <span className={`text-xs font-semibold ${isSelf ? 'text-[#79ff5b]' : 'text-slate-200'}`}>
+                      <span className={`text-xs font-semibold ${isSelf ? 'text-[#79ff5b]' : 'theme-text opacity-70'}`}>
                         {lead.nombre} {isSelf && '(Tú)'}
                       </span>
                     </div>
