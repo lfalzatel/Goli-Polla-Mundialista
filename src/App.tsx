@@ -636,61 +636,61 @@ export default function App() {
         {/* Tab: Inicio */}
         <button
           onClick={() => setActiveTab('inicio')}
-          className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
+          className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
             activeTab === 'inicio' 
-              ? 'bg-[#e1b12c] text-[#034226] px-6 scale-105 font-bold shadow-lg shadow-[#e1b12c]/20' 
-              : 'text-white/60 hover:text-white'
+              ? 'bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]' 
+              : 'py-2.5 px-4 text-white/60 hover:text-white'
           }`}
         >
-          <span className={`material-symbols-outlined text-[22px] transition-transform duration-300 ${activeTab === 'inicio' ? '-translate-y-1 -rotate-[15deg] scale-110 drop-shadow-md' : ''}`} style={{ fontVariationSettings: activeTab === 'inicio' ? "'FILL' 1" : "'FILL' 0" }}>
+          <span className={`material-symbols-outlined text-[24px] transition-transform duration-300 ${activeTab === 'inicio' ? '-rotate-6 scale-110' : ''}`} style={{ fontVariationSettings: activeTab === 'inicio' ? "'FILL' 1" : "'FILL' 0" }}>
             home
           </span>
-          <span className="font-sans text-xs mt-0.5 font-semibold">Inicio</span>
+          <span className={`font-sans mt-0.5 uppercase tracking-wide ${activeTab === 'inicio' ? 'text-[9px] font-bold' : 'text-[10px] font-semibold'}`}>Inicio</span>
         </button>
 
         {/* Tab: Reglas */}
         <button
           onClick={() => setActiveTab('reglas')}
-          className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
+          className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
             activeTab === 'reglas' 
-              ? 'bg-[#e1b12c] text-[#034226] px-6 scale-105 font-bold shadow-lg shadow-[#e1b12c]/20' 
-              : 'text-white/60 hover:text-white'
+              ? 'bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]' 
+              : 'py-2.5 px-4 text-white/60 hover:text-white'
           }`}
         >
-          <span className={`material-symbols-outlined text-[22px] transition-transform duration-300 ${activeTab === 'reglas' ? '-translate-y-1 -rotate-[15deg] scale-110 drop-shadow-md' : ''}`} style={{ fontVariationSettings: activeTab === 'reglas' ? "'FILL' 1" : "'FILL' 0" }}>
+          <span className={`material-symbols-outlined text-[24px] transition-transform duration-300 ${activeTab === 'reglas' ? '-rotate-6 scale-110' : ''}`} style={{ fontVariationSettings: activeTab === 'reglas' ? "'FILL' 1" : "'FILL' 0" }}>
             gavel
           </span>
-          <span className="font-sans text-xs mt-0.5 font-semibold">Reglas</span>
+          <span className={`font-sans mt-0.5 uppercase tracking-wide ${activeTab === 'reglas' ? 'text-[9px] font-bold' : 'text-[10px] font-semibold'}`}>Reglas</span>
         </button>
 
         {/* Tab: Perfil */}
         <button
           onClick={() => setActiveTab('perfil')}
-          className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
+          className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
             activeTab === 'perfil' 
-              ? 'bg-[#e1b12c] text-[#034226] px-6 scale-105 font-bold shadow-lg shadow-[#e1b12c]/20' 
-              : 'text-white/60 hover:text-white'
+              ? 'bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]' 
+              : 'py-2.5 px-4 text-white/60 hover:text-white'
           }`}
         >
-          <span className={`material-symbols-outlined text-[22px] transition-transform duration-300 ${activeTab === 'perfil' ? '-translate-y-1 -rotate-[15deg] scale-110 drop-shadow-md' : ''}`} style={{ fontVariationSettings: activeTab === 'perfil' ? "'FILL' 1" : "'FILL' 0" }}>
+          <span className={`material-symbols-outlined text-[24px] transition-transform duration-300 ${activeTab === 'perfil' ? '-rotate-6 scale-110' : ''}`} style={{ fontVariationSettings: activeTab === 'perfil' ? "'FILL' 1" : "'FILL' 0" }}>
             person
           </span>
-          <span className="font-sans text-xs mt-0.5 font-semibold">Perfil</span>
+          <span className={`font-sans mt-0.5 uppercase tracking-wide ${activeTab === 'perfil' ? 'text-[9px] font-bold' : 'text-[10px] font-semibold'}`}>Perfil</span>
         </button>
 
         {/* Tab: Ranking */}
         <button
           onClick={() => setActiveTab('ranking')}
-          className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
+          className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
             activeTab === 'ranking' 
-              ? 'bg-[#e1b12c] text-[#034226] px-6 scale-105 font-bold shadow-lg shadow-[#e1b12c]/20' 
-              : 'text-white/60 hover:text-white'
+              ? 'bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]' 
+              : 'py-2.5 px-4 text-white/60 hover:text-white'
           }`}
         >
-          <span className={`material-symbols-outlined text-[22px] transition-transform duration-300 ${activeTab === 'ranking' ? '-translate-y-1 -rotate-[15deg] scale-110 drop-shadow-md' : ''}`} style={{ fontVariationSettings: activeTab === 'ranking' ? "'FILL' 1" : "'FILL' 0" }}>
+          <span className={`material-symbols-outlined text-[24px] transition-transform duration-300 ${activeTab === 'ranking' ? '-rotate-6 scale-110' : ''}`} style={{ fontVariationSettings: activeTab === 'ranking' ? "'FILL' 1" : "'FILL' 0" }}>
             leaderboard
           </span>
-          <span className="font-sans text-xs mt-0.5 font-semibold">Ranking</span>
+          <span className={`font-sans mt-0.5 uppercase tracking-wide ${activeTab === 'ranking' ? 'text-[9px] font-bold' : 'text-[10px] font-semibold'}`}>Ranking</span>
         </button>
 
       </nav>
