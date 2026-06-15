@@ -5,7 +5,6 @@
 
 export interface Grupo {
   codigoGrupo: string;
-  gruposPermitidos?: string[];
   nombre: string;
   activo: boolean;
   creadoPor: string;
@@ -18,13 +17,15 @@ export interface Usuario {
   foto: string;
   whatsapp: string;
   codigoGrupo: string;
-  puntosTotal: number;\n  puntosPorGrupo?: Record<string, number>;
+  gruposPermitidos?: string[];
+  puntosTotal: number;
+  puntosPorGrupo?: Record<string, number>;
   createdAt: string;
   esAdmin?: boolean;
 }
 
 export interface Partido {
-  partidoId: string;\n  codigoGrupo?: string;
+  partidoId: string;
   fecha: string;      // Formato legible "JUE 11-06", "VIE 12-06", etc.
   hora: string;       // "10:00 AM", "03:00 PM"
   fechaHoraInicio: number; // Timestamp en ms (Date.now())
@@ -49,9 +50,10 @@ export interface ApuestaPuntosDesglose {
 }
 
 export interface Apuesta {
-  id: string; // `${uid}_${partidoId}`
+  id: string; // `${uid}_${partidoId}_${codigoGrupo}`
   uid: string;
   partidoId: string;
+  codigoGrupo?: string;
   golesLocalApuesta: number;
   golesVisitanteApuesta: number;
   equipoGanadorApuesta: string; // "local" | "visitante" | "empate" de la predicción

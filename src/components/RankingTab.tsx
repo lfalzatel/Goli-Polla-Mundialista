@@ -5,11 +5,13 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 
 interface RankingTabProps {
   usuarios: (Usuario & { posicion: number })[];
+  apuestas: Apuesta[];
   partidos: Partido[];
   usuarioActualId: string;
+  activeGrupo?: string;
 }
 
-export default function RankingTab({ usuarios, partidos, usuarioActualId }: RankingTabProps) {
+export default function RankingTab({ usuarios, apuestas, partidos, usuarioActualId, activeGrupo }: RankingTabProps) {
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
   const [userBets, setUserBets] = useState<Apuesta[]>([]);
   const [loadingBets, setLoadingBets] = useState(false);
@@ -34,7 +36,11 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
     setLoadingBets(true);
     
     try {
-      const q = query(collection(db, 'pm_apuestas'), where('uid', '==', uid));
+      const q = query(
+        collection(db, 'pm_apuestas'), 
+        where('uid', '==', uid),
+        where('codigoGrupo', '==', activeGrupo || 'LACURVA1')
+      );
       const snap = await getDocs(q);
       const bets: Apuesta[] = [];
       snap.forEach(doc => bets.push(doc.data() as Apuesta));

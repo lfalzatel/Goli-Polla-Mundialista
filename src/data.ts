@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Partido, RankedUser, Apuesta, PicksGlobales } from './types';
+import { Partido, RankedUser, Apuesta } from './types';
 
 // Let's gather the precise official images matching the prompt or beautiful alternatives
 export const PARTIDOS_INICIALES: Partido[] = [

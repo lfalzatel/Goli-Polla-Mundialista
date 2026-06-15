@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Partido, Apuesta, RankedUser, Usuario } from './types';
+import { Partido, Apuesta, RankedUser, Usuario, BonificacionesEspeciales } from './types';
 import { PARTIDOS_INICIALES, RANKING_INICIAL, APUESTAS_INICIALES_PRESETS, calcularPuntosPartido } from './data';
 import { db, auth, messagingPromise } from './lib/firebase';
 import { collection, onSnapshot, doc, setDoc, updateDoc, writeBatch, getDocs, getDoc } from 'firebase/firestore';

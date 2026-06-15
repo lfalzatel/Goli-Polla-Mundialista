@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { db } from '../lib/firebase';
-import { collection, query, where, onSnapshot, doc, setDoc, getDocs, updateDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, setDoc, getDocs, updateDoc, writeBatch } from 'firebase/firestore';
 
 interface ConfiguracionTabProps {
   usuario: any;
@@ -413,7 +413,6 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               onClick={async () => {
                 if(!window.confirm("¿Ejecutar migración de apuestas a LACURVA1 y crear puntosPorGrupo?")) return;
                 try {
-                  const { writeBatch, getDocs, collection, doc } = require('firebase/firestore');
                   let batch = writeBatch(db);
                   let count = 0;
                   
