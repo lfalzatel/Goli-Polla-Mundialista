@@ -50,7 +50,16 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
     return userBets.find(a => a.partidoId === partidoId);
   };
 
-  const filteredPartidos = partidos.filter(p => {
+  const now = Date.now();
+  const partidosComputados = partidos.map(p => {
+    let computedEstado = p.estado;
+    if (computedEstado === 'pendiente' && p.fechaHoraInicio <= now) {
+      computedEstado = 'en_vivo';
+    }
+    return { ...p, estado: computedEstado };
+  });
+
+  const filteredPartidos = partidosComputados.filter(p => {
     if (selectedDate && p.fecha !== selectedDate) return false;
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();

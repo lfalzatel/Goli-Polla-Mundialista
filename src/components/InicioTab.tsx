@@ -66,8 +66,18 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
     }
   };
 
+  // Ajuste dinámico de estado: Si es "pendiente" pero la hora ya pasó, tratarlo como "en_vivo" en la interfaz
+  const now = Date.now();
+  const partidosComputados = partidos.map(p => {
+    let computedEstado = p.estado;
+    if (computedEstado === 'pendiente' && p.fechaHoraInicio <= now) {
+      computedEstado = 'en_vivo';
+    }
+    return { ...p, estado: computedEstado };
+  });
+
   // Filter matches based on search term (universal filter) and selected date
-  const filteredPartidos = partidos.filter(p => {
+  const filteredPartidos = partidosComputados.filter(p => {
     if (selectedDate && p.fecha !== selectedDate) return false;
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
