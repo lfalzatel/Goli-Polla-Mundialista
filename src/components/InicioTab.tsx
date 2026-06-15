@@ -544,7 +544,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                   key={match.partidoId}
                   className={`relative rounded-2xl border transition-all duration-300 overflow-hidden ${
                     yaBloqueado 
-                      ? 'bg-slate-50  opacity-90 shadow-sm' 
+                      ? 'theme-card opacity-70 shadow-sm' 
                       : 'theme-card border-2 border-[#034226]/15 hover:border-[#034226]/45 shadow-[0_4px_20px_rgba(0,0,0,0.02)]'
                   }`}
                 >
