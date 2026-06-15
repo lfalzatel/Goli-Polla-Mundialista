@@ -440,10 +440,31 @@ export default function App() {
                 <span className="material-symbols-outlined text-[#e1b12c]">group</span>
                 Cambiar de Grupo
               </h3>
-              <p className="text-[#e1b12c] font-sans text-xs mt-1">Ingresa el código del nuevo grupo</p>
+              <p className="text-[#e1b12c] font-sans text-xs mt-1">Selecciona o ingresa el código del grupo</p>
             </div>
             
             <form onSubmit={handleJoinGroup} className="p-5 flex flex-col gap-4">
+                
+              {usuario?.gruposPermitidos && usuario.gruposPermitidos.length > 0 && (
+                <div className="flex flex-col gap-2 mb-2">
+                  <label className="font-sans text-xs font-bold text-slate-500 px-1 uppercase tracking-wider">
+                    Tus Grupos Permitidos
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {usuario.gruposPermitidos.map(gCode => (
+                      <button 
+                        key={gCode}
+                        type="button"
+                        onClick={() => setNewGroupCode(gCode)}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border ${newGroupCode.toUpperCase() === gCode ? 'bg-[#034226] text-white border-[#034226]' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'}`}
+                      >
+                        {gCode}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex flex-col gap-2">
                 <label className="font-sans text-xs font-bold text-slate-500 px-1 uppercase tracking-wider">
                   Código de Acceso

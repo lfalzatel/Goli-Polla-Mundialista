@@ -293,7 +293,23 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 {misGrupos.map(g => (
                   <div key={g.id} className="bg-white/5 border border-white/10 rounded-lg p-3 flex justify-between items-center shadow-sm">
                     <div>
-                      <p className="font-bold text-white text-sm leading-tight">{g.nombre}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-white text-sm leading-tight">{g.nombre}</p>
+                        <button 
+                          onClick={async () => {
+                            const newName = window.prompt("Ingresa el nuevo nombre para el grupo:", g.nombre);
+                            if (newName && newName.trim() !== g.nombre) {
+                              try {
+                                await updateDoc(doc(db, 'pm_grupos', g.id), { nombre: newName.trim() });
+                              } catch(e) { console.error("Error renaming group", e); }
+                            }
+                          }}
+                          className="text-slate-400 hover:text-white transition-colors p-0.5"
+                          title="Editar nombre"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">edit</span>
+                        </button>
+                      </div>
                       <p className={`text-[10px] uppercase tracking-widest font-semibold mt-0.5 ${g.activo !== false ? 'text-green-300' : 'text-red-400'}`}>
                         {g.activo !== false ? 'Activo' : 'Inactivo'}
                       </p>
