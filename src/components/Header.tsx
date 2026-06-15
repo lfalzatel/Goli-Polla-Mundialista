@@ -7,20 +7,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Partido } from '../types';
 
 interface HeaderProps {
-  usuario: {
-    nombre: string;
-    email: string;
-    foto: string;
-    puntosTotal: number;
-    codigoGrupo: string;
-  };
+  usuario: any;
   onLogout: () => void;
   onChangeGroup: () => void;
   onOpenChat: () => void;
-  partidos?: Partido[];
+  partidos: any[];
+  onGoToSettings?: () => void;
+  themeMode?: string;
+  setThemeMode?: (theme: string) => void;
+  activeThemes?: string[];
 }
 
-export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, partidos = [] }: HeaderProps) {
+export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, partidos = [], onGoToSettings, themeMode, setThemeMode, activeThemes = [] }: HeaderProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
@@ -218,19 +216,44 @@ export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, p
                 <span className="font-sans font-medium">Cambiar de Grupo</span>
               </button>
 
+              {activeThemes.length > 0 && setThemeMode && themeMode && (
+                <div className="px-3 py-2 flex items-center justify-between border-b border-slate-100 mb-1">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Modo Rápido</span>
+                  <div className="flex gap-1">
+                    {activeThemes.map((themeName) => {
+                      let icon = 'palette';
+                      if (themeName === 'dia') icon = 'light_mode';
+                      if (themeName === 'noche' || themeName === 'original') icon = 'dark_mode';
+                      if (themeName === 'glass') icon = 'layers';
+                      if (themeName === 'kilocode') icon = 'bolt';
+                      if (themeName === 'cyberpunk') icon = 'terminal';
+
+                      return (
+                        <button
+                          key={themeName}
+                          onClick={() => {
+                            setThemeMode(themeName);
+                            setShowDropdown(false);
+                          }}
+                          className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                            themeMode === themeName 
+                              ? 'bg-[#034226] text-[#e1b12c] shadow-inner scale-110' 
+                              : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600'
+                          }`}
+                          title={`Modo: ${themeName}`}
+                        >
+                          <span className="material-symbols-outlined text-[14px]">{icon}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               <button
                 onClick={() => {
                   setShowDropdown(false);
-                  // Dynamic subtle toast instead of raw blocking window.alert
-                  const toast = document.createElement('div');
-                  toast.className = 'fixed top-4 left-1/2 -translate-x-1/2 bg-[#034226] text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold z-50 transition-all transform scale-90 duration-300';
-                  toast.textContent = 'Configuraciones locales sincronizadas';
-                  document.body.appendChild(toast);
-                  setTimeout(() => toast.style.transform = 'translateY(10px) scale(1)', 10);
-                  setTimeout(() => {
-                    toast.style.opacity = '0';
-                    setTimeout(() => toast.remove(), 300);
-                  }, 2000);
+                  if (onGoToSettings) onGoToSettings();
                 }}
                 className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-950 rounded-lg transition-colors cursor-pointer text-left"
               >

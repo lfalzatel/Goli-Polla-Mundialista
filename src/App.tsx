@@ -22,10 +22,37 @@ export default function App() {
   const [apuestas, setApuestas] = useState<Apuesta[]>([]);
   const [rankingLideres, setRankingLideres] = useState<RankedUser[]>(RANKING_INICIAL);
   const [bonificaciones, setBonificaciones] = useState<BonificacionesEspeciales | null>(null);
-  const [activeTab, setActiveTab] = useState<'inicio' | 'reglas' | 'perfil'>('inicio');
+  const [activeTab, setActiveTab] = useState<'inicio' | 'reglas' | 'perfil' | 'ranking' | 'configuracion'>('inicio');
+  const [tabRotationToggle, setTabRotationToggle] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
   const [showFloatingRanking, setShowFloatingRanking] = useState(false);
   const [showWhatsAppConfirm, setShowWhatsAppConfirm] = useState(false);
   const [notificationToast, setNotificationToast] = useState<{title: string, body: string} | null>(null);
+  
+  // Themes
+  const [themeMode, setThemeMode] = useState<string>(localStorage.getItem('goli_theme') || 'noche');
+  const [activeThemes, setActiveThemes] = useState<string[]>(
+    JSON.parse(localStorage.getItem('goli_active_themes') || '["dia", "noche", "glass", "kilocode", "cyberpunk"]')
+  );
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', themeMode);
+    localStorage.setItem('goli_theme', themeMode);
+  }, [themeMode]);
+
+  useEffect(() => {
+    localStorage.setItem('goli_active_themes', JSON.stringify(activeThemes));
+  }, [activeThemes]);
+
+  const handleTabClick = (tab: 'inicio' | 'reglas' | 'perfil' | 'ranking') => {
+    if (activeTab === tab) {
+      setTabRotationToggle(!tabRotationToggle);
+    } else {
+      setActiveTab(tab);
+      setTabRotationToggle(false);
+    }
+  };
+  
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [newGroupCode, setNewGroupCode] = useState('');
   const [groupError, setGroupError] = useState('');
@@ -398,6 +425,10 @@ export default function App() {
         onChangeGroup={handleOpenGroupModal}
         onOpenChat={() => setShowWhatsAppConfirm(true)}
         partidos={partidos}
+        onGoToSettings={() => setActiveTab('configuracion')}
+        themeMode={themeMode}
+        setThemeMode={setThemeMode}
+        activeThemes={activeThemes}
       />
 
       {/* Group Change Modal */}
@@ -635,10 +666,10 @@ export default function App() {
         
         {/* Tab: Inicio */}
         <button
-          onClick={() => setActiveTab('inicio')}
+          onClick={() => handleTabClick('inicio')}
           className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
             activeTab === 'inicio' 
-              ? 'bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 -rotate-6 scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]' 
+              ? `bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]` 
               : 'py-2.5 px-4 text-white/60 hover:text-white'
           }`}
         >
@@ -650,10 +681,10 @@ export default function App() {
 
         {/* Tab: Reglas */}
         <button
-          onClick={() => setActiveTab('reglas')}
+          onClick={() => handleTabClick('reglas')}
           className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
             activeTab === 'reglas' 
-              ? 'bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 -rotate-6 scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]' 
+              ? `bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]` 
               : 'py-2.5 px-4 text-white/60 hover:text-white'
           }`}
         >
@@ -665,10 +696,10 @@ export default function App() {
 
         {/* Tab: Perfil */}
         <button
-          onClick={() => setActiveTab('perfil')}
+          onClick={() => handleTabClick('perfil')}
           className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
             activeTab === 'perfil' 
-              ? 'bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 -rotate-6 scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]' 
+              ? `bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]` 
               : 'py-2.5 px-4 text-white/60 hover:text-white'
           }`}
         >
@@ -680,10 +711,10 @@ export default function App() {
 
         {/* Tab: Ranking */}
         <button
-          onClick={() => setActiveTab('ranking')}
+          onClick={() => handleTabClick('ranking')}
           className={`flex flex-col items-center justify-center transition-all duration-300 cursor-pointer relative ${
             activeTab === 'ranking' 
-              ? 'bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 -rotate-6 scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]' 
+              ? `bg-[#e1b12c] text-[#034226] w-16 h-14 rounded-xl -translate-y-4 ${tabRotationToggle ? 'rotate-6' : '-rotate-6'} scale-110 shadow-lg shadow-[#e1b12c]/40 border-2 border-[#034226]` 
               : 'py-2.5 px-4 text-white/60 hover:text-white'
           }`}
         >
