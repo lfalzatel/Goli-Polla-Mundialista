@@ -294,20 +294,34 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                   <div key={g.id} className="bg-white/5 border border-white/10 rounded-lg p-3 flex justify-between items-center shadow-sm">
                     <div>
                       <p className="font-bold text-white text-sm leading-tight">{g.nombre}</p>
-                      <p className="text-[10px] text-green-300 uppercase tracking-widest font-semibold mt-0.5">Activo</p>
+                      <p className={`text-[10px] uppercase tracking-widest font-semibold mt-0.5 ${g.activo !== false ? 'text-green-300' : 'text-red-400'}`}>
+                        {g.activo !== false ? 'Activo' : 'Inactivo'}
+                      </p>
                     </div>
-                    <button 
-                      onClick={() => handleCopyCode(g.codigo)}
-                      className={`font-mono font-bold text-xs px-3 py-1.5 rounded border transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
-                        copiedCode === g.codigo 
-                          ? 'bg-[#e1b12c] text-[#034226] border-[#cda023]' 
-                          : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
-                      }`}
-                      title="Copiar código"
-                    >
-                      {copiedCode === g.codigo ? '¡COPIADO!' : g.codigo}
-                      {copiedCode !== g.codigo && <span className="material-symbols-outlined text-[14px]">content_copy</span>}
-                    </button>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={async () => {
+                          try {
+                            await updateDoc(doc(db, 'pm_grupos', g.id), { activo: g.activo === false ? true : false });
+                          } catch(e) { console.error("Error toggling group", e); }
+                        }}
+                        className={`text-[10px] px-2 py-1 rounded font-bold uppercase transition-colors ${g.activo !== false ? 'bg-red-500/20 text-red-300 hover:bg-red-500/40' : 'bg-green-500/20 text-green-300 hover:bg-green-500/40'}`}
+                      >
+                        {g.activo !== false ? 'Desactivar' : 'Activar'}
+                      </button>
+                      <button 
+                        onClick={() => handleCopyCode(g.codigo)}
+                        className={`font-mono font-bold text-xs px-3 py-1.5 rounded border transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
+                          copiedCode === g.codigo 
+                            ? 'bg-[#e1b12c] text-[#034226] border-[#cda023]' 
+                            : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                        }`}
+                        title="Copiar código"
+                      >
+                        {copiedCode === g.codigo ? '¡COPIADO!' : g.codigo}
+                        {copiedCode !== g.codigo && <span className="material-symbols-outlined text-[14px]">content_copy</span>}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -426,8 +440,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 >
                   <option value="">Seleccionar grupo...</option>
                   {allGroups.map(g => (
-                    <option key={g.id} value={g.codigoGrupo} className="bg-[#034226] text-white">
-                      {g.nombre} ({g.codigoGrupo})
+                    <option key={g.id} value={g.codigo} className="bg-[#034226] text-white">
+                      {g.nombre} ({g.codigo})
                     </option>
                   ))}
                 </select>
@@ -440,19 +454,19 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     <label key={g.id} className="flex items-center gap-3 text-white text-sm cursor-pointer hover:bg-white/5 p-1.5 rounded-md transition-colors">
                       <input 
                         type="checkbox" 
-                        checked={editFormData.gruposPermitidos.includes(g.codigoGrupo)}
+                        checked={editFormData.gruposPermitidos.includes(g.codigo)}
                         onChange={(e) => {
                           const checked = e.target.checked;
                           setEditFormData(prev => ({
                             ...prev,
                             gruposPermitidos: checked 
-                              ? [...prev.gruposPermitidos, g.codigoGrupo]
-                              : prev.gruposPermitidos.filter(id => id !== g.codigoGrupo)
+                              ? [...prev.gruposPermitidos, g.codigo]
+                              : prev.gruposPermitidos.filter(id => id !== g.codigo)
                           }));
                         }}
                         className="accent-[#e1b12c] w-4 h-4 cursor-pointer"
                       />
-                      <span>{g.nombre} <span className="text-slate-400 text-xs ml-1 font-mono">({g.codigoGrupo})</span></span>
+                      <span>{g.nombre} <span className="text-slate-400 text-xs ml-1 font-mono">({g.codigo})</span></span>
                     </label>
                   ))}
                   {allGroups.length === 0 && <p className="text-xs text-slate-400 p-2 text-center">No hay grupos disponibles</p>}
