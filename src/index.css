@@ -71,7 +71,7 @@
 }
 
 [data-theme="cyberpunk"] .theme-bg, [data-theme="kilocode"] .theme-bg {
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.5) 2px, rgba(0,0,0,0.5) 4px) !important;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, rgba(0,0,0,0.15) 2px) !important;
   font-family: var(--font-mono);
 }
 
@@ -79,6 +79,7 @@
   border-radius: 0 !important;
   box-shadow: 0 0 10px var(--border-card);
   font-family: var(--font-mono);
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px) !important;
 }
 
 @theme {
@@ -141,6 +142,7 @@
   box-shadow: 0 0 10px var(--border-card) !important;
   border-color: var(--border-card) !important;
   font-family: var(--font-mono) !important;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px) !important;
 }
 
 [data-theme='cyberpunk'] .premium-text, [data-theme='kilocode'] .premium-text {

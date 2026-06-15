@@ -226,9 +226,9 @@ export default function PerfilTab({
           </div>
 
           {/* Points Enclosure counter panel */}
-          <div className="flex flex-col items-center justify-center bg-[#034226] px-5 py-4 rounded-2xl border-2 border-[#e1b12c] min-w-[140px] shadow-sm text-center">
-            <span className="font-sans text-[10px] text-[#e1b12c] uppercase tracking-widest font-extrabold">Total Puntos</span>
-            <span className="font-display text-4xl text-white leading-tight font-black">{puntosTotal}</span>
+          <div className="flex flex-col items-center justify-center premium-card px-5 py-4 rounded-2xl border-2 min-w-[140px] shadow-sm text-center">
+            <span className="font-sans text-[10px] premium-accent uppercase tracking-widest font-extrabold">Total Puntos</span>
+            <span className="font-display text-4xl premium-text leading-tight font-black" style={{opacity: 1}}>{puntosTotal}</span>
           </div>
 
         </div>
@@ -276,14 +276,14 @@ export default function PerfilTab({
         <div className="relative z-10 mt-5 flex gap-3">
           <button 
             onClick={() => setShowInstallModal(true)}
-            className="flex-1 bg-[#034226] text-white py-2.5 rounded-xl font-sans text-xs font-bold uppercase tracking-wider shadow-md hover:bg-[#02331d] transition-all flex items-center justify-center gap-2"
+            className="flex-1 premium-button-accent py-2.5 rounded-xl font-sans text-xs font-bold uppercase tracking-wider shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined text-[18px]">download</span>
             Instalar App
           </button>
           <button 
             onClick={handleShareApp}
-            className="flex-1 bg-[#e1b12c] text-[#034226] py-2.5 rounded-xl font-sans text-xs font-bold uppercase tracking-wider shadow-md hover:bg-[#cda023] transition-all flex items-center justify-center gap-2"
+            className="flex-1 premium-button-accent py-2.5 rounded-xl font-sans text-xs font-bold uppercase tracking-wider shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined text-[18px]">share</span>
             Compartir App
@@ -466,7 +466,7 @@ export default function PerfilTab({
           <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowInstallModal(false)}></div>
           <div className="relative w-full max-w-[340px] theme-card rounded-3xl p-6 shadow-2xl animate-in font-sans text-center">
             
-            <div className="w-16 h-16 bg-[#034226] text-[#e1b12c] rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg border-4 border-slate-50">
+            <div className="w-16 h-16 premium-button-accent rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg border-4 border-slate-50">
               <span className="material-symbols-outlined text-[32px]">download_for_offline</span>
             </div>
 
