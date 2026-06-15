@@ -5,11 +5,16 @@ export default function ReglasTab() {
     <div className="space-y-6">
       
       {/* Rules Header introduction */}
-      <section className="space-y-2">
-        <h2 className="font-display text-4xl text-[#e1b12c] uppercase tracking-wider mb-1">
+      <section className="relative overflow-hidden rounded-2xl p-6 bg-[#034226] border border-[#e1b12c]/30 shadow-xl group">
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <span className="material-symbols-outlined text-8xl text-white">gavel</span>
+        </div>
+        
+        <h2 className="font-display text-2xl text-[#e1b12c] mb-2 flex items-center gap-2 uppercase tracking-wide relative z-10">
+          <span className="material-symbols-outlined text-[24px]">gavel</span>
           Reglamento Oficial
         </h2>
-        <p className="text-slate-300 font-sans text-sm max-w-2xl leading-relaxed font-medium">
+        <p className="text-white/80 font-sans text-sm max-w-2xl leading-relaxed font-medium relative z-10">
           Domina el campo de juego conociendo el sistema de puntuación. La precisión es la clave fundamental para llegar a la cima de la tabla del grupo.
         </p>
       </section>

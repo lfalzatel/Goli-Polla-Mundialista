@@ -92,11 +92,16 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
 
   return (
     <div className="p-4 sm:p-6 pb-32 max-w-4xl mx-auto font-sans animate-in fade-in duration-300">
-      <div className="flex justify-between items-end mb-6">
-        <div>
-          <h2 className="font-display text-3xl text-white mb-1">Ranking Total</h2>
-          <p className="text-slate-400 text-sm">Posiciones y predicciones del grupo</p>
+      <div className="relative overflow-hidden rounded-2xl p-6 bg-[#034226] border border-[#e1b12c]/30 shadow-xl group mb-6">
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <span className="material-symbols-outlined text-8xl text-white">leaderboard</span>
         </div>
+        
+        <h2 className="font-display text-2xl text-[#e1b12c] mb-2 flex items-center gap-2 uppercase tracking-wide relative z-10">
+          <span className="material-symbols-outlined text-[24px]">leaderboard</span>
+          Ranking Total
+        </h2>
+        <p className="text-white/80 font-sans text-sm relative z-10">Posiciones y predicciones del grupo</p>
       </div>
 
       <div className="space-y-4">

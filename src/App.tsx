@@ -630,15 +630,15 @@ export default function App() {
       )}
 
       {/* Styled Premium Bottom Tab Bar Navigation navigation */}
-      <nav className="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-4 pt-2.5 bg-[#1b1b1f] border-t border-white/10 shadow-[0_-5px_20px_rgba(0,0,0,0.5)] rounded-t-3xl">
+      <nav className="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-4 pt-2.5 bg-[#034226] border-t-4 border-[#e1b12c] shadow-[0_-5px_20px_rgba(0,0,0,0.5)] rounded-t-3xl">
         
         {/* Tab: Inicio */}
         <button
           onClick={() => setActiveTab('inicio')}
           className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
             activeTab === 'inicio' 
-              ? 'bg-[#79ff5b] text-[#022100] px-6 scale-105 font-bold shadow-lg shadow-[#79ff5b]/10' 
-              : 'text-[#c5c6d0] hover:text-[#79ff5b]'
+              ? 'bg-[#e1b12c] text-[#034226] px-6 scale-105 font-bold shadow-lg shadow-[#e1b12c]/20' 
+              : 'text-white/60 hover:text-white'
           }`}
         >
           <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'inicio' ? "'FILL' 1" : "'FILL' 0" }}>
@@ -652,8 +652,8 @@ export default function App() {
           onClick={() => setActiveTab('reglas')}
           className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
             activeTab === 'reglas' 
-              ? 'bg-[#79ff5b] text-[#022100] px-6 scale-105 font-bold shadow-lg shadow-[#79ff5b]/10' 
-              : 'text-[#c5c6d0] hover:text-[#79ff5b]'
+              ? 'bg-[#e1b12c] text-[#034226] px-6 scale-105 font-bold shadow-lg shadow-[#e1b12c]/20' 
+              : 'text-white/60 hover:text-white'
           }`}
         >
           <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'reglas' ? "'FILL' 1" : "'FILL' 0" }}>
@@ -667,8 +667,8 @@ export default function App() {
           onClick={() => setActiveTab('perfil')}
           className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
             activeTab === 'perfil' 
-              ? 'bg-[#79ff5b] text-[#022100] px-6 scale-105 font-bold shadow-lg shadow-[#79ff5b]/10' 
-              : 'text-[#c5c6d0] hover:text-[#79ff5b]'
+              ? 'bg-[#e1b12c] text-[#034226] px-6 scale-105 font-bold shadow-lg shadow-[#e1b12c]/20' 
+              : 'text-white/60 hover:text-white'
           }`}
         >
           <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'perfil' ? "'FILL' 1" : "'FILL' 0" }}>
@@ -682,8 +682,8 @@ export default function App() {
           onClick={() => setActiveTab('ranking')}
           className={`flex flex-col items-center justify-center py-2.5 px-5 rounded-full transition-all duration-200 cursor-pointer ${
             activeTab === 'ranking' 
-              ? 'bg-[#ffe16d] text-[#121316] px-6 scale-105 font-bold shadow-lg shadow-[#ffe16d]/20' 
-              : 'text-[#c5c6d0] hover:text-[#ffe16d]'
+              ? 'bg-[#e1b12c] text-[#034226] px-6 scale-105 font-bold shadow-lg shadow-[#e1b12c]/20' 
+              : 'text-white/60 hover:text-white'
           }`}
         >
           <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: activeTab === 'ranking' ? "'FILL' 1" : "'FILL' 0" }}>
