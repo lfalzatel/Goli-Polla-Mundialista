@@ -328,7 +328,11 @@ export default function App() {
       });
 
       await batch.commit();
-      // Silently succeed, InicioTab handles notification
+      setNotificationToast({
+        title: 'Actualización Exitosa',
+        body: 'Resultados de la fecha simulados y actualizados en Firestore. Se han repartido puntos según las reglas.'
+      });
+      setTimeout(() => setNotificationToast(null), 5000);
     } catch (e) {
       console.error(e);
       // Silently fail, or could use a toast mechanism in the future

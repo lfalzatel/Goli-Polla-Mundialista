@@ -128,7 +128,9 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
                     {user.nombre}
                     {isCurrentUser && <span className="text-[10px] bg-[#e1b12c] text-black px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">Tú</span>}
                   </h3>
-                  <p className="text-sm text-slate-400">Ranking Global</p>
+                  <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px]">visibility</span> Ver apuestas
+                  </p>
                 </div>
                 
                 <div className="text-right">
@@ -266,7 +268,7 @@ export default function RankingTab({ usuarios, partidos, usuarioActualId }: Rank
                                       {apuesta.puntosObtenidos.marcador > 0 && <div className="flex justify-between items-center text-slate-300"><span>Marcador Exacto:</span> <span className="font-bold text-[#00ff88]">+{apuesta.puntosObtenidos.marcador} pts</span></div>}
                                       {apuesta.puntosObtenidos.ganador > 0 && <div className="flex justify-between items-center text-slate-300"><span>Equipo Ganador:</span> <span className="font-bold text-[#00ff88]">+{apuesta.puntosObtenidos.ganador} pts</span></div>}
                                       {apuesta.puntosObtenidos.empate > 0 && <div className="flex justify-between items-center text-slate-300"><span>Empate Acertado:</span> <span className="font-bold text-[#00ff88]">+{apuesta.puntosObtenidos.empate} pts</span></div>}
-                                      {apuesta.puntosObtenidos.totalGoles > 0 && <div className="flex justify-between items-center text-slate-300"><span>Opcional (+/- 2.5 Goles):</span> <span className="font-bold text-[#00ff88]">+{apuesta.puntosObtenidos.totalGoles} pts</span></div>}
+                                      {apuesta.puntosObtenidos.totalGoles > 0 && <div className="flex justify-between items-center text-slate-300"><span>Opcional ({apuesta.totalGolesApuesta === 'mas25' ? '+2.5' : '-2.5'} Goles):</span> <span className="font-bold text-[#00ff88]">+{apuesta.puntosObtenidos.totalGoles} pts</span></div>}
                                     </div>
                                     <div className="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
                                       <span className="text-[11px] font-bold text-[#e1b12c] uppercase">Puntos Obtenidos:</span>

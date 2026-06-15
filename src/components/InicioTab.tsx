@@ -212,11 +212,11 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
     // Let's set Mexico vs Argentina to 3 - 1 (perfectly matches user's historical view)
     // and Brazil vs Switzerland to 1 - 0
     // and Spain vs Croatia to 2 - 0
-    onSimularPartidos({
-      "p2": { golesLocal: 3, golesVisitante: 1 }, // México 3 - 1 Argentina
-      "p3": { golesLocal: 1, golesVisitante: 0 }, // Brasil 1 - 0 Suiza
-      "p4": { golesLocal: 0, golesVisitante: 1 }  // España 0 - 1 Croacia
+    const res = {};
+    partidos.filter(p => p.estado === 'finalizado' && p.golesLocal !== null).forEach(p => {
+        res[p.partidoId] = { golesLocal: p.golesLocal, golesVisitante: p.golesVisitante };
     });
+    onSimularPartidos(res);
 
     setNotifText('⚡ Cloud Function Ejecutada: Se consultaron resultados de la API y calcularon puntos.');
     setTimeout(() => setNotifText(''), 5000);
