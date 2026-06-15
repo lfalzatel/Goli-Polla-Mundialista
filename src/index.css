@@ -203,6 +203,21 @@
   font-weight: bold;
 }
 
+[data-theme='glass'] .premium-card {
+  background-color: var(--text-primary) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+[data-theme='glass'] .premium-accent {
+  color: var(--text-primary) !important;
+}
+
+[data-theme='glass'] .premium-button-accent {
+  background-color: var(--text-primary) !important;
+  color: #fff !important;
+}
+
 /* Add scanlines background utility */
 .scanlines-bg {
   background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, rgba(0,0,0,0.15) 2px) !important;
