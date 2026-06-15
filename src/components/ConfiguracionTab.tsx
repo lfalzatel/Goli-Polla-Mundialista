@@ -406,57 +406,6 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           <div className="p-3 rounded-lg border border-white/5 text-center mt-6">
             <p className="text-xs font-mono text-slate-500">GOLI Polla Mundialista v2.2.0</p>
           </div>
-          
-          {/* BOTON DE MIGRACION SECRETO SOLO PARA ADMIN PRINCIPAL */}
-          {usuario.email === 'lfalzatel@gmail.com' && (
-            <button 
-              onClick={async () => {
-                if(!window.confirm("¿Ejecutar migración de apuestas a LACURVA1 y crear puntosPorGrupo?")) return;
-                try {
-                  let batch = writeBatch(db);
-                  let count = 0;
-                  
-                  // 1. Migrar Apuestas
-                  const betsSnap = await getDocs(collection(db, 'pm_apuestas'));
-                  betsSnap.forEach(d => {
-                    const data = d.data();
-                    if (!data.codigoGrupo) {
-                      const newId = `${data.uid}_${data.partidoId}_LACURVA1`;
-                      batch.set(doc(db, 'pm_apuestas', newId), { ...data, codigoGrupo: 'LACURVA1' });
-                      batch.delete(d.ref);
-                      count += 2;
-                    }
-                    if (count > 400) { batch.commit(); batch = writeBatch(db); count = 0; }
-                  });
-                  await batch.commit();
-
-                  // 2. Migrar Usuarios (puntosPorGrupo)
-                  batch = writeBatch(db);
-                  count = 0;
-                  const usersSnap = await getDocs(collection(db, 'pm_usuarios'));
-                  usersSnap.forEach(d => {
-                    const uData = d.data();
-                    if (uData.puntosTotal !== undefined && !uData.puntosPorGrupo) {
-                      batch.update(d.ref, { 
-                        puntosPorGrupo: { 'LACURVA1': uData.puntosTotal || 0 }
-                      });
-                      count++;
-                    }
-                    if (count > 400) { batch.commit(); batch = writeBatch(db); count = 0; }
-                  });
-                  await batch.commit();
-                  
-                  alert("Migración completada exitosamente.");
-                } catch(e) {
-                  console.error(e);
-                  alert("Error en la migración: " + e.message);
-                }
-              }}
-              className="w-full mt-4 p-3 rounded-lg bg-red-900/50 border border-red-500/50 text-red-200 text-xs font-bold font-mono"
-            >
-              [ADMIN] MIGRAR DB A GRUPOS AISLADOS
-            </button>
-          )}
         </div>
       </section>
 
