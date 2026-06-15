@@ -70,7 +70,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
   };
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 ${isConsoleMode ? 'theme-bg border-b-2 theme-border' : 'bg-[#034226] text-white border-b-4 border-[#e1b12c]'} shadow-md flex justify-between items-center px-4 h-16 shrink-0`}>
+    <header className={`fixed top-0 left-0 w-full z-50 border-b-4 border-[#e1b12c] ${isConsoleMode ? 'theme-bg' : 'bg-[#034226]'} text-white shadow-md flex justify-between items-center px-4 h-16 shrink-0`}>
       {/* Profil capsule and title */}
       <div className="flex items-center gap-2">
         <div className="relative w-11 h-11 shrink-0">
