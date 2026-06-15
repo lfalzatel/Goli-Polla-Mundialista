@@ -33,6 +33,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
   // Admin Users States
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [editingUser, setEditingUser] = useState<any | null>(null);
+  const [editFormData, setEditFormData] = useState({ esAdmin: false, codigoGrupo: '', whatsapp: '' });
 
   useEffect(() => {
     if (!usuario.esAdmin && usuario.email !== 'lfalzatel@gmail.com') return;
@@ -112,6 +114,31 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
     navigator.clipboard.writeText(codigo);
     setCopiedCode(codigo);
     setTimeout(() => setCopiedCode(null), 2000);
+  };
+
+  const handleOpenEditUser = (u: any) => {
+    setEditingUser(u);
+    setEditFormData({ 
+      esAdmin: !!u.esAdmin, 
+      codigoGrupo: u.codigoGrupo || '', 
+      whatsapp: u.whatsapp || '' 
+    });
+  };
+
+  const handleSaveUserEdit = async () => {
+    if (!editingUser) return;
+    try {
+      await updateDoc(doc(db, 'pm_usuarios', editingUser.id), {
+        esAdmin: editFormData.esAdmin,
+        codigoGrupo: editFormData.codigoGrupo,
+        whatsapp: editFormData.whatsapp
+      });
+      setAllUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, ...editFormData } : u));
+      setEditingUser(null);
+    } catch (e) {
+      console.error("Error updating user", e);
+      alert('Error al guardar cambios');
+    }
   };
 
   const handleChangeUserRole = async (uid: string, esAdmin: boolean) => {
@@ -299,10 +326,11 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     </div>
                     <div className="flex items-center gap-2">
                       <button 
-                        onClick={() => handleChangeUserRole(u.id, !u.esAdmin)}
-                        className={`text-[10px] px-2 py-1 rounded font-bold uppercase transition-colors ${u.esAdmin ? 'bg-red-500/20 text-red-300 hover:bg-red-500/40' : 'bg-[#e1b12c]/20 text-[#e1b12c] hover:bg-[#e1b12c]/40'}`}
+                        onClick={() => handleOpenEditUser(u)}
+                        className="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-lg transition-colors"
+                        title="Editar usuario"
                       >
-                        {u.esAdmin ? 'Quitar Admin' : 'Hacer Admin'}
+                        <span className="material-symbols-outlined text-[16px]">edit</span>
                       </button>
                     </div>
                   </div>
@@ -341,6 +369,78 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
         </div>
       </section>
 
+      {/* Modal de Edición de Usuario */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setEditingUser(null)}></div>
+          <div className="relative w-full max-w-[340px] bg-[#121316] border border-[#034226] rounded-3xl p-6 shadow-2xl animate-in fade-in slide-in-from-bottom-4 font-sans">
+            
+            <div className="flex justify-between items-center mb-5">
+              <h3 className="font-display text-xl text-[#e1b12c]">Editar Usuario</h3>
+              <button onClick={() => setEditingUser(null)} className="text-slate-400 hover:text-white">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-3 mb-6 bg-white/5 p-3 rounded-xl border border-white/10">
+              <img src={editingUser.foto || "https://ui-avatars.com/api/?name=" + editingUser.nombre} className="w-10 h-10 rounded-full bg-slate-200" alt="" />
+              <div>
+                <p className="font-bold text-white text-sm">{editingUser.nombre}</p>
+                <p className="text-xs text-slate-400">{editingUser.email}</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">Rol</label>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => setEditFormData({...editFormData, esAdmin: false})}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-700 text-white border border-slate-500' : 'bg-slate-800/50 text-slate-500 border border-transparent'}`}
+                  >
+                    Usuario
+                  </button>
+                  <button 
+                    onClick={() => setEditFormData({...editFormData, esAdmin: true})}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-[#034226] text-[#e1b12c] border border-[#e1b12c]/50' : 'bg-slate-800/50 text-slate-500 border border-transparent'}`}
+                  >
+                    Administrador
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">Grupo Activo</label>
+                <input 
+                  type="text"
+                  value={editFormData.codigoGrupo}
+                  onChange={(e) => setEditFormData({...editFormData, codigoGrupo: e.target.value.toUpperCase()})}
+                  className="w-full bg-black/30 border border-white/10 rounded-lg py-2.5 px-3 text-white font-mono focus:border-[#e1b12c] outline-none transition-colors"
+                  placeholder="Ej. GOLI2026"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">WhatsApp</label>
+                <input 
+                  type="text"
+                  value={editFormData.whatsapp}
+                  onChange={(e) => setEditFormData({...editFormData, whatsapp: e.target.value})}
+                  className="w-full bg-black/30 border border-white/10 rounded-lg py-2.5 px-3 text-white font-sans focus:border-[#e1b12c] outline-none transition-colors"
+                  placeholder="Ej. 3001234567"
+                />
+              </div>
+            </div>
+
+            <button 
+              onClick={handleSaveUserEdit}
+              className="w-full bg-[#e1b12c] hover:bg-[#cda023] text-[#034226] font-bold py-3 rounded-xl mt-6 transition-all shadow-[0_4px_12px_rgba(225,177,44,0.3)] active:scale-95"
+            >
+              Guardar Cambios
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
