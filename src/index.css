@@ -77,9 +77,28 @@
 
 [data-theme="cyberpunk"] .theme-card, [data-theme="kilocode"] .theme-card {
   border-radius: 0 !important;
-  box-shadow: 0 0 3px var(--border-card);
+  border-color: transparent !important;
+  box-shadow: none !important;
   font-family: var(--font-mono);
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px) !important;
+  background-image: 
+    linear-gradient(var(--border-card), var(--border-card)),
+    linear-gradient(var(--border-card), var(--border-card)),
+    linear-gradient(var(--border-card), var(--border-card)),
+    linear-gradient(var(--border-card), var(--border-card)),
+    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px) !important;
+  background-size: 
+    calc(100% - 24px) 1px,
+    calc(100% - 24px) 1px,
+    1px calc(100% - 24px),
+    1px calc(100% - 24px),
+    100% 100% !important;
+  background-position: 
+    top center,
+    bottom center,
+    left center,
+    right center,
+    0 0 !important;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat !important;
 }
 
 @theme {
@@ -139,10 +158,28 @@
   background-color: var(--bg-card) !important;
   color: var(--text-card) !important;
   border-radius: 0 !important;
-  box-shadow: 0 0 3px var(--border-card) !important;
-  border-color: var(--border-card) !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
   font-family: var(--font-mono) !important;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px) !important;
+  background-image: 
+    linear-gradient(var(--border-card), var(--border-card)),
+    linear-gradient(var(--border-card), var(--border-card)),
+    linear-gradient(var(--border-card), var(--border-card)),
+    linear-gradient(var(--border-card), var(--border-card)),
+    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px) !important;
+  background-size: 
+    calc(100% - 24px) 1px,
+    calc(100% - 24px) 1px,
+    1px calc(100% - 24px),
+    1px calc(100% - 24px),
+    100% 100% !important;
+  background-position: 
+    top center,
+    bottom center,
+    left center,
+    right center,
+    0 0 !important;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat !important;
 }
 
 [data-theme='cyberpunk'] .premium-pill-container, [data-theme='kilocode'] .premium-pill-container {

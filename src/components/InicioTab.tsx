@@ -551,10 +551,10 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                   <div className="p-5">
                     {/* Header info */}
                     <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
-                      <span className="font-sans text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                      <span className="font-sans text-[10px] text-slate-400 font-bold uppercase tracking-wider theme-text-card opacity-80">
                         {match.grupoTorneo} • {match.estadio}
                       </span>
-                      <span className={`font-mono text-xs font-bold uppercase ${match.estado === 'en_vivo' ? 'text-red-500 animate-pulse flex items-center gap-1.5' : yaBloqueado ? 'text-slate-400' : 'text-[#034226]'}`}>
+                      <span className={`font-mono text-xs font-bold uppercase ${match.estado === 'en_vivo' ? 'text-red-500 animate-pulse flex items-center gap-1.5' : yaBloqueado ? 'text-slate-400' : 'theme-text-card text-[#034226]'}`}>
                         {match.estado === 'en_vivo' ? <><span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>JUGÁNDOSE</> : match.estado === 'finalizado' ? 'FINALIZADO' : match.hora}
                       </span>
                     </div>
@@ -572,7 +572,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             referrerPolicy="no-referrer"
                           />
                         </div>
-                        <span className="font-display text-lg text-slate-700 tracking-wider truncate max-w-[124px]">
+                        <span className="font-display text-lg theme-text text-slate-700 tracking-wider truncate max-w-[124px]">
                           {match.equipoLocal}
                         </span>
                         
@@ -641,7 +641,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             referrerPolicy="no-referrer"
                           />
                         </div>
-                        <span className="font-display text-lg text-slate-700 tracking-wider truncate max-w-[124px]">
+                        <span className="font-display text-lg theme-text text-slate-700 tracking-wider truncate max-w-[124px]">
                           {match.equipoVisitante}
                         </span>
 
