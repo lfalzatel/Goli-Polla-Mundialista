@@ -253,6 +253,19 @@ export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, p
                 <span className="font-sans font-medium">Compartir App</span>
               </button>
 
+              <button
+                onClick={() => {
+                  setShowDropdown(false);
+                  onLogout();
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer text-left"
+              >
+                <span className="material-symbols-outlined text-slate-400 text-[18px]">
+                  switch_account
+                </span>
+                <span className="font-sans font-medium">Cambiar / Añadir cuenta</span>
+              </button>
+
               <div className="h-[1px] bg-slate-100 my-1" />
 
               <button
