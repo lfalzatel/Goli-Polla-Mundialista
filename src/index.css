@@ -64,6 +64,22 @@
   backdrop-filter: blur(8px);
 }
 
+[data-theme="cyberpunk"], [data-theme="kilocode"] {
+  --font-sans: "JetBrains Mono", monospace;
+  --font-display: "JetBrains Mono", monospace;
+}
+
+[data-theme="cyberpunk"] .theme-bg, [data-theme="kilocode"] .theme-bg {
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.5) 2px, rgba(0,0,0,0.5) 4px) !important;
+  font-family: var(--font-mono);
+}
+
+[data-theme="cyberpunk"] .theme-card, [data-theme="kilocode"] .theme-card {
+  border-radius: 0 !important;
+  box-shadow: 0 0 10px var(--border-card);
+  font-family: var(--font-mono);
+}
+
 @theme {
   --font-sans: "Hanken Grotesk", system-ui, sans-serif;
   --font-display: "Bebas Neue", sans-serif;

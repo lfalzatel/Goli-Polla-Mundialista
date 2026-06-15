@@ -236,7 +236,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
               <h3 className="font-display text-xl text-white mt-2 tracking-wide uppercase">
                 Obtener Resultados Reales
               </h3>
-              <p className="font-sans text-xs text-slate-200 mt-1 leading-relaxed">
+              <p className="font-sans text-xs theme-text opacity-70 mt-1 leading-relaxed">
                 Esta herramienta consulta los partidos finalizados y actualiza los puntajes.
               </p>
             </div>
@@ -522,7 +522,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
             {Object.entries(fechasObj).map(([fecha, partidosEstrella]) => (
               <section key={fecha} className="space-y-4">
                 <div className="flex items-center gap-4 mt-6">
-                  <h3 className="font-display text-3xl text-slate-200 uppercase tracking-wide leading-none">{fecha}</h3>
+                  <h3 className="font-display text-3xl theme-text opacity-70 uppercase tracking-wide leading-none">{fecha}</h3>
                   <div className="h-[1px] flex-grow theme-card/15"></div>
                 </div>
 
