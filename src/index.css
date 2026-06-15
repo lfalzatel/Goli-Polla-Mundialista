@@ -1,5 +1,69 @@
 @import "tailwindcss";
 
+:root, [data-theme="noche"] {
+  --bg-app: #121316;
+  --bg-app-grad: #0d0e11;
+  --text-primary: #e3e2e6;
+  --bg-card: #ffffff;
+  --text-card: #1e293b;
+  --border-card: #e2e8f0;
+}
+
+[data-theme="dia"] {
+  --bg-app: #f1f5f9;
+  --bg-app-grad: #e2e8f0;
+  --text-primary: #0f172a;
+  --bg-card: #ffffff;
+  --text-card: #1e293b;
+  --border-card: #cbd5e1;
+}
+
+[data-theme="glass"] {
+  --bg-app: #0f172a;
+  --bg-app-grad: #1e1b4b;
+  --text-primary: #f8fafc;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --text-card: #f8fafc;
+  --border-card: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="cyberpunk"] {
+  --bg-app: #09090b;
+  --bg-app-grad: #18181b;
+  --text-primary: #0ea5e9;
+  --bg-card: rgba(8, 47, 73, 0.6);
+  --text-card: #38bdf8;
+  --border-card: #0284c7;
+}
+
+[data-theme="kilocode"] {
+  --bg-app: #0a0a0a;
+  --bg-app-grad: #171717;
+  --text-primary: #eab308;
+  --bg-card: rgba(202, 138, 4, 0.1);
+  --text-card: #fde047;
+  --border-card: #ca8a04;
+}
+
+.theme-bg {
+  background-color: var(--bg-app) !important;
+  color: var(--text-primary) !important;
+}
+
+.theme-card {
+  background-color: var(--bg-card) !important;
+  color: var(--text-card) !important;
+  border-color: var(--border-card) !important;
+}
+
+.theme-text {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="glass"] .theme-card {
+  backdrop-filter: blur(8px);
+}
+
 @theme {
   --font-sans: "Hanken Grotesk", system-ui, sans-serif;
   --font-display: "Bebas Neue", sans-serif;

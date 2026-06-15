@@ -216,7 +216,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       </section>
 
       {/* SECCIÓN CUENTA Y PERFIL */}
-      <section className="bg-white/5 border border-white/10 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
+      <section className="theme-card/5 border border-white/10 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
         <h2 className="text-[#e1b12c] font-display text-xl mb-4 flex items-center gap-2">
           <span className="material-symbols-outlined">person</span>
           CUENTA Y PERFIL
@@ -263,14 +263,14 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 placeholder="Nombre del Grupo (Ej. Empresa X)" 
                 value={newGroupName}
                 onChange={e => setNewGroupName(e.target.value)}
-                className="w-full bg-white border border-[#034226] rounded-lg py-2 px-3 text-sm text-slate-800 font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none"
+                className="w-full theme-card border border-[#034226] rounded-lg py-2 px-3 text-sm theme-text font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none"
               />
               <input 
                 type="text" 
                 placeholder="Código Único (Ej. GOLI2026)" 
                 value={newGroupCode}
                 onChange={e => setNewGroupCode(e.target.value)}
-                className="w-full bg-white border border-[#034226] rounded-lg py-2 px-3 text-sm text-slate-800 font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none uppercase"
+                className="w-full theme-card border border-[#034226] rounded-lg py-2 px-3 text-sm theme-text font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none uppercase"
               />
             </div>
             <button
@@ -291,7 +291,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               </h4>
               <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
                 {misGrupos.map(g => (
-                  <div key={g.id} className="bg-white/5 border border-white/10 rounded-lg p-3 flex flex-col gap-3 shadow-sm">
+                  <div key={g.id} className="theme-card/5 border border-white/10 rounded-lg p-3 flex flex-col gap-3 shadow-sm">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
                         <p className="font-bold text-white text-sm leading-tight">{g.nombre}</p>
@@ -330,7 +330,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                         className={`font-mono font-bold text-xs px-3 py-1.5 rounded border transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
                           copiedCode === g.codigo 
                             ? 'bg-[#e1b12c] text-[#034226] border-[#cda023]' 
-                            : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                            : 'theme-card/10 text-white border-white/20 hover:theme-card/20'
                         }`}
                         title="Copiar código"
                       >
@@ -356,7 +356,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
                 {allUsers.map(u => (
-                  <div key={u.id} className="bg-white/5 border border-white/10 rounded-lg p-3 shadow-sm flex items-center justify-between">
+                  <div key={u.id} className="theme-card/5 border border-white/10 rounded-lg p-3 shadow-sm flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <img src={u.foto || "https://ui-avatars.com/api/?name=" + u.nombre} className="w-8 h-8 rounded-full bg-slate-200" alt={u.nombre} />
                       <div>
@@ -367,7 +367,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     <div className="flex items-center gap-2">
                       <button 
                         onClick={() => handleOpenEditUser(u)}
-                        className="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-lg transition-colors"
+                        className="theme-card/10 hover:theme-card/20 text-white p-1.5 rounded-lg transition-colors"
                         title="Editar usuario"
                       >
                         <span className="material-symbols-outlined text-[16px]">edit</span>
@@ -382,7 +382,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       )}
 
       {/* SECCIÓN APP */}
-      <section className="bg-white/5 border border-white/10 rounded-2xl p-5 shadow-lg backdrop-blur-md">
+      <section className="theme-card/5 border border-white/10 rounded-2xl p-5 shadow-lg backdrop-blur-md">
         <h2 className="text-slate-400 font-display text-xl mb-4 flex items-center gap-2">
           <span className="material-symbols-outlined">app_shortcut</span>
           APLICACIÓN
@@ -420,7 +420,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                       </p>
                     </div>
             
-            <div className="flex items-center gap-3 mb-6 bg-white/5 p-3 rounded-xl border border-white/10">
+            <div className="flex items-center gap-3 mb-6 theme-card/5 p-3 rounded-xl border border-white/10">
               <img src={editingUser.foto || "https://ui-avatars.com/api/?name=" + editingUser.nombre} className="w-10 h-10 rounded-full bg-slate-200" alt="" />
               <div>
                 <p className="font-bold text-white text-sm">{editingUser.nombre}</p>
@@ -434,13 +434,13 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 <div className="flex gap-2">
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: false})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-100 text-slate-800 border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-100 theme-text border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
                   >
                     Usuario
                   </button>
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: true})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-slate-100 text-slate-800 border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-slate-100 theme-text border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
                   >
                     Administrador
                   </button>
@@ -467,7 +467,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 <label className="block text-xs font-bold text-[#e1b12c] mb-1.5 uppercase">Grupos Permitidos</label>
                 <div className="max-h-32 overflow-y-auto bg-black/20 border border-white/10 rounded-lg p-2 space-y-1">
                   {allGroups.map(g => (
-                    <label key={g.id} className="flex items-center gap-3 text-white text-sm cursor-pointer hover:bg-white/5 p-1.5 rounded-md transition-colors">
+                    <label key={g.id} className="flex items-center gap-3 text-white text-sm cursor-pointer hover:theme-card/5 p-1.5 rounded-md transition-colors">
                       <input 
                         type="checkbox" 
                         checked={editFormData.gruposPermitidos.includes(g.codigo)}

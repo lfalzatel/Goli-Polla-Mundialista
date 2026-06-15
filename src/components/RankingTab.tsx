@@ -100,14 +100,14 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
     <div className="p-4 sm:p-6 pb-32 max-w-4xl mx-auto font-sans animate-in fade-in duration-300">
       <div className="relative overflow-hidden rounded-2xl p-6 bg-[#034226] border border-[#e1b12c]/30 shadow-xl group mb-6">
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-          <span className="material-symbols-outlined text-8xl text-slate-800">leaderboard</span>
+          <span className="material-symbols-outlined text-8xl theme-text">leaderboard</span>
         </div>
         
-        <h2 className="font-display text-2xl text-[#e1b12c] mb-2 flex items-center gap-2 uppercase tracking-wide relative z-10">
+        <h2 className="font-display text-blackxl text-[#e1b12c] mb-2 flex items-center gap-2 uppercase tracking-wide relative z-10">
           <span className="material-symbols-outlined text-[24px]">leaderboard</span>
           Ranking Total
         </h2>
-        <p className="text-slate-800/80 font-sans text-sm relative z-10">Posiciones y predicciones del grupo</p>
+        <p className="text-[#e3e2e6]/70 font-sans text-sm relative z-10">Posiciones y predicciones del grupo</p>
       </div>
 
       <div className="space-y-4">
@@ -116,26 +116,26 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
           const isCurrentUser = user.uid === usuarioActualId;
 
           return (
-            <div key={user.uid} className={`bg-white border ${isCurrentUser ? 'border-[#e1b12c]' : 'border-slate-200'} rounded-2xl overflow-hidden shadow-xl transition-all duration-300`}>
+            <div key={user.uid} className={`theme-card border ${isCurrentUser ? 'border-[#e1b12c]' : ''} rounded-2xl overflow-hidden shadow-xl transition-all duration-300`}>
               {/* User row header */}
               <div 
                 onClick={() => handleUserClick(user.uid)}
-                className={`flex items-center gap-4 p-4 cursor-pointer hover:bg-slate-50 transition-colors ${isExpanded ? 'bg-white/5' : ''}`}
+                className={`flex items-center gap-4 p-4 cursor-pointer hover:bg-slate-50 transition-colors ${isExpanded ? 'theme-card/5' : ''}`}
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${user.posicion === 1 ? 'bg-[#e1b12c] text-[#121316]' : user.posicion === 2 ? 'bg-[#94a3b8] text-[#121316]' : user.posicion === 3 ? 'bg-[#b45309] text-slate-800' : 'bg-slate-100 text-slate-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${user.posicion === 1 ? 'bg-[#e1b12c] text-[#121316]' : user.posicion === 2 ? 'bg-[#94a3b8] text-[#121316]' : user.posicion === 3 ? 'bg-[#b45309] theme-text' : 'bg-slate-100 text-slate-400'}`}>
                   {user.posicion}
                 </div>
                 
                 {user.foto ? (
-                  <img src={user.foto} alt={user.nombre} className="w-12 h-12 rounded-full object-cover border-2 border-slate-200" />
+                  <img src={user.foto} alt={user.nombre} className="w-12 h-12 rounded-full object-cover border-2 " />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center border-2 border-slate-200">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center border-2 ">
                     <span className="material-symbols-outlined text-slate-400">person</span>
                   </div>
                 )}
                 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-slate-800 text-lg truncate flex items-center gap-2">
+                  <h3 className="font-bold theme-text text-lg truncate flex items-center gap-2">
                     {user.nombre}
                     {isCurrentUser && <span className="text-[10px] bg-[#e1b12c] text-black px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">Tú</span>}
                   </h3>
@@ -145,7 +145,7 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                 </div>
                 
                 <div className="text-right">
-                  <p className="font-mono text-2xl font-bold text-[#e1b12c]">{user.puntosTotal}</p>
+                  <p className="font-mono text-blackxl font-bold text-[#e1b12c]">{user.puntosTotal}</p>
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Puntos</p>
                 </div>
               </div>
@@ -162,12 +162,12 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                         placeholder="Buscar equipo o fecha..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-white border border-slate-200 text-slate-800 rounded-xl pl-10 pr-4 py-2.5 font-sans focus:outline-none focus:border-[#00ff88]/50 focus:ring-1 focus:ring-[#00ff88]/50 transition-all text-sm placeholder:text-slate-500"
+                        className="w-full theme-card border  theme-text rounded-xl pl-10 pr-4 py-2.5 font-sans focus:outline-none focus:border-[#00ff88]/50 focus:ring-1 focus:ring-[#00ff88]/50 transition-all text-sm placeholder:text-slate-500"
                       />
                     </div>
                     <button 
                       onClick={() => setShowCalendar(!showCalendar)}
-                      className={`h-11 px-4 rounded-xl font-bold flex items-center gap-2 transition-colors border ${selectedDate || showCalendar ? 'bg-[#e1b12c] text-[#121316] border-[#e1b12c]' : 'bg-white text-slate-800 border-slate-200 hover:border-white/30'}`}
+                      className={`h-11 px-4 rounded-xl font-bold flex items-center gap-2 transition-colors border ${selectedDate || showCalendar ? 'bg-[#e1b12c] text-[#121316] border-[#e1b12c]' : 'theme-card theme-text  hover:border-white/30'}`}
                     >
                       <span className="material-symbols-outlined">calendar_month</span>
                     </button>
@@ -183,8 +183,8 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
 
                   {/* Calendar view */}
                   {showCalendar && (
-                    <div className="mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-inner">
-                      <h3 className="text-slate-800 text-sm font-bold mb-3 font-sans uppercase tracking-wider">Fechas de Partidos</h3>
+                    <div className="mb-6 theme-card p-4 rounded-xl border  shadow-inner">
+                      <h3 className="theme-text text-sm font-bold mb-3 font-sans uppercase tracking-wider">Fechas de Partidos</h3>
                       <div className="flex flex-wrap gap-2">
                         {uniqueDates.map(date => (
                           <button
@@ -195,7 +195,7 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all border ${
                               date === selectedDate 
                                 ? 'bg-[#e1b12c] text-[#121316] border-[#e1b12c] scale-105' 
-                                : 'bg-white text-slate-600 border-slate-200 hover:border-white/30'
+                                : 'theme-card theme-text  hover:border-white/30'
                             }`}
                           >
                             {date}
@@ -219,7 +219,7 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                         const isSecret = partido.estado === 'pendiente' && !isCurrentUser;
 
                         return (
-                          <div key={partido.partidoId} className="bg-white border border-slate-200 rounded-xl p-3 sm:p-4 shadow flex flex-col gap-3">
+                          <div key={partido.partidoId} className="theme-card border  rounded-xl p-3 sm:p-4 shadow flex flex-col gap-3">
                             <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{partido.grupoTorneo}</span>
                               <span className="text-xs text-slate-400">{partido.fecha} - {partido.hora}</span>
@@ -227,31 +227,31 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                             
                             <div className="flex items-center justify-between gap-2 sm:gap-4">
                               <div className="flex-1 flex flex-col items-center gap-2">
-                                <img src={partido.banderaLocal} alt={partido.equipoLocal} className="w-10 h-7 sm:w-12 sm:h-8 object-cover rounded border border-slate-200 shadow-sm" />
-                                <span className="text-xs sm:text-sm font-bold text-slate-800 text-center leading-tight">{partido.equipoLocal}</span>
+                                <img src={partido.banderaLocal} alt={partido.equipoLocal} className="w-10 h-7 sm:w-12 sm:h-8 object-cover rounded border  shadow-sm" />
+                                <span className="text-xs sm:text-sm font-bold theme-text text-center leading-tight">{partido.equipoLocal}</span>
                               </div>
                               
                               <div className="flex-1 flex flex-col items-center">
                                 {isSecret ? (
                                   <div className="flex flex-col items-center mb-1">
                                     <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-0.5 opacity-0">PRONÓSTICO</span>
-                                    <div className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex items-center justify-center">
+                                    <div className="theme-card border  rounded-lg px-4 py-2 flex items-center justify-center">
                                       <span className="material-symbols-outlined text-slate-500">lock</span>
                                     </div>
                                   </div>
                                 ) : apuesta ? (
                                   <div className="flex flex-col items-center mb-1">
                                     <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-0.5 uppercase">Pronóstico</span>
-                                    <div className="bg-white border border-[#e1b12c]/30 rounded-lg px-3 sm:px-5 py-1.5 flex items-center justify-center gap-2 sm:gap-4 shadow-inner">
-                                      <span className="font-mono text-xl sm:text-2xl font-bold text-slate-800">{apuesta.golesLocalApuesta}</span>
+                                    <div className="theme-card border border-[#e1b12c]/30 rounded-lg px-3 sm:px-5 py-1.5 flex items-center justify-center gap-2 sm:gap-4 shadow-inner">
+                                      <span className="font-mono text-xl sm:text-blackxl font-bold theme-text">{apuesta.golesLocalApuesta}</span>
                                       <span className="text-slate-500">-</span>
-                                      <span className="font-mono text-xl sm:text-2xl font-bold text-slate-800">{apuesta.golesVisitanteApuesta}</span>
+                                      <span className="font-mono text-xl sm:text-blackxl font-bold theme-text">{apuesta.golesVisitanteApuesta}</span>
                                     </div>
                                   </div>
                                 ) : (
                                   <div className="flex flex-col items-center mb-1">
                                     <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-0.5 opacity-0">PRONÓSTICO</span>
-                                    <div className="bg-white border border-red-500/20 rounded-lg px-3 py-1 flex items-center justify-center">
+                                    <div className="theme-card border border-red-500/20 rounded-lg px-3 py-1 flex items-center justify-center">
                                       <span className="text-xs text-red-400">Sin predicción</span>
                                     </div>
                                   </div>
@@ -272,8 +272,8 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                               </div>
                               
                               <div className="flex-1 flex flex-col items-center gap-2">
-                                <img src={partido.banderaVisitante} alt={partido.equipoVisitante} className="w-10 h-7 sm:w-12 sm:h-8 object-cover rounded border border-slate-200 shadow-sm" />
-                                <span className="text-xs sm:text-sm font-bold text-slate-800 text-center leading-tight">{partido.equipoVisitante}</span>
+                                <img src={partido.banderaVisitante} alt={partido.equipoVisitante} className="w-10 h-7 sm:w-12 sm:h-8 object-cover rounded border  shadow-sm" />
+                                <span className="text-xs sm:text-sm font-bold theme-text text-center leading-tight">{partido.equipoVisitante}</span>
                               </div>
                             </div>
 
@@ -281,13 +281,13 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                             {partido.estado === 'finalizado' && partido.golesLocal !== null && apuesta && (
                               <div className="mt-3">
                                 {typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos !== null ? (
-                                  <div className="bg-white rounded-xl p-3 border border-[#e1b12c]/20">
+                                  <div className="theme-card rounded-xl p-3 border border-[#e1b12c]/20">
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Desglose de Puntos</p>
                                     <div className="space-y-1 text-[11px] font-sans">
-                                      {apuesta.puntosObtenidos.marcador > 0 && <div className="flex justify-between items-center text-slate-600"><span>Marcador Exacto:</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.marcador} pts</span></div>}
-                                      {apuesta.puntosObtenidos.ganador > 0 && <div className="flex justify-between items-center text-slate-600"><span>{apuesta.puntosObtenidos.ganador === 3 ? 'Ganador + Goles:' : 'Equipo Ganador:'}</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.ganador} pts</span></div>}
-                                      {apuesta.puntosObtenidos.empate > 0 && <div className="flex justify-between items-center text-slate-600"><span>Empate Acertado:</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.empate} pts</span></div>}
-                                      {apuesta.puntosObtenidos.totalGoles > 0 && <div className="flex justify-between items-center text-slate-600"><span>Opcional ({apuesta.totalGolesApuesta === 'mas25' ? '+2.5' : '-2.5'} Goles):</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.totalGoles} pts</span></div>}
+                                      {apuesta.puntosObtenidos.marcador > 0 && <div className="flex justify-between items-center theme-text"><span>Marcador Exacto:</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.marcador} pts</span></div>}
+                                      {apuesta.puntosObtenidos.ganador > 0 && <div className="flex justify-between items-center theme-text"><span>{apuesta.puntosObtenidos.ganador === 3 ? 'Ganador + Goles:' : 'Equipo Ganador:'}</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.ganador} pts</span></div>}
+                                      {apuesta.puntosObtenidos.empate > 0 && <div className="flex justify-between items-center theme-text"><span>Empate Acertado:</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.empate} pts</span></div>}
+                                      {apuesta.puntosObtenidos.totalGoles > 0 && <div className="flex justify-between items-center theme-text"><span>Opcional ({apuesta.totalGolesApuesta === 'mas25' ? '+2.5' : '-2.5'} Goles):</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.totalGoles} pts</span></div>}
                                     </div>
                                     <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-100">
                                       <span className="text-[11px] font-bold text-[#e1b12c] uppercase">Puntos Obtenidos:</span>

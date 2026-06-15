@@ -471,10 +471,10 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#121316] text-[#e3e2e6] pb-28">
+    <div className="min-h-screen theme-bg pb-28 transition-colors duration-500">
       
       {/* Background aesthetics layer */}
-      <div className="fixed inset-0 -z-10 bg-gradient-to-tr from-[#121316] via-[#0d0e11] to-[#001b44]/20"></div>
+      <div className="fixed inset-0 -z-10 bg-gradient-to-tr from-[var(--bg-app)] via-[var(--bg-app-grad)] to-[var(--bg-app-grad)] opacity-90 transition-colors duration-500"></div>
       <div className="fixed inset-0 -z-10 stadium-mesh opacity-30"></div>
 
       {/* Main navigation header */}

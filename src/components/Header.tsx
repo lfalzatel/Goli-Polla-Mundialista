@@ -219,36 +219,47 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
               </button>
 
               {activeThemes.length > 0 && setThemeMode && themeMode && (
-                <div className="px-3 py-2 flex items-center justify-between border-b border-slate-100 mb-1">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Modo Rápido</span>
-                  <div className="flex gap-1">
-                    {activeThemes.map((themeName) => {
-                      let icon = 'palette';
-                      if (themeName === 'dia') icon = 'light_mode';
-                      if (themeName === 'noche' || themeName === 'original') icon = 'dark_mode';
-                      if (themeName === 'glass') icon = 'layers';
-                      if (themeName === 'kilocode') icon = 'bolt';
-                      if (themeName === 'cyberpunk') icon = 'terminal';
+                <div className="mx-3 mt-1 mb-2 bg-[#1a1b1e] rounded-[18px] p-1 flex items-center justify-between shadow-inner">
+                  {activeThemes.slice(0, 3).map((themeName) => {
+                    let icon = 'palette';
+                    let label = themeName;
+                    if (themeName === 'dia') { icon = 'light_mode'; label = 'Día'; }
+                    if (themeName === 'noche' || themeName === 'original') { icon = 'dark_mode'; label = 'Noche'; }
+                    if (themeName === 'glass') { icon = 'layers'; label = 'Glass'; }
+                    if (themeName === 'kilocode') { icon = 'keyboard_arrow_right'; label = 'Kilo'; }
+                    if (themeName === 'cyberpunk') { icon = 'desktop_windows'; label = 'Cyber'; }
 
-                      return (
-                        <button
-                          key={themeName}
-                          onClick={() => {
-                            setThemeMode(themeName);
-                            setShowDropdown(false);
-                          }}
-                          className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
-                            themeMode === themeName 
-                              ? 'bg-[#034226] text-[#e1b12c] shadow-inner scale-110' 
-                              : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600'
-                          }`}
-                          title={`Modo: ${themeName}`}
-                        >
-                          <span className="material-symbols-outlined text-[14px]">{icon}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                    const isSelected = themeMode === themeName;
+
+                    return (
+                      <button
+                        key={themeName}
+                        onClick={() => {
+                          setThemeMode(themeName);
+                          setShowDropdown(false);
+                        }}
+                        className={`flex-1 py-2 flex flex-col items-center justify-center gap-0.5 rounded-[14px] transition-all duration-300 ${
+                          isSelected && themeName === 'kilocode' ? 'bg-[#e1b12c] text-black relative overflow-hidden' :
+                          isSelected && themeName === 'dia' ? 'bg-[#e2e8f0] text-black' :
+                          isSelected && themeName === 'cyberpunk' ? 'bg-[#0284c7] text-white' :
+                          isSelected ? 'bg-white/10 text-white' :
+                          'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                        }`}
+                      >
+                        {isSelected && themeName === 'kilocode' && (
+                          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.5) 2px, rgba(0,0,0,0.5) 4px)' }}></div>
+                        )}
+                        <div className="relative z-10 flex flex-col items-center justify-center">
+                          {themeName === 'kilocode' ? (
+                            <span className="font-mono font-bold text-lg leading-none" style={{ marginTop: '-4px', marginBottom: '2px' }}>{'>_'}</span>
+                          ) : (
+                            <span className="material-symbols-outlined text-[20px] leading-none mb-[2px]">{icon}</span>
+                          )}
+                          <span className="text-[11px] font-bold leading-none">{label}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 

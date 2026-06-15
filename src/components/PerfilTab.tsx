@@ -188,7 +188,7 @@ export default function PerfilTab({
     <div className="space-y-6">
       
       {/* Profile Hero Enclosure */}
-      <section className="relative overflow-hidden bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+      <section className="relative overflow-hidden theme-card border  rounded-2xl p-6 shadow-sm">
         
         {/* Glow vector back */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#034226]/5 blur-3xl rounded-full"></div>
@@ -212,7 +212,7 @@ export default function PerfilTab({
             </div>
             
             <div className="space-y-1">
-              <h2 className="font-display text-2xl text-slate-800 tracking-wide leading-none">{nombre}</h2>
+              <h2 className="font-display text-2xl theme-text tracking-wide leading-none">{nombre}</h2>
               <div className="flex items-center gap-1.5 text-slate-500">
                 <span className="material-symbols-outlined text-[16px] text-[#e1b12c]" style={{ fontVariationSettings: "'FILL' 1" }}>
                   verified
@@ -245,7 +245,7 @@ export default function PerfilTab({
               </span>
               
               <input
-                className="w-full bg-white border border-[#034226]/50 rounded-full py-3 pl-12 pr-12 text-slate-800 font-sans text-sm focus:ring-2 focus:ring-[#034226] focus:border-transparent transition-all outline-none"
+                className="w-full theme-card border border-[#034226]/50 rounded-full py-3 pl-12 pr-12 theme-text font-sans text-sm focus:ring-2 focus:ring-[#034226] focus:border-transparent transition-all outline-none"
                 type="text"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
@@ -309,7 +309,7 @@ export default function PerfilTab({
           </button>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden divide-y divide-slate-100 shadow-sm">
+        <div className="theme-card border  rounded-2xl overflow-hidden divide-y divide-slate-100 shadow-sm">
           {visibleRanking.map(user => {
             const isSelf = user.uid === 'me';
             
@@ -330,7 +330,7 @@ export default function PerfilTab({
                       1
                     </div>
                   ) : user.posicion === 2 ? (
-                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-300 text-slate-800 font-display text-lg font-black">
+                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-300 theme-text font-display text-lg font-black">
                       2
                     </div>
                   ) : user.posicion === 3 ? (
@@ -342,7 +342,7 @@ export default function PerfilTab({
                   )}
 
                   {/* Avatar thumbnail */}
-                  <div className={`w-10 h-10 rounded-full overflow-hidden shrink-0 border ${isSelf ? 'border-[#034226] border-2' : 'border-slate-200'}`}>
+                  <div className={`w-10 h-10 rounded-full overflow-hidden shrink-0 border ${isSelf ? 'border-[#034226] border-2' : ''}`}>
                     <img 
                       alt={user.nombre} 
                       className="w-full h-full object-cover" 
@@ -352,7 +352,7 @@ export default function PerfilTab({
                   </div>
 
                   <div>
-                    <span className={`font-sans text-sm font-bold block ${isSelf ? 'text-[#034226]' : 'text-slate-800'}`}>
+                    <span className={`font-sans text-sm font-bold block ${isSelf ? 'text-[#034226]' : 'theme-text'}`}>
                       {user.nombre} {isSelf && '(Tú)'}
                     </span>
                     <span className="font-sans text-[10px] text-slate-500 font-semibold leading-none">
@@ -380,14 +380,14 @@ export default function PerfilTab({
 
         <div className="space-y-4">
           {historialApuestas.length === 0 ? (
-            <div className="bg-white rounded-2xl p-6 text-center text-slate-500 border border-slate-200 shadow-sm text-sm">
+            <div className="theme-card rounded-2xl p-6 text-center text-slate-500 border  shadow-sm text-sm">
               No tienes partidos finalizados con apuestas registradas aún.
             </div>
           ) : historialApuestas.map((item, idx) => {
             return (
               <div 
                 key={idx}
-                className={`bg-white rounded-2xl p-5 flex flex-col gap-4 border border-slate-200 border-l-4 border-solid ${item.colorLeft} shadow-sm`}
+                className={`theme-card rounded-2xl p-5 flex flex-col gap-4 border  border-l-4 border-solid ${item.colorLeft} shadow-sm`}
               >
                 
                 {/* Header row */}
@@ -406,7 +406,7 @@ export default function PerfilTab({
                   
                   {/* Local Flag info */}
                   <div className="flex flex-col items-center gap-1.5">
-                    <div className="w-12 h-8 rounded overflow-hidden bg-slate-50 flex items-center justify-center border border-slate-200 shadow-sm">
+                    <div className="w-12 h-8 rounded overflow-hidden bg-slate-50 flex items-center justify-center border  shadow-sm">
                       <img 
                         alt={item.local} 
                         className="w-full h-full object-cover" 
@@ -434,7 +434,7 @@ export default function PerfilTab({
 
                   {/* Visiter Flag info */}
                   <div className="flex flex-col items-center gap-1.5">
-                    <div className="w-12 h-8 rounded overflow-hidden bg-slate-50 flex items-center justify-center border border-slate-200 shadow-sm">
+                    <div className="w-12 h-8 rounded overflow-hidden bg-slate-50 flex items-center justify-center border  shadow-sm">
                       <img 
                         alt={item.visitante} 
                         className="w-full h-full object-cover" 
@@ -464,13 +464,13 @@ export default function PerfilTab({
       {showInstallModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowInstallModal(false)}></div>
-          <div className="relative w-full max-w-[340px] bg-white rounded-3xl p-6 shadow-2xl animate-in font-sans text-center">
+          <div className="relative w-full max-w-[340px] theme-card rounded-3xl p-6 shadow-2xl animate-in font-sans text-center">
             
             <div className="w-16 h-16 bg-[#034226] text-[#e1b12c] rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg border-4 border-slate-50">
               <span className="material-symbols-outlined text-[32px]">download_for_offline</span>
             </div>
 
-            <h3 className="font-display text-2xl text-slate-800 mb-2">Instalar Goli Polla</h3>
+            <h3 className="font-display text-2xl theme-text mb-2">Instalar Goli Polla</h3>
             
             <p className="text-sm text-slate-500 mb-6 leading-relaxed">
               Para tener la mejor experiencia y acceso rápido, instala esta aplicación en tu pantalla de inicio:
@@ -496,7 +496,7 @@ export default function PerfilTab({
 
             <button 
               onClick={() => setShowInstallModal(false)}
-              className="mt-6 w-full bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors"
+              className="mt-6 w-full bg-slate-100 theme-text font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors"
             >
               Cerrar
             </button>
