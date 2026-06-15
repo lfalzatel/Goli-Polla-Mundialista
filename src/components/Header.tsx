@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Partido } from '../types';
 
 interface HeaderProps {
@@ -24,6 +24,24 @@ export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, p
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
+
+  const profileRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Determinar próximos partidos y alertas
   const now = new Date();
@@ -78,7 +96,7 @@ export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, p
         </button>
 
         {/* Notification Bell */}
-        <div className="relative">
+        <div className="relative" ref={notifRef}>
           <button 
             onClick={() => {
               setShowNotifications(!showNotifications);
@@ -132,31 +150,39 @@ export default function Header({ usuario, onLogout, onChangeGroup, onOpenChat, p
         </div>
 
         {/* Points indicator cap with dropdown */}
-        <div className="relative">
+        <div className="relative" ref={profileRef}>
           <button
             onClick={() => {
               setShowDropdown(!showDropdown);
               setShowNotifications(false);
             }}
-          className="flex items-center gap-2 bg-[#02331d] hover:bg-[#012213] pl-1.5 pr-2 py-1.5 rounded-full border border-white/20 font-sans cursor-pointer transition-all shadow-inner"
-        >
-          {usuario.foto ? (
-            <img src={usuario.foto} alt="Perfil" className="w-6 h-6 rounded-full border border-white/20 object-cover" />
-          ) : (
-            <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-              <span className="material-symbols-outlined text-white/50 text-[14px]">person</span>
+            className="flex items-center gap-2 px-3 py-1.5 rounded-[999px] border border-white/10 font-sans cursor-pointer transition-colors duration-200 min-h-[44px] bg-white/5 hover:bg-white/15 active:bg-white/15"
+          >
+            {usuario.foto ? (
+              <img src={usuario.foto} alt="Perfil" className="w-10 h-10 rounded-full border-2 border-[#e1b12c] object-cover shrink-0" />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border-2 border-[#e1b12c] shrink-0">
+                <span className="material-symbols-outlined text-white/50 text-[20px]">person</span>
+              </div>
+            )}
+            
+            <div className="flex flex-col items-start leading-tight">
+               <span className="text-white font-semibold text-[13px] truncate max-w-[70px] sm:max-w-[100px]">
+                 {usuario.nombre.split(' ')[0]}
+               </span>
+               <span className="text-[#e1b12c] font-medium text-[11px] flex items-center gap-1">
+                 <span className="sm:hidden text-[10px]">🏆</span>
+                 {usuario.puntosTotal} <span className="hidden sm:inline">pts</span>
+               </span>
             </div>
-          )}
-          <div className="flex flex-col items-start leading-none pr-1">
-            <span className="text-white/80 font-medium font-sans text-[10px]">Puntaje:</span>
-            <span className="text-[#e1b12c] font-bold font-mono text-xs">
-              {usuario.puntosTotal} pts
+
+            <span 
+              className="material-symbols-outlined text-[#e1b12c] text-[18px] transition-transform duration-200 ml-1" 
+              style={{ transform: showDropdown ? 'rotate(180deg)' : 'rotate(0)' }}
+            >
+              expand_more
             </span>
-          </div>
-          <span className="material-symbols-outlined text-[#e1b12c] text-[20px] transition-transform duration-200" style={{ transform: showDropdown ? 'rotate(180deg)' : 'rotate(0)' }}>
-            arrow_drop_down
-          </span>
-        </button>
+          </button>
 
         {/* Dropdown Menu block in professional light design */}
         {showDropdown && (
