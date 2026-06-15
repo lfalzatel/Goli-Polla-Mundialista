@@ -184,16 +184,34 @@ export default function App() {
           }
         });
         
-        // Update local user's total points if it changed in DB (for this group)
-        const myRank = ranking.find(r => r.uid === usuario.uid);
-        if (myRank && myRank.puntosTotal !== usuario.puntosTotal) {
-           setUsuario(prev => prev ? { ...prev, puntosTotal: myRank.puntosTotal } : prev);
-        }
-        
         // Sort and assign positions
         ranking.sort((a, b) => b.puntosTotal - a.puntosTotal);
         ranking.forEach((r, idx) => r.posicion = idx + 1);
         setRankingLideres(ranking);
+
+        // Update local user data if it changed in DB (for this group)
+        const myRank = ranking.find(r => r.uid === usuario.uid);
+        const myDoc = snapshot.docs.find(d => d.id === usuario.uid);
+        if (myDoc) {
+          const myData = myDoc.data() as Usuario;
+          setUsuario(prev => {
+            if (!prev) return prev;
+            const pt = myRank?.puntosTotal ?? prev.puntosTotal;
+            const gp = myData.gruposPermitidos || [];
+            
+            // Only update if something relevant changed to avoid infinite loops
+            if (
+              prev.puntosTotal !== pt || 
+              JSON.stringify(prev.gruposPermitidos || []) !== JSON.stringify(gp) ||
+              prev.esAdmin !== myData.esAdmin
+            ) {
+              const nextUser = { ...prev, ...myData, puntosTotal: pt, gruposPermitidos: gp };
+              localStorage.setItem('polla_usuario', JSON.stringify(nextUser));
+              return nextUser;
+            }
+            return prev;
+          });
+        }
       });
 
     return () => {
@@ -205,7 +223,7 @@ export default function App() {
   }, [usuario?.uid]);
 
   // Sync state functions
-  const handleLoginSuccess = (nombre: string, email: string, whatsapp: string, codigoGrupo: string, uid: string, fotoUrl?: string) => {
+  const handleLoginSuccess = (nombre: string, email: string, whatsapp: string, codigoGrupo: string, uid: string, fotoUrl?: string, gruposPermitidos?: string[]) => {
     const newUser: Usuario = {
       uid,
       nombre,
@@ -213,6 +231,7 @@ export default function App() {
       foto: fotoUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuB51HhLfnZaDiGtKYp7MwISidlkzLIvjuKRkqP-Z4Ht2dfgJK3G8Ve2q4QdXolTh7pung4KkLRXjVW-wEb_4UESxWciOP6HrVq2_JhM1XYhDssQTl7p5-ey-rgv2tfQCzfManWqd5WgZ8rShV-0IJFalxgyqdM5DuGNi-aMWPgI2fDBTcvn1bDgPNRX6YlC9MMlGEC_qv3OozOdRzTAWf5n3njxyzJz_10pMEEW1tGZ9t6OAaoy2zhSTVl1dQ10KnYavNUUhU2_0RU',
       whatsapp,
       codigoGrupo,
+      gruposPermitidos,
       puntosTotal: 0,
       createdAt: new Date().toISOString()
     };

@@ -10,7 +10,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import GlobalSplash from './GlobalSplash';
 
 interface SplashLoginProps {
-  onLoginSuccess: (nombre: string, email: string, whatsapp: string, codigoGrupo: string, uid: string, fotoUrl?: string) => void;
+  onLoginSuccess: (nombre: string, email: string, whatsapp: string, codigoGrupo: string, uid: string, fotoUrl?: string, gruposPermitidos?: string[]) => void;
   isLoggingOut?: boolean;
 }
 
@@ -183,7 +183,8 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
         fullPhone, 
         codigoGrupo.toUpperCase(), 
         pendingUser.uid,
-        pendingUser.photoURL || undefined
+        pendingUser.photoURL || undefined,
+        []
       );
     } catch (error) {
       console.error("Error guardando perfil", error);
@@ -195,7 +196,7 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
   useEffect(() => {
     if (!loading && pendingUser && (pendingUser as any).existingData) {
       const data = (pendingUser as any).existingData;
-      onLoginSuccess(data.nombre, data.email, data.whatsapp, data.codigoGrupo, pendingUser.uid, data.foto || pendingUser.photoURL || undefined);
+      onLoginSuccess(data.nombre, data.email, data.whatsapp, data.codigoGrupo, pendingUser.uid, data.foto || pendingUser.photoURL || undefined, data.gruposPermitidos);
     }
   }, [loading, pendingUser, onLoginSuccess]);
 
