@@ -61,7 +61,7 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
 
   const handleUserAuth = async (user: User) => {
     try {
-      setLoading(true);
+      // setLoading(true); // Removed to fix splash screen freeze
       const userRef = doc(db, 'pm_usuarios', user.uid);
       const userSnap = await getDoc(userRef);
 
@@ -115,15 +115,35 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
           setErrorText("El código de grupo no existe o está inactivo.");
           return;
         }
-      } else {
-        // If they didn't enter a code, they might be an existing user trying to login or an admin.
-        // We'll let them try, but if they are new and not admin, handleUserAuth will stop them later.
       }
+      
+      // Reiniciar Splash Screen
+      setLoading(true);
+      setMinTimeElapsed(false);
+      setAuthResolved(false);
+      setProgress(0);
+      
+      const startTime = Date.now();
+      const duration = 2500;
+      const interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        setProgress(Math.min((elapsed / duration) * 100, 99));
+      }, 50);
 
-      const result = await signInWithPopup(auth, googleProvider);
-      await handleUserAuth(result.user);
+      const timer = setTimeout(() => {
+        setMinTimeElapsed(true);
+        setProgress(100);
+        clearInterval(interval);
+      }, duration);
+
+      await signInWithPopup(auth, googleProvider);
+      // We don't call handleUserAuth here, onAuthStateChanged will handle it.
+
     } catch (error: any) {
       console.error("Error en login con Google", error);
+      setMinTimeElapsed(true);
+      setAuthResolved(true);
+      setLoading(false);
       if (error.code !== 'auth/popup-closed-by-user') {
          setErrorText("No se pudo iniciar sesión con Google.");
       }
