@@ -47,11 +47,9 @@ export default function App() {
   }, [activeThemes]);
 
   const handleTabClick = (tab: 'inicio' | 'reglas' | 'perfil' | 'ranking' | 'configuracion') => {
-    if (activeTab === tab) {
-      setTabRotationToggle(!tabRotationToggle);
-    } else {
+    setTabRotationToggle(!tabRotationToggle);
+    if (activeTab !== tab) {
       setActiveTab(tab);
-      setTabRotationToggle(false);
     }
   };
   
