@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { db } from '../lib/firebase';
 import { collection, query, where, onSnapshot, doc, setDoc, getDocs, updateDoc, writeBatch, deleteDoc } from 'firebase/firestore';
+import { Partido } from '../types';
 
 interface ConfiguracionTabProps {
   usuario: any;
@@ -11,6 +12,9 @@ interface ConfiguracionTabProps {
   setActiveThemes: (themes: string[]) => void;
   onLogout: () => void;
   onToggleNotifications?: (enabled: boolean) => void;
+  partidos?: Partido[];
+  onSimularPartidos?: (marcadoresRealistas: Record<string, { golesLocal: number, golesVisitante: number }>) => void;
+  onRepararPuntos?: () => void;
 }
 
 const AVAILABLE_THEMES = [
@@ -21,7 +25,7 @@ const AVAILABLE_THEMES = [
   { id: 'kilocode', name: 'Kilo', icon: 'bolt' }
 ];
 
-export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, activeThemes, setActiveThemes, onLogout, onToggleNotifications }: ConfiguracionTabProps) {
+export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, activeThemes, setActiveThemes, onLogout, onToggleNotifications, partidos, onSimularPartidos, onRepararPuntos }: ConfiguracionTabProps) {
   const [resetSent, setResetSent] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   
@@ -188,9 +192,20 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
     }
   };
 
-  const showToast = (message: string) => {
-    setToastMessage(message);
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  const runCloudFunctionSync = () => {
+    if (!partidos || !onSimularPartidos) return;
+    const res: Record<string, { golesLocal: number, golesVisitante: number }> = {};
+    partidos.filter(p => p.estado === 'finalizado' && p.golesLocal !== null).forEach(p => {
+        res[p.partidoId] = { golesLocal: p.golesLocal, golesVisitante: p.golesVisitante };
+    });
+    onSimularPartidos(res);
+
+    showToast('⚡ Cloud Function Ejecutada: Se consultaron resultados de la API y calcularon puntos.');
   };
 
   const handleTestNotification = async () => {
@@ -404,6 +419,38 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           </div>
 
           {/* Lista de Grupos */}
+          <div className="theme-card/10 rounded-xl p-4 mb-4 border border-white/10">
+            <h4 className="font-sans font-bold premium-card-title mb-3 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px]">sync</span>
+              Resultados Reales API
+            </h4>
+            <p className="text-xs text-current opacity-70 mb-3 leading-relaxed">
+              Esta herramienta consulta los partidos finalizados y actualiza los puntajes de todos los usuarios.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
+              <button
+                onClick={runCloudFunctionSync}
+                className="premium-button-accent hover:opacity-90 text-[#034226] font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md flex-1 justify-center"
+              >
+                <span className="material-symbols-outlined text-[16px] font-bold">cloud_download</span>
+                <span>ACTUALIZAR RESULTADOS</span>
+              </button>
+              
+              {onRepararPuntos && (
+                <button
+                  onClick={() => {
+                    onRepararPuntos();
+                    showToast('Se han recalculado todos los puntos correctamente.');
+                  }}
+                  className="bg-red-500 hover:bg-red-600 text-white font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md flex-1 justify-center"
+                >
+                  <span className="material-symbols-outlined text-[16px] font-bold">build</span>
+                  <span>REPARAR PUNTOS</span>
+                </button>
+              )}
+            </div>
+          </div>
+
           {misGrupos.length > 0 && (
             <div className="theme-card/10 rounded-xl p-4 mb-4 border border-white/10">
               <h4 className="font-sans font-bold premium-card-title mb-3 flex items-center gap-2">

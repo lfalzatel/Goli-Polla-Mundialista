@@ -751,6 +751,9 @@ export default function App() {
             setActiveThemes={setActiveThemes}
             onLogout={handleLogout}
             onToggleNotifications={handleToggleNotifications}
+            partidos={partidos}
+            onSimularPartidos={handleSimularPartidos}
+            onRepararPuntos={handleRepararPuntos}
           />
         )}
       </main>
