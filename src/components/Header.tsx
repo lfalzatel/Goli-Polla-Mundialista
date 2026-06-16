@@ -340,7 +340,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onSwitchAccount
                         setShowDropdown(false);
                         if (onSwitchAccount) onSwitchAccount(acc.email);
                       }}
-                      className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors cursor-pointer text-left ${usuario.uid === acc.uid ? (isConsoleMode ? 'bg-white/10' : 'bg-slate-100') : (isConsoleMode ? 'hover:bg-white/5 text-slate-300' : 'hover:bg-slate-50 text-slate-700')}`}
+                      className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors cursor-pointer text-left ${usuario.uid === acc.uid ? (isConsoleMode ? 'bg-white/10 text-white' : 'bg-slate-100 text-slate-900') : (isConsoleMode ? 'hover:bg-white/5 text-slate-300' : 'hover:bg-slate-50 text-slate-700')}`}
                     >
                       {acc.foto ? (
                         <img src={acc.foto} alt={acc.nombre} className="w-6 h-6 rounded-full object-cover shrink-0" />
