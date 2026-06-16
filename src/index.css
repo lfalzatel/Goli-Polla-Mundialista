@@ -387,3 +387,11 @@
 [data-theme="glass"] .theme-text-muted {
   color: #0369a1 !important; /* Blue for visibility on light backgrounds */
 }
+/* Custom colors for points breakdown */
+.text-points-breakdown { color: #f97316 !important; }
+[data-theme='cyberpunk'] .text-points-breakdown, [data-theme='kilocode'] .text-points-breakdown { color: var(--text-primary) !important; opacity: 0.8; }
+
+.text-points-total { color: #034226 !important; }
+[data-theme='noche'] .text-points-total { color: #22c55e !important; }
+[data-theme='glass'] .text-points-total { color: #0ea5e9 !important; }
+[data-theme='cyberpunk'] .text-points-total, [data-theme='kilocode'] .text-points-total { color: var(--text-primary) !important; font-weight: 900; }
