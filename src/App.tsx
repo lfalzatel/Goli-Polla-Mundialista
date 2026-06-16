@@ -680,7 +680,7 @@ export default function App() {
       {/* Floating Leaderboard Action Button (Contextual quick tool) */}
       <button 
         onClick={() => setShowFloatingRanking(!showFloatingRanking)}
-        className="fixed bottom-24 right-4 w-12 h-12 header-accent-bg text-slate-900 hover:opacity-80 rounded-full shadow-2xl flex items-center justify-center border border-white/20 active:scale-90 transition-transform cursor-pointer z-40"
+        className="fixed bottom-24 right-4 w-12 h-12 premium-button-accent hover:opacity-80 rounded-full shadow-2xl flex items-center justify-center border border-white/20 active:scale-90 transition-all cursor-pointer z-40"
         title="Mostrar tabla de posiciones del grupo"
         aria-haspopup="dialog"
       >
