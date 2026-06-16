@@ -504,7 +504,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
       {/* Group listings of matches by state and date */}
       {[
         { estadoKey: 'en_vivo', titulo: 'EN VIVO', colorCls: 'text-red-500 border-red-500 bg-red-500/10 flex gap-2 justify-center items-center', icon: true },
-        { estadoKey: 'pendiente', titulo: 'PRÓXIMOS PARTIDOS', colorCls: 'premium-card premium-accent border-2 border-current shadow-lg', icon: false },
+        { estadoKey: 'pendiente', titulo: 'PRÓXIMOS PARTIDOS', colorCls: 'premium-card premium-card-title border-2 border-current shadow-lg', icon: false },
         { estadoKey: 'finalizado', titulo: 'FINALIZADOS', colorCls: 'text-slate-400 border-slate-600 bg-[#121316]', icon: false }
       ].map(({ estadoKey, titulo, colorCls, icon }) => {
         const fechasObj = partidosPorEstadoYFecha[estadoKey];

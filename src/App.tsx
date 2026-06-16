@@ -618,7 +618,7 @@ export default function App() {
         {/* Global Page Header */}
         <div className="mb-6 border p-4 shadow-xl flex items-center justify-center relative overflow-hidden app-page-header">
           <div className={`absolute inset-0 stadium-mesh ${isConsoleMode ? 'opacity-5' : 'opacity-20'}`}></div>
-          <h1 className="font-display text-3xl md:text-4xl tracking-wider leading-none select-none uppercase text-center relative z-10 app-page-header-title">
+          <h1 className={`font-display tracking-wider leading-none select-none uppercase text-center relative z-10 app-page-header-title ${isConsoleMode ? 'text-2xl md:text-3xl' : 'text-3xl md:text-4xl'}`}>
             GOLI <span className="app-page-header-accent">POLLA MUNDIALISTA</span>
           </h1>
         </div>

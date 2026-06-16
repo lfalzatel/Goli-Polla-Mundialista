@@ -251,9 +251,27 @@
 
 [data-theme="cyberpunk"] .app-page-header, [data-theme="kilocode"] .app-page-header {
   background-color: var(--bg-card) !important;
-  border-color: var(--border-card) !important;
+  border-color: transparent !important;
   border-radius: 0 !important;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, rgba(0,0,0,0.15) 2px) !important;
+  background-image: 
+    linear-gradient(var(--border-card), var(--border-card)),
+    linear-gradient(var(--border-card), var(--border-card)),
+    linear-gradient(var(--border-card), var(--border-card)),
+    linear-gradient(var(--border-card), var(--border-card)),
+    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, rgba(0,0,0,0.15) 2px) !important;
+  background-size: 
+    calc(100% - 24px) 1px,
+    calc(100% - 24px) 1px,
+    1px calc(100% - 24px),
+    1px calc(100% - 24px),
+    100% 100% !important;
+  background-position: 
+    top center,
+    bottom center,
+    left center,
+    right center,
+    0 0 !important;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat !important;
 }
 
 [data-theme="glass"] .app-page-header {
@@ -285,4 +303,16 @@
 
 [data-theme="glass"] .app-page-header-accent {
   color: var(--text-primary) !important;
+}
+
+.premium-card-title {
+  color: #e1b12c;
+}
+
+[data-theme="cyberpunk"] .premium-card-title, [data-theme="kilocode"] .premium-card-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="glass"] .premium-card-title {
+  color: #ffffff !important;
 }
