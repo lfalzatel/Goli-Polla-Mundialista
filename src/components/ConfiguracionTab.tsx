@@ -178,7 +178,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       {/* SECCIÓN APARIENCIA */}
       <section className="premium-card border rounded-2xl p-5 shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 stadium-mesh opacity-20 pointer-events-none"></div>
-        <h2 className="font-bold text-current font-display text-xl mb-4 flex items-center gap-2 relative z-10">
+        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2 relative z-10">
           <span className="material-symbols-outlined">palette</span>
           GESTIÓN DE TEMAS
         </h2>
@@ -216,8 +216,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       </section>
 
       {/* SECCIÓN CUENTA Y PERFIL */}
-      <section className="theme-card rounded-2xl p-5 shadow-lg relative overflow-hidden">
-        <h2 className="font-bold text-current font-display text-xl mb-4 flex items-center gap-2">
+      <section className="premium-card border border-current rounded-2xl p-5 shadow-xl relative overflow-hidden">
+        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
           <span className="material-symbols-outlined">person</span>
           CUENTA Y PERFIL
         </h2>
@@ -247,7 +247,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       {/* SECCIÓN GESTIÓN (ADMIN) */}
       {(usuario.esAdmin || usuario.email === 'lfalzatel@gmail.com') && (
         <section className="premium-card border rounded-2xl p-5 shadow-xl">
-          <h2 className="font-bold text-current font-display text-xl mb-4 flex items-center gap-2">
+          <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
             <span className="material-symbols-outlined">admin_panel_settings</span>
             PANEL DE ADMINISTRADOR
           </h2>
@@ -382,8 +382,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       )}
 
       {/* SECCIÓN APP */}
-      <section className="theme-card rounded-2xl p-5 shadow-lg">
-        <h2 className="font-bold text-current font-display text-xl mb-4 flex items-center gap-2">
+      <section className="premium-card border border-current rounded-2xl p-5 shadow-xl">
+        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
           <span className="material-symbols-outlined">app_shortcut</span>
           APLICACIÓN
         </h2>
