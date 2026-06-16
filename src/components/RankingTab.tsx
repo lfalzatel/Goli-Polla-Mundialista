@@ -215,7 +215,7 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
 
                   {loadingBets ? (
                     <div className="flex justify-center p-8">
-                      <div className="w-8 h-8 border-4 border-green-200 border-t-[#00ff88] rounded-full animate-spin"></div>
+                      <div className="w-8 h-8 border-4 border-green-200 border-t-[#00ff88] rounded-full animate-pulse"></div>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
