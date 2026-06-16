@@ -6,10 +6,11 @@
 import React, { useState, useEffect } from 'react';
 import { Partido, Apuesta, RankedUser, Usuario, BonificacionesEspeciales } from './types';
 import { PARTIDOS_INICIALES, RANKING_INICIAL, APUESTAS_INICIALES_PRESETS, calcularPuntosPartido } from './data';
-import { db, auth, messagingPromise } from './lib/firebase';
+import { db, auth, messagingPromise, functions } from './lib/firebase';
 import { collection, onSnapshot, doc, setDoc, updateDoc, writeBatch, getDocs, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { getToken, onMessage } from 'firebase/messaging';
+import { httpsCallable } from 'firebase/functions';
 import SplashLogin from './components/SplashLogin';
 import Header from './components/Header';
 import InicioTab from './components/InicioTab';
@@ -31,6 +32,10 @@ export default function App() {
   const [showFloatingRanking, setShowFloatingRanking] = useState(false);
   const [showWhatsAppConfirm, setShowWhatsAppConfirm] = useState(false);
   const [notificationToast, setNotificationToast] = useState<{title: string, body: string} | null>(null);
+  
+  // Notification Prompts
+  const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
+  const [showNotificationWarning, setShowNotificationWarning] = useState(false);
   
   // Themes
   const [themeMode, setThemeMode] = useState<string>(localStorage.getItem('goli_theme') || 'noche');
@@ -123,32 +128,49 @@ export default function App() {
   }, [usuario?.notificationSound]);
 
   // Request Notification Permissions and save Token
+  const renovarTokenFCM = async () => {
+    try {
+      const messaging = await messagingPromise;
+      if (messaging) {
+        const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY });
+        if (token && usuario?.uid) {
+          await setDoc(doc(db, 'pm_usuarios', usuario.uid), { fcmToken: token }, { merge: true });
+        }
+      }
+    } catch (e) {
+      console.error('Error renewing token', e);
+    }
+  };
+
   useEffect(() => {
     if (!usuario?.uid) return;
     
-    const requestPermission = async () => {
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-          const messaging = await messagingPromise;
-          if (messaging) {
-            // Importante: Aquí se usa la llave VAPID real generada en Firebase.
-            const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY });
-            if (token) {
-              await setDoc(doc(db, 'pm_usuarios', usuario.uid), { fcmToken: token }, { merge: true });
-            }
-          }
-        }
-      } catch (e) {
-        console.error('Push notification permission error', e);
-      }
-    };
-    
-    // Si ya está concedido, renueva el token, si no está denegado, lo pide
-    if (Notification.permission !== 'denied') {
-      requestPermission();
+    // Check if permission is default and we haven't asked yet
+    if (Notification.permission === 'default') {
+      setShowNotificationPrompt(true);
+    } else if (Notification.permission === 'granted') {
+      renovarTokenFCM();
     }
   }, [usuario?.uid]);
+
+  const handleAcceptNotifications = async () => {
+    setShowNotificationPrompt(false);
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        await renovarTokenFCM();
+      } else {
+        setShowNotificationWarning(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleRejectNotifications = () => {
+    setShowNotificationPrompt(false);
+    setShowNotificationWarning(true);
+  };
 
   // Load configuration from Firebase on mount (only when user is authenticated)
   useEffect(() => {
@@ -491,6 +513,7 @@ export default function App() {
       const apuestasList = apuestasSnap.docs.map(d => ({id: d.id, ...d.data()})) as (Apuesta & {id: string})[];
       
       const userPointsByGroup: Record<string, Record<string, number>> = {};
+      const matchPointsData: Record<string, { equipoLocal: string, equipoVisitante: string, matchPoints: Record<string, number> }> = {};
 
       apuestasList.forEach(apuesta => {
          if (resultados[apuesta.partidoId]) {
@@ -502,6 +525,14 @@ export default function App() {
                 estado: 'finalizado' as const
             };
             
+            if (!matchPointsData[apuesta.partidoId]) {
+                matchPointsData[apuesta.partidoId] = {
+                    equipoLocal: partidoActualizado.equipoLocal,
+                    equipoVisitante: partidoActualizado.equipoVisitante,
+                    matchPoints: {}
+                };
+            }
+            
             // Calcular puntos reales
             const puntosObj = calcularPuntosPartido(
               partidoActualizado.golesLocal!,
@@ -512,6 +543,8 @@ export default function App() {
             );
             
             const puntosGanados = typeof puntosObj === 'number' ? puntosObj : (puntosObj.total || 0);
+
+            matchPointsData[apuesta.partidoId].matchPoints[apuesta.uid] = puntosGanados;
 
             // Guardar el objeto completo para tener el desglose
             batch.update(doc(db, 'pm_apuestas', apuesta.id), {
@@ -549,6 +582,20 @@ export default function App() {
       });
 
       await batch.commit();
+
+      // Enviar notificaciones de puntos para cada partido simulado
+      const sendMatchResultsNotification = httpsCallable(functions, 'sendMatchResultsNotification');
+      for (const pId of Object.keys(matchPointsData)) {
+          const matchData = matchPointsData[pId];
+          if (Object.keys(matchData.matchPoints).length > 0) {
+              sendMatchResultsNotification({
+                  equipoLocal: matchData.equipoLocal,
+                  equipoVisitante: matchData.equipoVisitante,
+                  matchPoints: matchData.matchPoints
+              }).catch(e => console.error("Error invoking sendMatchResultsNotification", e));
+          }
+      }
+
       setNotificationToast({
         title: 'Actualización Exitosa',
         body: 'Resultados de la fecha simulados y actualizados en Firestore. Se han repartido puntos según las reglas.'
@@ -685,6 +732,51 @@ export default function App() {
           <button onClick={() => setNotificationToast(null)} className="ml-auto text-slate-400 hover:text-slate-700">
             <span className="material-symbols-outlined text-[18px]">close</span>
           </button>
+        </div>
+      )}
+
+      {/* Notification Prompts */}
+      {showNotificationPrompt && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+          <div className="bg-[#034226] border border-[#e1b12c] rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl animate-in fade-in zoom-in-95">
+            <span className="material-symbols-outlined text-5xl text-[#e1b12c] mb-4">notifications_active</span>
+            <h3 className="text-xl font-display text-white mb-2">¡No te pierdas de nada!</h3>
+            <p className="text-white/80 font-sans text-sm mb-6">
+              Activa las notificaciones para saber cuándo ganaste puntos y cuándo empiezan los partidos.
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={handleRejectNotifications}
+                className="flex-1 py-3 px-4 rounded-xl border border-white/20 text-white font-bold hover:bg-white/10 transition-colors"
+              >
+                Ahora no
+              </button>
+              <button 
+                onClick={handleAcceptNotifications}
+                className="flex-1 py-3 px-4 rounded-xl bg-[#e1b12c] text-[#034226] font-bold hover:brightness-110 transition-all shadow-lg"
+              >
+                Activar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showNotificationWarning && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+          <div className="bg-[#034226] border border-red-500/50 rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl animate-in fade-in zoom-in-95">
+            <span className="material-symbols-outlined text-5xl text-red-400 mb-4">warning</span>
+            <h3 className="text-xl font-display text-white mb-2">Atención</h3>
+            <p className="text-white/80 font-sans text-sm mb-6">
+              Si cancelas no te llegarán los avisos de los próximos partidos ni de los puntos ganados. Podrás activarlas luego desde tu navegador.
+            </p>
+            <button 
+              onClick={() => setShowNotificationWarning(false)}
+              className="w-full py-3 px-4 rounded-xl bg-white/10 border border-white/20 text-white font-bold hover:bg-white/20 transition-colors"
+            >
+              Entendido
+            </button>
+          </div>
         </div>
       )}
 

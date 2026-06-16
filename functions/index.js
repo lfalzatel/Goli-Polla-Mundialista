@@ -187,6 +187,7 @@ async function calcularYGuardarPuntos(partidoId, partidoActualizado) {
 
   const batch = db.batch();
   const userPointsDiff = {};
+  const matchPoints = {};
 
   apuestasSnap.docs.forEach(apuestaDoc => {
     const a = apuestaDoc.data();
@@ -203,6 +204,8 @@ async function calcularYGuardarPuntos(partidoId, partidoActualizado) {
     const ptsAnteriores = typeof a.puntosObtenidos === 'number' 
                           ? a.puntosObtenidos 
                           : (a.puntosObtenidos?.total || 0);
+
+    matchPoints[a.uid] = ptsTotal;
 
     // Guardar siempre el objeto para el desglose visual en la app, 
     // incluso si el puntaje total obtenido es igual al anterior (ej: 0 y 0)
@@ -236,6 +239,47 @@ async function calcularYGuardarPuntos(partidoId, partidoActualizado) {
   }
 
   await batch.commit();
+
+  await emitirNotificacionesPuntos(partidoActualizado.equipoLocal, partidoActualizado.equipoVisitante, matchPoints);
+}
+
+async function emitirNotificacionesPuntos(equipoLocal, equipoVisitante, matchPoints) {
+    const uids = Object.keys(matchPoints);
+    if (uids.length === 0) return;
+
+    // Get tokens for these users
+    const allUsers = [];
+    for (let i = 0; i < uids.length; i += 30) {
+        const chunk = uids.slice(i, i + 30);
+        const snap = await db.collection('pm_usuarios').where(admin.firestore.FieldPath.documentId(), 'in', chunk).get();
+        snap.forEach(d => allUsers.push({ id: d.id, ...d.data() }));
+    }
+
+    const messages = [];
+    allUsers.forEach(user => {
+        const token = user.fcmToken;
+        if (token && user.notificationsEnabled !== false) {
+            const pts = matchPoints[user.id] || 0;
+            const title = "¡Partido Finalizado!";
+            const body = pts > 0 
+                ? `Has ganado ${pts} puntos en ${equipoLocal} vs ${equipoVisitante}.`
+                : `No has ganado puntos en ${equipoLocal} vs ${equipoVisitante}. ¡Suerte en el próximo!`;
+            
+            messages.push({
+                notification: { title, body },
+                token: token
+            });
+        }
+    });
+
+    if (messages.length > 0) {
+        try {
+            const response = await admin.messaging().sendEach(messages);
+            console.log(`Notificaciones post-partido: ${response.successCount} enviadas, ${response.failureCount} fallidas.`);
+        } catch (e) {
+            console.error("Error enviando notificaciones post-partido:", e);
+        }
+    }
 }
 
 // 5. Cron Job: sendMatchReminders
@@ -388,4 +432,26 @@ exports.sendTestNotification = functions.https.onRequest(async (req, res) => {
         console.error("Error en sendTestNotification:", e);
         res.status(500).send({ error: 'Internal Server Error' });
     }
+});
+
+// 7. Callable Function: sendMatchResultsNotification
+exports.sendMatchResultsNotification = functions.https.onCall(async (data, context) => {
+    // Solo usuarios autenticados
+    if (!context.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'Autenticación requerida.');
+    }
+
+    const { equipoLocal, equipoVisitante, matchPoints } = data;
+    if (!equipoLocal || !equipoVisitante || !matchPoints) {
+        throw new functions.https.HttpsError('invalid-argument', 'Faltan parámetros requeridos.');
+    }
+
+    // Verificar si es administrador
+    const userDoc = await db.collection('pm_usuarios').doc(context.auth.uid).get();
+    if (!userDoc.exists || (!userDoc.data().esAdmin && userDoc.data().email !== 'lfalzatel@gmail.com')) {
+        throw new functions.https.HttpsError('permission-denied', 'Solo administradores pueden enviar notificaciones de resultados.');
+    }
+
+    await emitirNotificacionesPuntos(equipoLocal, equipoVisitante, matchPoints);
+    return { success: true };
 });
