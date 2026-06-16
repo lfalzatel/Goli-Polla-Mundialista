@@ -212,18 +212,26 @@ async function calcularYGuardarPuntos(partidoId, partidoActualizado) {
 
     if (ptsTotal !== ptsAnteriores) {
         const diff = ptsTotal - ptsAnteriores;
-        userPointsDiff[a.uid] = (userPointsDiff[a.uid] || 0) + diff;
+        if (!userPointsDiff[a.uid]) userPointsDiff[a.uid] = { total: 0, byGroup: {} };
+        userPointsDiff[a.uid].total += diff;
+        
+        const grupo = a.codigoGrupo || 'LACURVA1';
+        userPointsDiff[a.uid].byGroup[grupo] = (userPointsDiff[a.uid].byGroup[grupo] || 0) + diff;
     }
   });
 
   // Update total points for users
   for (const uid of Object.keys(userPointsDiff)) {
-      const diff = userPointsDiff[uid];
-      if (diff !== 0) {
+      const diffs = userPointsDiff[uid];
+      if (diffs.total !== 0) {
           const userRef = db.collection('pm_usuarios').doc(uid);
-          batch.update(userRef, {
-             puntosTotal: admin.firestore.FieldValue.increment(diff)
-          });
+          const updateData = {
+             puntosTotal: admin.firestore.FieldValue.increment(diffs.total)
+          };
+          for (const g of Object.keys(diffs.byGroup)) {
+             updateData[`puntosPorGrupo.${g}`] = admin.firestore.FieldValue.increment(diffs.byGroup[g]);
+          }
+          batch.update(userRef, updateData);
       }
   }
 

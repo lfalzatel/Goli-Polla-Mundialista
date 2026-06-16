@@ -391,6 +391,52 @@ export default function App() {
     }
   };
 
+  const handleRepararPuntos = async () => {
+    if (!usuario || (!usuario.esAdmin && usuario.email !== 'lfalzatel@gmail.com')) return;
+    try {
+      const usersSnap = await getDocs(collection(db, 'pm_usuarios'));
+      const betsSnap = await getDocs(collection(db, 'pm_apuestas'));
+      
+      const userPoints: Record<string, {total: number, byGroup: Record<string, number>}> = {};
+      usersSnap.forEach(u => {
+        userPoints[u.id] = { total: 0, byGroup: {} };
+      });
+      
+      betsSnap.forEach(docSnap => {
+        const a = docSnap.data();
+        let pts = 0;
+        if (typeof a.puntosObtenidos === 'number') {
+            pts = a.puntosObtenidos;
+        } else if (a.puntosObtenidos && typeof a.puntosObtenidos.total === 'number') {
+            pts = a.puntosObtenidos.total;
+        }
+
+        if (pts > 0 && userPoints[a.uid]) {
+            userPoints[a.uid].total += pts;
+            const grupo = a.codigoGrupo || 'LACURVA1';
+            userPoints[a.uid].byGroup[grupo] = (userPoints[a.uid].byGroup[grupo] || 0) + pts;
+        }
+      });
+      
+      const batch = writeBatch(db);
+      for (const uid of Object.keys(userPoints)) {
+        const data = userPoints[uid];
+        batch.update(doc(db, 'pm_usuarios', uid), {
+            puntosTotal: data.total,
+            puntosPorGrupo: data.byGroup
+        });
+      }
+      await batch.commit();
+      setNotificationToast({
+        title: 'Reparación Exitosa',
+        body: 'Se han recalculado todos los puntos históricos de los usuarios correctamente.'
+      });
+    } catch (e) {
+      console.error(e);
+      alert('Error reparando puntos.');
+    }
+  };
+
   // Simulate schedule cloud function matches finalized
   const handleSimularPartidos = async (resultados: Record<string, { golesLocal: number; golesVisitante: number }>) => {
     if (!usuario) return;
@@ -632,6 +678,7 @@ export default function App() {
             onGuardarApuesta={handleGuardarApuesta}
             onGuardarBonificaciones={handleGuardarBonificaciones}
             onSimularPartidos={handleSimularPartidos}
+            onRepararPuntos={handleRepararPuntos}
           />
         )}
 

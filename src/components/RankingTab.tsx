@@ -41,12 +41,19 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
         where('uid', '==', uid),
         where('codigoGrupo', '==', activeGrupo || 'LACURVA1')
       );
-      const snap = await getDocs(q);
+      
+      // Timeout de 8 segundos para evitar cargas infinitas si la red falla
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 8000));
+      const snap = await Promise.race([getDocs(q), timeoutPromise]) as any;
+      
       const bets: Apuesta[] = [];
-      snap.forEach(doc => bets.push(doc.data() as Apuesta));
+      snap.forEach((doc: any) => bets.push(doc.data() as Apuesta));
       setUserBets(bets);
-    } catch (e) {
+    } catch (e: any) {
       console.error("Error cargando apuestas del usuario", e);
+      if (e.message === 'TIMEOUT') {
+         console.warn("La carga de apuestas tardó demasiado. Posible problema de conexión.");
+      }
     } finally {
       setLoadingBets(false);
     }

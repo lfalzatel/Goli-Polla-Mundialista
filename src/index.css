@@ -63,6 +63,9 @@
 
 [data-theme="glass"] .theme-card {
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transform: translateZ(0);
+  will-change: transform, backdrop-filter;
 }
 
 [data-theme="cyberpunk"], [data-theme="kilocode"] {

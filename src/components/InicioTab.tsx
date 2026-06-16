@@ -16,9 +16,10 @@ interface InicioTabProps {
   onGuardarApuesta: (partidoId: string, golesLocal: number, golesVisitante: number, totalGolesApuesta?: "mas25" | "menos25" | null) => void;
   onGuardarBonificaciones?: (bonos: Partial<BonificacionesEspeciales>) => void;
   onSimularPartidos: (marcadoresRealistas: Record<string, { golesLocal: number, golesVisitante: number }>) => void;
+  onRepararPuntos?: () => void;
 }
 
-export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin, onGuardarApuesta, onGuardarBonificaciones, onSimularPartidos }: InicioTabProps) {
+export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin, onGuardarApuesta, onGuardarBonificaciones, onSimularPartidos, onRepararPuntos }: InicioTabProps) {
   // Local state for interactive editing of scores before saving
   const [editingScores, setEditingScores] = useState<Record<string, { golesLocal: number; golesVisitante: number; totalGolesApuesta?: "mas25" | "menos25" | null }>>({});
   const [editingBonos, setEditingBonos] = useState<Partial<BonificacionesEspeciales>>(bonificaciones || {});
@@ -254,13 +255,25 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 Esta herramienta consulta los partidos finalizados y actualiza los puntajes.
               </p>
             </div>
-            <button
-              onClick={runCloudFunctionSync}
-              className="premium-button-accent hover:opacity-90 text-[#034226] font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md self-stretch sm:self-auto justify-center"
-            >
-              <span className="material-symbols-outlined text-[16px] font-bold">cloud_download</span>
-              <span>ACTUALIZAR RESULTADOS (API)</span>
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-4 sm:mt-0">
+              <button
+                onClick={runCloudFunctionSync}
+                className="premium-button-accent hover:opacity-90 text-[#034226] font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md flex-1 sm:flex-none justify-center"
+              >
+                <span className="material-symbols-outlined text-[16px] font-bold">cloud_download</span>
+                <span>ACTUALIZAR RESULTADOS</span>
+              </button>
+              
+              {onRepararPuntos && (
+                <button
+                  onClick={onRepararPuntos}
+                  className="bg-red-500 hover:bg-red-600 text-white font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md flex-1 sm:flex-none justify-center"
+                >
+                  <span className="material-symbols-outlined text-[16px] font-bold">build</span>
+                  <span>REPARAR PUNTOS</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
