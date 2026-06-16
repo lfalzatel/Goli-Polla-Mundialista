@@ -581,7 +581,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                           <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1 premium-pill-container">
                             <button
                               onClick={() => setLocalScore(match.partidoId, getEditingLocalScore(match.partidoId, 0) - 1)}
-                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 text-current flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Disminuir goles local"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">remove</span>
@@ -591,7 +591,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             </span>
                             <button
                               onClick={() => setLocalScore(match.partidoId, getEditingLocalScore(match.partidoId, 0) + 1)}
-                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 text-current flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Aumentar goles local"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">add</span>
@@ -649,7 +649,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                           <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1 premium-pill-container">
                             <button
                               onClick={() => setVisitanteScore(match.partidoId, getEditingVisitanteScore(match.partidoId, 0) - 1)}
-                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 text-current flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Disminuir goles visitante"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">remove</span>
@@ -659,7 +659,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             </span>
                             <button
                               onClick={() => setVisitanteScore(match.partidoId, getEditingVisitanteScore(match.partidoId, 0) + 1)}
-                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 theme-text-card flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
+                              className="w-8 h-8 rounded-full premium-card hover:brightness-110 text-current flex items-center justify-center cursor-pointer transition-colors active:scale-95 border  shadow-sm"
                               aria-label="Aumentar goles visitante"
                             >
                               <span className="material-symbols-outlined text-xs font-bold">add</span>
