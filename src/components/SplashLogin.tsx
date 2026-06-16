@@ -136,7 +136,13 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
         clearInterval(interval);
       }, duration);
 
-      googleProvider.setCustomParameters({ prompt: 'select_account' });
+      const loginHint = localStorage.getItem('polla_login_hint');
+      if (loginHint) {
+        googleProvider.setCustomParameters({ login_hint: loginHint });
+        localStorage.removeItem('polla_login_hint');
+      } else {
+        googleProvider.setCustomParameters({ prompt: 'select_account' });
+      }
       await signInWithPopup(auth, googleProvider);
       // We don't call handleUserAuth here, onAuthStateChanged will handle it.
 

@@ -10,6 +10,7 @@ interface HeaderProps {
   usuario: any;
   grupoNombre?: string;
   onLogout: () => void;
+  onSwitchAccount?: (email: string | null) => void;
   onChangeGroup: () => void;
   onOpenChat: () => void;
   partidos: any[];
@@ -17,12 +18,16 @@ interface HeaderProps {
   themeMode?: string;
   setThemeMode?: (theme: string) => void;
   activeThemes?: string[];
+  onToggleNotifications?: (enabled: boolean) => void;
 }
 
-export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, onOpenChat, partidos = [], onGoToSettings, themeMode, setThemeMode, activeThemes = [], onToggleNotifications }: HeaderProps) {
+export default function Header({ usuario, grupoNombre, onLogout, onSwitchAccount, onChangeGroup, onOpenChat, partidos = [], onGoToSettings, themeMode, setThemeMode, activeThemes = [], onToggleNotifications }: HeaderProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
+  const [showAccountsModal, setShowAccountsModal] = useState(false);
+
+  const savedAccounts = JSON.parse(localStorage.getItem('polla_saved_accounts') || '[]');
 
   const isConsoleMode = themeMode === 'kilocode' || themeMode === 'cyberpunk';
   const consoleColor = themeMode === 'cyberpunk' ? 'text-[#00FFB2]' : 'header-accent-text';
@@ -325,7 +330,12 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                 <button
                   onClick={() => {
                     setShowDropdown(false);
-                    onLogout();
+                    if (savedAccounts.length > 0) {
+                      setShowAccountsModal(true);
+                    } else {
+                      if (onSwitchAccount) onSwitchAccount(null);
+                      else onLogout();
+                    }
                   }}
                   className={`w-full flex items-center gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider ' + consoleColor : 'px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg'} transition-colors cursor-pointer text-left`}
                 >
@@ -357,7 +367,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
 
       {/* Install App Modal */}
       {showInstallModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowInstallModal(false)}></div>
           <div className="relative w-full max-w-[340px] bg-white rounded-3xl p-6 shadow-2xl animate-in font-sans text-center">
             <div className="w-16 h-16 bg-[#034226] header-accent-text rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg border-4 border-slate-50">
@@ -383,12 +393,74 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                 </div>
               </div>
             </div>
-            <button 
-              onClick={() => setShowInstallModal(false)}
-              className="mt-6 w-full bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors"
-            >
-              Cerrar
+            <button onClick={() => setShowInstallModal(false)} className="w-full font-bold text-slate-400 py-3 rounded-xl hover:bg-slate-50 transition-colors">
+              Entendido
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Accounts Modal */}
+      {showAccountsModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowAccountsModal(false)}></div>
+          <div className="relative w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-gradient-to-r from-[#034226] to-[#045c36] p-5">
+              <h3 className="text-xl font-display text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#e1b12c]">switch_account</span>
+                Selecciona una cuenta
+              </h3>
+              <p className="text-[#e1b12c] font-sans text-xs mt-1">Ingresa directamente sin contraseña</p>
+            </div>
+            
+            <div className="p-4 flex flex-col gap-3">
+              {savedAccounts.map((acc: any) => (
+                <button 
+                  key={acc.uid}
+                  onClick={() => {
+                    setShowAccountsModal(false);
+                    if (onSwitchAccount) onSwitchAccount(acc.email);
+                  }}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer ${usuario.uid === acc.uid ? 'border-[#034226] bg-[#034226]/5' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}
+                >
+                  {acc.foto ? (
+                    <img src={acc.foto} alt={acc.nombre} className="w-10 h-10 rounded-full object-cover shrink-0" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-[#034226]/10 flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-[#034226]">person</span>
+                    </div>
+                  )}
+                  <div className="flex flex-col items-start min-w-0">
+                    <span className="font-bold text-sm text-slate-800 truncate w-full">{acc.nombre}</span>
+                    <span className="text-xs text-slate-500 truncate w-full">{acc.email}</span>
+                  </div>
+                  {usuario.uid === acc.uid && (
+                    <span className="material-symbols-outlined text-[#034226] ml-auto text-lg">check_circle</span>
+                  )}
+                </button>
+              ))}
+
+              <button 
+                onClick={() => {
+                  setShowAccountsModal(false);
+                  if (onSwitchAccount) onSwitchAccount(null);
+                  else onLogout();
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-slate-300 hover:border-slate-400 hover:bg-slate-50 transition-colors cursor-pointer mt-2"
+              >
+                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined text-slate-600">person_add</span>
+                </div>
+                <span className="font-bold text-sm text-slate-700">Añadir cuenta nueva</span>
+              </button>
+              
+              <button 
+                onClick={() => setShowAccountsModal(false)}
+                className="w-full font-bold text-slate-500 py-2.5 mt-2 rounded-xl hover:bg-slate-100 transition-colors text-sm"
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}

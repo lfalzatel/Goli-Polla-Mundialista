@@ -309,6 +309,21 @@ export default function App() {
     setUsuario(newUser);
   };
 
+  // Guardar cuenta en el historial de cuentas para cambio rpido
+  useEffect(() => {
+    if (usuario) {
+      const saved = JSON.parse(localStorage.getItem('polla_saved_accounts') || '[]');
+      const existingIndex = saved.findIndex((acc: any) => acc.uid === usuario.uid);
+      const newAccount = { uid: usuario.uid, nombre: usuario.nombre, email: usuario.email, foto: usuario.foto || '' };
+      if (existingIndex >= 0) {
+        saved[existingIndex] = newAccount;
+      } else {
+        saved.push(newAccount);
+      }
+      localStorage.setItem('polla_saved_accounts', JSON.stringify(saved));
+    }
+  }, [usuario]);
+
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
@@ -325,6 +340,26 @@ export default function App() {
     setApuestas([]);
     setRankingLideres([]);
     setActiveTab('inicio');
+  };
+
+  const handleSwitchAccount = async (email: string | null) => {
+    try {
+      setIsLoggingOut(true);
+      await signOut(auth);
+      setUsuario(null);
+      localStorage.removeItem('polla_usuario');
+      
+      if (email) {
+        localStorage.setItem('polla_login_hint', email);
+      } else {
+        localStorage.removeItem('polla_login_hint');
+      }
+      
+      setTimeout(() => setIsLoggingOut(false), 500);
+    } catch (error) {
+      console.error("Error al cambiar de cuenta", error);
+      setIsLoggingOut(false);
+    }
   };
 
   const handleOpenGroupModal = () => {
@@ -631,8 +666,9 @@ export default function App() {
       <Header 
         usuario={usuario} 
         grupoNombre={gruposData[usuario.codigoGrupo] || usuario.codigoGrupo}
-        onLogout={handleLogout} 
-        onChangeGroup={handleOpenGroupModal}
+          onLogout={handleLogout} 
+          onSwitchAccount={handleSwitchAccount}
+          onChangeGroup={handleOpenGroupModal}
         onOpenChat={() => setShowWhatsAppConfirm(true)}
         partidos={partidos}
         onGoToSettings={() => setActiveTab('configuracion')}
