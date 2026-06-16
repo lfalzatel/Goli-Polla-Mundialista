@@ -225,7 +225,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
         <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 mb-3">
           <div>
             <p className="font-bold text-current opacity-70 text-sm">Rol de Cuenta</p>
-            <p className="text-xs text-slate-400 mt-1">{usuario.esAdmin ? 'Administrador' : 'Usuario General'}</p>
+            <p className="text-xs text-current opacity-60 mt-1">{usuario.esAdmin ? 'Administrador' : 'Usuario General'}</p>
           </div>
           <span className="material-symbols-outlined premium-card-title">shield_person</span>
         </div>
@@ -233,7 +233,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
         <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 mb-3">
           <div>
             <p className="font-bold text-current opacity-70 text-sm">Contraseña</p>
-            <p className="text-xs text-slate-400 mt-1">Enviar enlace de recuperación a tu correo</p>
+            <p className="text-xs text-current opacity-60 mt-1">Enviar enlace de recuperación a tu correo</p>
           </div>
           <button 
             onClick={handleResetPassword}
@@ -304,7 +304,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                               } catch(e) { console.error("Error renaming group", e); }
                             }
                           }}
-                          className="text-slate-400 hover:text-current transition-colors p-0.5"
+                          className="text-current opacity-60 hover:text-current transition-colors p-0.5"
                           title="Editar nombre"
                         >
                           <span className="material-symbols-outlined text-[14px]">edit</span>
@@ -424,7 +424,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               <img src={editingUser.foto || "https://ui-avatars.com/api/?name=" + editingUser.nombre} className="w-10 h-10 rounded-full bg-slate-200" alt="" />
               <div>
                 <p className="font-bold text-current text-sm">{editingUser.nombre}</p>
-                <p className="text-xs text-slate-400">{editingUser.email}</p>
+                <p className="text-xs text-current opacity-60">{editingUser.email}</p>
               </div>
             </div>
 
@@ -482,10 +482,10 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                         }}
                         className="accent-current w-4 h-4 cursor-pointer"
                       />
-                      <span>{g.nombre} <span className="text-slate-400 text-xs ml-1 font-mono">({g.codigo})</span></span>
+                      <span>{g.nombre} <span className="text-current opacity-60 text-xs ml-1 font-mono">({g.codigo})</span></span>
                     </label>
                   ))}
-                  {allGroups.length === 0 && <p className="text-xs text-slate-400 p-2 text-center">No hay grupos disponibles</p>}
+                  {allGroups.length === 0 && <p className="text-xs text-current opacity-60 p-2 text-center">No hay grupos disponibles</p>}
                 </div>
               </div>
 
