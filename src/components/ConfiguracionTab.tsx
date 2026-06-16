@@ -52,7 +52,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
   const [editFormData, setEditFormData] = useState({ esAdmin: false, codigoGrupo: '', whatsapp: '', gruposPermitidos: [] as string[] });
 
   useEffect(() => {
-    if (!usuario.esAdmin && usuario.email !== 'lfalzatel@gmail.com') return;
+    const isSuperAdmin = usuario.email === 'lfalzatel@gmail.com' || usuario.email === 'luis.alzate@barroblanco.edu.co';
+    if (!usuario.esAdmin && !isSuperAdmin) return;
 
     // 1. Fetch Admin Groups
     const qGrupos = query(collection(db, 'pm_grupos'), where("creadoPor", "==", usuario.email));
@@ -420,7 +421,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       </section>
 
       {/* SECCIÓN GESTIÓN (ADMIN) */}
-      {(usuario.esAdmin || usuario.email === 'lfalzatel@gmail.com') && (
+      {(usuario.esAdmin || usuario.email === 'lfalzatel@gmail.com' || usuario.email === 'luis.alzate@barroblanco.edu.co') && (
         <section className="premium-card border rounded-2xl p-0 shadow-xl relative overflow-hidden">
           <button 
             onClick={() => setIsAdminExpanded(!isAdminExpanded)}
