@@ -316,3 +316,22 @@
 [data-theme="glass"] .premium-card-title {
   color: #ffffff !important;
 }
+
+/* Header Accents */
+.header-accent-text {
+  color: #e1b12c;
+}
+.header-accent-border {
+  border-color: #e1b12c;
+}
+.header-accent-bg {
+  background-color: #e1b12c;
+}
+
+[data-theme="cyberpunk"] .header-accent-text { color: #00FFB2 !important; }
+[data-theme="cyberpunk"] .header-accent-border { border-color: #00FFB2 !important; }
+[data-theme="cyberpunk"] .header-accent-bg { background-color: #00FFB2 !important; }
+
+[data-theme="glass"] .header-accent-text { color: var(--text-primary) !important; }
+[data-theme="glass"] .header-accent-border { border-color: var(--text-primary) !important; }
+[data-theme="glass"] .header-accent-bg { background-color: var(--text-primary) !important; }

@@ -25,8 +25,8 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
   const [showInstallModal, setShowInstallModal] = useState(false);
 
   const isConsoleMode = themeMode === 'kilocode' || themeMode === 'cyberpunk';
-  const consoleColor = themeMode === 'cyberpunk' ? 'text-[#00FFB2]' : 'text-[#e1b12c]';
-  const consoleBorderClass = themeMode === 'cyberpunk' ? 'border-[#00FFB2]' : 'border-[#e1b12c]';
+  const consoleColor = themeMode === 'cyberpunk' ? 'text-[#00FFB2]' : 'header-accent-text';
+  const consoleBorderClass = themeMode === 'cyberpunk' ? 'border-[#00FFB2]' : 'header-accent-border';
 
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -75,7 +75,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
       {/* Profil capsule and title */}
       <div className="flex items-center gap-2">
         <div className="relative w-11 h-11 shrink-0">
-          <svg className="absolute inset-[-10%] w-[120%] h-[120%] animate-spin text-[#e1b12c] -z-10" style={{ animationDuration: '6s' }} viewBox="0 0 100 100">
+          <svg className="absolute inset-[-10%] w-[120%] h-[120%] animate-spin header-accent-text -z-10" style={{ animationDuration: '6s' }} viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="70 30" strokeLinecap="round" />
           </svg>
           <svg className="absolute inset-[-20%] w-[140%] h-[140%] animate-[spin_9s_linear_infinite_reverse] text-[#000000] opacity-30 -z-10" viewBox="0 0 100 100">
@@ -84,7 +84,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
           <img src="/logo.png" alt="GOLI" className="w-full h-full object-contain rounded-full shadow-lg bg-[#034226]" />
         </div>
         <div className="flex flex-col justify-center">
-            <span className="text-[10px] text-[#e1b12c] font-bold tracking-widest uppercase mb-[-2px] flex items-center gap-1">
+            <span className="text-[10px] header-accent-text font-bold tracking-widest uppercase mb-[-2px] flex items-center gap-1">
               <span className="material-symbols-outlined text-[12px]">group</span>
               GRUPO
             </span>
@@ -171,9 +171,9 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
               className={`flex items-center gap-2 px-3 py-1.5 cursor-pointer transition-colors duration-200 min-h-[44px] ${isConsoleMode ? 'theme-card hover:bg-white/5' : 'rounded-[999px] border border-white/10 font-sans bg-white/5 hover:bg-white/15 active:bg-white/15'}`}
             >
             {usuario.foto ? (
-              <img src={usuario.foto} alt="Perfil" className="w-10 h-10 rounded-full border-2 border-[#e1b12c] object-cover shrink-0" />
+              <img src={usuario.foto} alt="Perfil" className="w-10 h-10 rounded-full border-2 header-accent-border object-cover shrink-0" />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border-2 border-[#e1b12c] shrink-0">
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border-2 header-accent-border shrink-0">
                 <span className="material-symbols-outlined text-white/50 text-[20px]">person</span>
               </div>
             )}
@@ -182,14 +182,14 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                <span className="text-white font-semibold text-[13px] truncate max-w-[70px] sm:max-w-[100px]">
                  {usuario.nombre.split(' ')[0]}
                </span>
-               <span className="text-[#e1b12c] font-medium text-[11px] flex items-center gap-1">
+               <span className="header-accent-text font-medium text-[11px] flex items-center gap-1">
                  <span className="sm:hidden text-[10px]">🏆</span>
                  {usuario.puntosTotal} <span className="hidden sm:inline">pts</span>
                </span>
             </div>
 
             <span 
-              className="material-symbols-outlined text-[#e1b12c] text-[18px] transition-transform duration-200 ml-1" 
+              className="material-symbols-outlined header-accent-text text-[18px] transition-transform duration-200 ml-1" 
               style={{ transform: showDropdown ? 'rotate(180deg)' : 'rotate(0)' }}
             >
               expand_more
@@ -242,7 +242,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                           setThemeMode(themeName);
                         }}
                         className={`flex-1 py-2 flex flex-col items-center justify-center gap-0.5 rounded-[14px] transition-all duration-300 ${
-                            isSelected && themeName === 'kilocode' ? 'bg-[#e1b12c] text-black relative overflow-hidden' :
+                            isSelected && themeName === 'kilocode' ? 'header-accent-bg text-black relative overflow-hidden' :
                             isSelected && themeName === 'cyberpunk' ? 'bg-[#00FFB2] text-black relative overflow-hidden' :
                             isSelected ? (isConsoleMode ? `bg-white/10 font-bold ${consoleColor}` : 'bg-white shadow-sm text-slate-900 font-bold') :
                             (isConsoleMode ? 'text-slate-500 hover:text-slate-300 hover:bg-white/5' : 'text-slate-500 hover:text-slate-900 hover:bg-black/5')
@@ -295,7 +295,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                   onClick={handleShareApp}
                   className={`w-full flex items-center gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider ' + consoleColor : 'px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-950 rounded-lg'} transition-colors cursor-pointer text-left`}
                 >
-                  <span className={`material-symbols-outlined text-[18px] ${isConsoleMode ? 'text-slate-400' : 'text-[#e1b12c]'}`}>share</span>
+                  <span className={`material-symbols-outlined text-[18px] ${isConsoleMode ? 'text-slate-400' : 'header-accent-text'}`}>share</span>
                   <span className="font-sans font-medium">Compartir App</span>
                 </button>
 
@@ -337,7 +337,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowInstallModal(false)}></div>
           <div className="relative w-full max-w-[340px] bg-white rounded-3xl p-6 shadow-2xl animate-in font-sans text-center">
-            <div className="w-16 h-16 bg-[#034226] text-[#e1b12c] rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg border-4 border-slate-50">
+            <div className="w-16 h-16 bg-[#034226] header-accent-text rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg border-4 border-slate-50">
               <span className="material-symbols-outlined text-[32px]">download_for_offline</span>
             </div>
             <h3 className="font-display text-2xl theme-text mb-2">Instalar Goli Polla</h3>
