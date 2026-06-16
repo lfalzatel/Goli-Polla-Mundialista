@@ -176,9 +176,9 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
     <div className="space-y-6 pb-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {/* SECCIÓN APARIENCIA */}
-      <section className="bg-[#034226] border border-[#e1b12c]/30 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+      <section className="premium-card border rounded-2xl p-5 shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 stadium-mesh opacity-20 pointer-events-none"></div>
-        <h2 className="text-[#e1b12c] font-display text-xl mb-4 flex items-center gap-2 relative z-10">
+        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2 relative z-10">
           <span className="material-symbols-outlined">palette</span>
           GESTIÓN DE TEMAS
         </h2>
@@ -189,7 +189,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             <button
               key={theme.id}
               onClick={() => setThemeMode(theme.id)}
-              className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${themeMode === theme.id ? 'border-[#e1b12c] bg-[#e1b12c]/10 text-[#e1b12c] scale-105 shadow-lg shadow-[#e1b12c]/20' : 'border-slate-500/30 bg-black/20 text-slate-300 hover:border-slate-400'}`}
+              className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${themeMode === theme.id ? 'border-current bg-current/10 premium-card-title scale-105 shadow-lg shadow-xl' : 'border-slate-500/30 theme-card/10 theme-text-card opacity-80 hover:border-slate-400'}`}
             >
               <span className="material-symbols-outlined text-[28px] mb-2">{theme.icon}</span>
               <span className="font-sans font-bold text-sm">{theme.name}</span>
@@ -197,16 +197,16 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           ))}
         </div>
 
-        <div className="h-[1px] bg-[#e1b12c]/20 my-4 relative z-10"></div>
+        <div className="h-[1px] bg-current/20 my-4 relative z-10"></div>
 
         <p className="text-sm theme-text opacity-70 font-sans mb-4 relative z-10">Modos en Menú Desplegable</p>
         <div className="space-y-3 relative z-10">
           {AVAILABLE_THEMES.map(theme => (
-            <label key={`toggle-${theme.id}`} className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-slate-500/30 cursor-pointer hover:bg-black/30 transition-colors">
-              <span className="font-mono text-sm text-slate-100">{theme.name === 'Original' ? 'Noche (Original)' : theme.name}</span>
+            <label key={`toggle-${theme.id}`} className="flex items-center justify-between p-3 rounded-lg theme-card/10 border border-slate-500/30 cursor-pointer hover:theme-card/20 transition-colors">
+              <span className="font-mono text-sm theme-text-card">{theme.name === 'Original' ? 'Noche (Original)' : theme.name}</span>
               <input 
                 type="checkbox" 
-                className="w-5 h-5 accent-[#e1b12c]"
+                className="w-5 h-5 accent-current"
                 checked={activeThemes.includes(theme.id)}
                 onChange={() => handleToggleTheme(theme.id)}
               />
@@ -217,27 +217,27 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
       {/* SECCIÓN CUENTA Y PERFIL */}
       <section className="theme-card/5 border border-white/10 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
-        <h2 className="text-[#e1b12c] font-display text-xl mb-4 flex items-center gap-2">
+        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
           <span className="material-symbols-outlined">person</span>
           CUENTA Y PERFIL
         </h2>
         
-        <div className="flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 mb-3">
+        <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 mb-3">
           <div>
             <p className="font-bold theme-text opacity-70 text-sm">Rol de Cuenta</p>
             <p className="text-xs text-slate-400 mt-1">{usuario.esAdmin ? 'Administrador' : 'Usuario General'}</p>
           </div>
-          <span className="material-symbols-outlined text-[#e1b12c]">shield_person</span>
+          <span className="material-symbols-outlined premium-card-title">shield_person</span>
         </div>
 
-        <div className="flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 mb-3">
+        <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 mb-3">
           <div>
             <p className="font-bold theme-text opacity-70 text-sm">Contraseña</p>
             <p className="text-xs text-slate-400 mt-1">Enviar enlace de recuperación a tu correo</p>
           </div>
           <button 
             onClick={handleResetPassword}
-            className="bg-[#e1b12c] text-[#034226] px-3 py-1.5 rounded-lg font-bold text-xs uppercase hover:bg-[#cda024] transition-colors"
+            className="premium-button-accent px-3 py-1.5 rounded-lg font-bold text-xs uppercase hover:bg-[#cda024] transition-colors"
           >
             {resetSent ? 'Enviado!' : 'Resetear'}
           </button>
@@ -246,14 +246,14 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
       {/* SECCIÓN GESTIÓN (ADMIN) */}
       {(usuario.esAdmin || usuario.email === 'lfalzatel@gmail.com') && (
-        <section className="bg-gradient-to-br from-[#034226] to-[#045c36] border border-[#e1b12c]/40 rounded-2xl p-5 shadow-xl">
-          <h2 className="text-[#e1b12c] font-display text-xl mb-4 flex items-center gap-2">
+        <section className="premium-card border rounded-2xl p-5 shadow-xl">
+          <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
             <span className="material-symbols-outlined">admin_panel_settings</span>
             PANEL DE ADMINISTRADOR
           </h2>
           
-          <div className="bg-black/20 rounded-xl p-4 mb-4 border border-white/10">
-            <h4 className="font-sans font-bold text-[#e1b12c] mb-3 flex items-center gap-2">
+          <div className="theme-card/10 rounded-xl p-4 mb-4 border border-white/10">
+            <h4 className="font-sans font-bold premium-card-title mb-3 flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px]">group_add</span>
               Crear Nuevo Grupo
             </h4>
@@ -263,19 +263,19 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 placeholder="Nombre del Grupo (Ej. Empresa X)" 
                 value={newGroupName}
                 onChange={e => setNewGroupName(e.target.value)}
-                className="w-full theme-card border border-[#034226] rounded-lg py-2 px-3 text-sm theme-text-card font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none"
+                className="w-full theme-card border border-current rounded-lg py-2 px-3 text-sm theme-text-card font-semibold focus:ring-2 focus:ring-current outline-none"
               />
               <input 
                 type="text" 
                 placeholder="Código Único (Ej. GOLI2026)" 
                 value={newGroupCode}
                 onChange={e => setNewGroupCode(e.target.value)}
-                className="w-full theme-card border border-[#034226] rounded-lg py-2 px-3 text-sm theme-text-card font-semibold focus:ring-2 focus:ring-[#e1b12c] outline-none uppercase"
+                className="w-full theme-card border border-current rounded-lg py-2 px-3 text-sm theme-text-card font-semibold focus:ring-2 focus:ring-current outline-none uppercase"
               />
             </div>
             <button
               onClick={handleCreateGroup}
-              className="bg-[#e1b12c] hover:bg-[#cda023] text-[#034226] font-sans text-sm font-bold py-2.5 px-5 rounded-xl transition-all shadow-md active:scale-95 w-full md:w-auto"
+              className="premium-button-accent hover:opacity-90 font-sans text-sm font-bold py-2.5 px-5 rounded-xl transition-all shadow-md active:scale-95 w-full md:w-auto"
             >
               Crear Grupo
             </button>
@@ -284,8 +284,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
           {/* Lista de Grupos */}
           {misGrupos.length > 0 && (
-            <div className="bg-black/20 rounded-xl p-4 mb-4 border border-white/10">
-              <h4 className="font-sans font-bold text-[#e1b12c] mb-3 flex items-center gap-2">
+            <div className="theme-card/10 rounded-xl p-4 mb-4 border border-white/10">
+              <h4 className="font-sans font-bold premium-card-title mb-3 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[18px]">group</span>
                 Tus Grupos Creados
               </h4>
@@ -294,7 +294,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                   <div key={g.id} className="theme-card/5 border border-white/10 rounded-lg p-3 flex flex-col gap-3 shadow-sm">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
-                        <p className="font-bold text-white text-sm leading-tight">{g.nombre}</p>
+                        <p className="font-bold theme-text-card text-sm leading-tight">{g.nombre}</p>
                         <button 
                           onClick={async () => {
                             const newName = window.prompt("Ingresa el nuevo nombre para el grupo:", g.nombre);
@@ -304,7 +304,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                               } catch(e) { console.error("Error renaming group", e); }
                             }
                           }}
-                          className="text-slate-400 hover:text-white transition-colors p-0.5"
+                          className="text-slate-400 hover:theme-text-card transition-colors p-0.5"
                           title="Editar nombre"
                         >
                           <span className="material-symbols-outlined text-[14px]">edit</span>
@@ -329,8 +329,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                         onClick={() => handleCopyCode(g.codigo)}
                         className={`font-mono font-bold text-xs px-3 py-1.5 rounded border transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
                           copiedCode === g.codigo 
-                            ? 'bg-[#e1b12c] text-[#034226] border-[#cda023]' 
-                            : 'theme-card/10 text-white border-white/20 hover:theme-card/20'
+                            ? 'premium-button-accent border-[#cda023]' 
+                            : 'theme-card/10 theme-text-card border-white/20 hover:theme-card/20'
                         }`}
                         title="Copiar código"
                       >
@@ -345,14 +345,14 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           )}
 
           {/* Listado de Usuarios */}
-          <div className="bg-black/20 rounded-xl p-4 border border-white/10">
-            <h4 className="font-sans font-bold text-[#e1b12c] mb-3 flex items-center gap-2">
+          <div className="theme-card/10 rounded-xl p-4 border border-white/10">
+            <h4 className="font-sans font-bold premium-card-title mb-3 flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px]">manage_accounts</span>
               Gestión de Usuarios
             </h4>
             
             {loadingUsers ? (
-              <p className="text-white text-xs text-center py-4 opacity-50 animate-pulse">Cargando usuarios...</p>
+              <p className="theme-text-card text-xs text-center py-4 opacity-50 animate-pulse">Cargando usuarios...</p>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
                 {allUsers.map(u => (
@@ -360,14 +360,14 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     <div className="flex items-center gap-3">
                       <img src={u.foto || "https://ui-avatars.com/api/?name=" + u.nombre} className="w-8 h-8 rounded-full bg-slate-200" alt={u.nombre} />
                       <div>
-                        <p className="font-bold text-white text-xs">{u.nombre}</p>
-                        <p className="text-[10px] text-slate-300">{u.email} • Grupo: <span className="text-[#e1b12c] font-mono">{u.codigoGrupo || 'N/A'}</span></p>
+                        <p className="font-bold theme-text-card text-xs">{u.nombre}</p>
+                        <p className="text-[10px] theme-text-card opacity-80">{u.email} • Grupo: <span className="premium-card-title font-mono">{u.codigoGrupo || 'N/A'}</span></p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <button 
                         onClick={() => handleOpenEditUser(u)}
-                        className="theme-card/10 hover:theme-card/20 text-white p-1.5 rounded-lg transition-colors"
+                        className="theme-card/10 hover:theme-card/20 theme-text-card p-1.5 rounded-lg transition-colors"
                         title="Editar usuario"
                       >
                         <span className="material-symbols-outlined text-[16px]">edit</span>
@@ -389,16 +389,16 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
         </h2>
         
         <div className="space-y-3">
-          <button className="w-full flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 hover:bg-black/50 transition-colors">
+          <button className="w-full flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 hover:bg-black/50 transition-colors">
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-[#e1b12c]">download</span>
+              <span className="material-symbols-outlined premium-card-title">download</span>
               <span className="font-bold theme-text opacity-70 text-sm">Instalar Aplicación (PWA)</span>
             </div>
           </button>
           
-          <button onClick={handleShareApp} className="w-full flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5 hover:bg-black/50 transition-colors">
+          <button onClick={handleShareApp} className="w-full flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 hover:bg-black/50 transition-colors">
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-[#e1b12c]">share</span>
+              <span className="material-symbols-outlined premium-card-title">share</span>
               <span className="font-bold theme-text opacity-70 text-sm">Compartir App</span>
             </div>
           </button>
@@ -413,9 +413,9 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setEditingUser(null)}></div>
-          <div className="relative w-full max-w-[340px] bg-[#034226] border border-[#e1b12c]/30 rounded-3xl p-6 shadow-2xl animate-in fade-in slide-in-from-bottom-4 font-sans">
+          <div className="relative w-full max-w-[340px] premium-card border rounded-3xl p-6 shadow-2xl animate-in fade-in slide-in-from-bottom-4 font-sans">
                         <div className="flex justify-between items-center">
-                      <p className="font-mono text-xl text-[#e1b12c] font-bold tracking-widest">
+                      <p className="font-mono text-xl premium-card-title font-bold tracking-widest">
                         {editingUser.codigoGrupo}
                       </p>
                     </div>
@@ -423,24 +423,24 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             <div className="flex items-center gap-3 mb-6 theme-card/5 p-3 rounded-xl border border-white/10">
               <img src={editingUser.foto || "https://ui-avatars.com/api/?name=" + editingUser.nombre} className="w-10 h-10 rounded-full bg-slate-200" alt="" />
               <div>
-                <p className="font-bold text-white text-sm">{editingUser.nombre}</p>
+                <p className="font-bold theme-text-card text-sm">{editingUser.nombre}</p>
                 <p className="text-xs text-slate-400">{editingUser.email}</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-[#e1b12c] mb-1.5 uppercase">Rol</label>
+                <label className="block text-xs font-bold premium-card-title mb-1.5 uppercase">Rol</label>
                 <div className="flex gap-2">
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: false})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-100 theme-text-card border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-100 theme-text-card border border-slate-300 shadow-inner' : 'theme-card/10 theme-text-card opacity-80 border border-transparent'}`}
                   >
                     Usuario
                   </button>
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: true})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-slate-100 theme-text-card border border-slate-300 shadow-inner' : 'bg-black/20 text-slate-300 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-slate-100 theme-text-card border border-slate-300 shadow-inner' : 'theme-card/10 theme-text-card opacity-80 border border-transparent'}`}
                   >
                     Administrador
                   </button>
@@ -448,15 +448,15 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#e1b12c] mb-1.5 uppercase">Grupo Activo (Principal)</label>
+                <label className="block text-xs font-bold premium-card-title mb-1.5 uppercase">Grupo Activo (Principal)</label>
                 <select 
                   value={editFormData.codigoGrupo}
                   onChange={(e) => setEditFormData({...editFormData, codigoGrupo: e.target.value})}
-                  className="w-full bg-black/30 border border-white/10 rounded-lg py-2.5 px-3 text-white font-mono focus:border-[#e1b12c] outline-none transition-colors appearance-none"
+                  className="w-full theme-card/20 border border-white/10 rounded-lg py-2.5 px-3 theme-text-card font-mono focus:border-current outline-none transition-colors appearance-none"
                 >
                   <option value="">Seleccionar grupo...</option>
                   {allGroups.map(g => (
-                    <option key={g.id} value={g.codigo} className="bg-[#034226] text-white">
+                    <option key={g.id} value={g.codigo} className="premium-card theme-text-card">
                       {g.nombre} ({g.codigo})
                     </option>
                   ))}
@@ -464,10 +464,10 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#e1b12c] mb-1.5 uppercase">Grupos Permitidos</label>
-                <div className="max-h-32 overflow-y-auto bg-black/20 border border-white/10 rounded-lg p-2 space-y-1">
+                <label className="block text-xs font-bold premium-card-title mb-1.5 uppercase">Grupos Permitidos</label>
+                <div className="max-h-32 overflow-y-auto theme-card/10 border border-white/10 rounded-lg p-2 space-y-1">
                   {allGroups.map(g => (
-                    <label key={g.id} className="flex items-center gap-3 text-white text-sm cursor-pointer hover:theme-card/5 p-1.5 rounded-md transition-colors">
+                    <label key={g.id} className="flex items-center gap-3 theme-text-card text-sm cursor-pointer hover:theme-card/5 p-1.5 rounded-md transition-colors">
                       <input 
                         type="checkbox" 
                         checked={editFormData.gruposPermitidos.includes(g.codigo)}
@@ -480,7 +480,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                               : prev.gruposPermitidos.filter(id => id !== g.codigo)
                           }));
                         }}
-                        className="accent-[#e1b12c] w-4 h-4 cursor-pointer"
+                        className="accent-current w-4 h-4 cursor-pointer"
                       />
                       <span>{g.nombre} <span className="text-slate-400 text-xs ml-1 font-mono">({g.codigo})</span></span>
                     </label>
@@ -490,12 +490,12 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#e1b12c] mb-1.5 uppercase">WhatsApp</label>
+                <label className="block text-xs font-bold premium-card-title mb-1.5 uppercase">WhatsApp</label>
                 <input 
                   type="text"
                   value={editFormData.whatsapp}
                   onChange={(e) => setEditFormData({...editFormData, whatsapp: e.target.value})}
-                  className="w-full bg-black/30 border border-white/10 rounded-lg py-2.5 px-3 text-white font-sans focus:border-[#e1b12c] outline-none transition-colors"
+                  className="w-full theme-card/20 border border-white/10 rounded-lg py-2.5 px-3 theme-text-card font-sans focus:border-current outline-none transition-colors"
                   placeholder="Ej. 3001234567"
                 />
               </div>
@@ -503,7 +503,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
             <button 
               onClick={handleSaveUserEdit}
-              className="w-full bg-[#e1b12c] hover:bg-[#cda023] text-[#034226] font-bold py-3 rounded-xl mt-6 transition-all shadow-[0_4px_12px_rgba(225,177,44,0.3)] active:scale-95"
+              className="w-full premium-button-accent hover:opacity-90 font-bold py-3 rounded-xl mt-6 transition-all shadow-[0_4px_12px_rgba(225,177,44,0.3)] active:scale-95"
             >
               Guardar Cambios
             </button>
