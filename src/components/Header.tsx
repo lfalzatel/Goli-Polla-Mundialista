@@ -25,7 +25,6 @@ export default function Header({ usuario, grupoNombre, onLogout, onSwitchAccount
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
-  const [showAccountsModal, setShowAccountsModal] = useState(false);
 
   const savedAccounts = JSON.parse(localStorage.getItem('polla_saved_accounts') || '[]');
 
@@ -327,23 +326,50 @@ export default function Header({ usuario, grupoNombre, onLogout, onSwitchAccount
                   <span className="font-sans font-medium">Compartir App</span>
                 </button>
 
-                <button
-                  onClick={() => {
-                    setShowDropdown(false);
-                    if (savedAccounts.length > 0) {
-                      setShowAccountsModal(true);
-                    } else {
+                <div className={`h-[1px] my-2 ${isConsoleMode ? 'bg-white/5' : 'bg-slate-100'}`} />
+
+                {/* Cuentas Guardadas directamente en el menú */}
+                <div className="flex flex-col gap-1 py-1">
+                  <span className={`px-3 text-[10px] font-bold uppercase tracking-wider ${isConsoleMode ? 'text-slate-500' : 'text-slate-400'} mb-1`}>
+                    Tus cuentas
+                  </span>
+                  {savedAccounts.map((acc: any) => (
+                    <button 
+                      key={acc.uid}
+                      onClick={() => {
+                        setShowDropdown(false);
+                        if (onSwitchAccount) onSwitchAccount(acc.email);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors cursor-pointer text-left ${usuario.uid === acc.uid ? (isConsoleMode ? 'bg-white/10' : 'bg-slate-100') : (isConsoleMode ? 'hover:bg-white/5 text-slate-300' : 'hover:bg-slate-50 text-slate-700')}`}
+                    >
+                      {acc.foto ? (
+                        <img src={acc.foto} alt={acc.nombre} className="w-6 h-6 rounded-full object-cover shrink-0" />
+                      ) : (
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${isConsoleMode ? 'bg-white/10' : 'bg-slate-200'}`}>
+                          <span className={`material-symbols-outlined text-[14px] ${isConsoleMode ? 'text-white' : 'text-slate-600'}`}>person</span>
+                        </div>
+                      )}
+                      <span className="font-sans font-medium truncate flex-1">{acc.nombre}</span>
+                      {usuario.uid === acc.uid && (
+                        <span className={`material-symbols-outlined text-[16px] ${isConsoleMode ? consoleColor : 'text-[#034226]'}`}>check_circle</span>
+                      )}
+                    </button>
+                  ))}
+
+                  <button 
+                    onClick={() => {
+                      setShowDropdown(false);
                       if (onSwitchAccount) onSwitchAccount(null);
                       else onLogout();
-                    }
-                  }}
-                  className={`w-full flex items-center gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider ' + consoleColor : 'px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg'} transition-colors cursor-pointer text-left`}
-                >
-                  <span className={`material-symbols-outlined text-[18px] ${isConsoleMode ? 'text-slate-400' : 'text-slate-400'}`}>
-                    switch_account
-                  </span>
-                  <span className="font-sans font-medium">Cambiar / Añadir cuenta</span>
-                </button>
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors cursor-pointer text-left ${isConsoleMode ? 'hover:bg-white/5 text-slate-400' : 'hover:bg-slate-50 text-slate-600'}`}
+                  >
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 border border-dashed ${isConsoleMode ? 'border-slate-500' : 'border-slate-300'}`}>
+                      <span className={`material-symbols-outlined text-[14px]`}>person_add</span>
+                    </div>
+                    <span className="font-sans font-medium">Añadir cuenta nueva</span>
+                  </button>
+                </div>
 
                 <div className={`h-[1px] my-1 ${isConsoleMode ? 'bg-white/5' : 'bg-slate-100'}`} />
 
@@ -396,71 +422,6 @@ export default function Header({ usuario, grupoNombre, onLogout, onSwitchAccount
             <button onClick={() => setShowInstallModal(false)} className="w-full font-bold text-slate-400 py-3 rounded-xl hover:bg-slate-50 transition-colors">
               Entendido
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Accounts Modal */}
-      {showAccountsModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowAccountsModal(false)}></div>
-          <div className="relative w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="bg-gradient-to-r from-[#034226] to-[#045c36] p-5">
-              <h3 className="text-xl font-display text-white flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#e1b12c]">switch_account</span>
-                Selecciona una cuenta
-              </h3>
-              <p className="text-[#e1b12c] font-sans text-xs mt-1">Ingresa directamente sin contraseña</p>
-            </div>
-            
-            <div className="p-4 flex flex-col gap-3">
-              {savedAccounts.map((acc: any) => (
-                <button 
-                  key={acc.uid}
-                  onClick={() => {
-                    setShowAccountsModal(false);
-                    if (onSwitchAccount) onSwitchAccount(acc.email);
-                  }}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer ${usuario.uid === acc.uid ? 'border-[#034226] bg-[#034226]/5' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}
-                >
-                  {acc.foto ? (
-                    <img src={acc.foto} alt={acc.nombre} className="w-10 h-10 rounded-full object-cover shrink-0" />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-[#034226]/10 flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-[#034226]">person</span>
-                    </div>
-                  )}
-                  <div className="flex flex-col items-start min-w-0">
-                    <span className="font-bold text-sm text-slate-800 truncate w-full">{acc.nombre}</span>
-                    <span className="text-xs text-slate-500 truncate w-full">{acc.email}</span>
-                  </div>
-                  {usuario.uid === acc.uid && (
-                    <span className="material-symbols-outlined text-[#034226] ml-auto text-lg">check_circle</span>
-                  )}
-                </button>
-              ))}
-
-              <button 
-                onClick={() => {
-                  setShowAccountsModal(false);
-                  if (onSwitchAccount) onSwitchAccount(null);
-                  else onLogout();
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-slate-300 hover:border-slate-400 hover:bg-slate-50 transition-colors cursor-pointer mt-2"
-              >
-                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-slate-600">person_add</span>
-                </div>
-                <span className="font-bold text-sm text-slate-700">Añadir cuenta nueva</span>
-              </button>
-              
-              <button 
-                onClick={() => setShowAccountsModal(false)}
-                className="w-full font-bold text-slate-500 py-2.5 mt-2 rounded-xl hover:bg-slate-100 transition-colors text-sm"
-              >
-                Cancelar
-              </button>
-            </div>
           </div>
         </div>
       )}

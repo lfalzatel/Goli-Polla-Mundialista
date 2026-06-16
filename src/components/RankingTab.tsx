@@ -249,10 +249,17 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                                 ) : apuesta ? (
                                   <div className="flex flex-col items-center mb-1">
                                     <span className="text-[10px] font-bold theme-text-muted tracking-wider mb-0.5 uppercase">Pronóstico</span>
-                                    <div className="theme-card border border-[#e1b12c]/30 rounded-lg px-3 sm:px-5 py-1.5 flex items-center justify-center gap-2 sm:gap-4 shadow-inner">
-                                      <span className="font-mono text-xl sm:text-2xl font-bold theme-text-card">{apuesta.golesLocalApuesta}</span>
-                                      <span className="theme-text-muted">-</span>
-                                      <span className="font-mono text-xl sm:text-2xl font-bold theme-text-card">{apuesta.golesVisitanteApuesta}</span>
+                                    <div className="theme-card border border-[#e1b12c]/30 rounded-lg px-3 sm:px-5 py-1.5 flex flex-col items-center justify-center shadow-inner">
+                                      <div className="flex items-center gap-2 sm:gap-4">
+                                        <span className="font-mono text-xl sm:text-2xl font-bold theme-text-card">{apuesta.golesLocalApuesta}</span>
+                                        <span className="theme-text-muted">-</span>
+                                        <span className="font-mono text-xl sm:text-2xl font-bold theme-text-card">{apuesta.golesVisitanteApuesta}</span>
+                                      </div>
+                                      {apuesta.totalGolesApuesta && (
+                                        <span className={`text-[10px] font-bold px-1.5 rounded mt-0.5 ${apuesta.totalGolesApuesta === 'mas25' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                          {apuesta.totalGolesApuesta === 'mas25' ? '+2.5 Goles' : '-2.5 Goles'}
+                                        </span>
+                                      )}
                                     </div>
                                   </div>
                                 ) : (
