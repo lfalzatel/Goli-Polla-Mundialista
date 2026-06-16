@@ -220,7 +220,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               <span className="font-mono text-sm text-current">{theme.name === 'Original' ? 'Noche (Original)' : theme.name}</span>
               <input 
                 type="checkbox" 
-                className="w-5 h-5 accent-current"
+                className="w-5 h-5 cursor-pointer rounded border-2 border-current bg-transparent checked:bg-blue-500 checked:border-blue-500 transition-colors"
                 checked={activeThemes.includes(theme.id)}
                 onChange={() => handleToggleTheme(theme.id)}
               />
@@ -236,25 +236,66 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           CUENTA Y PERFIL
         </h2>
         
-        <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 mb-3">
-          <div>
-            <p className="font-bold text-current opacity-70 text-sm">Rol de Cuenta</p>
-            <p className="text-xs text-current opacity-60 mt-1">{usuario.esAdmin ? 'Administrador' : 'Usuario General'}</p>
+        <div className="flex flex-col gap-3 mb-3">
+          <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5">
+            <div>
+              <p className="font-bold text-current opacity-70 text-sm">Rol de Cuenta</p>
+              <p className="text-xs text-current opacity-60 mt-1">{usuario.esAdmin ? 'Administrador' : 'Usuario General'}</p>
+            </div>
+            <span className="material-symbols-outlined premium-card-title">shield_person</span>
           </div>
-          <span className="material-symbols-outlined premium-card-title">shield_person</span>
-        </div>
 
-        <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 mb-3">
-          <div>
-            <p className="font-bold text-current opacity-70 text-sm">Contraseña</p>
-            <p className="text-xs text-current opacity-60 mt-1">Enviar enlace de recuperación a tu correo</p>
+          <div className="flex flex-col gap-2 p-3 rounded-lg theme-card/20 border border-white/5">
+            <div>
+              <p className="font-bold text-current opacity-70 text-sm">Sonido de Notificación</p>
+              <p className="text-xs text-current opacity-60 mt-1">Elige el sonido que escucharás al recibir mensajes</p>
+            </div>
+            <div className="flex gap-2 mt-2">
+              <button 
+                onClick={async () => {
+                  try {
+                    await updateDoc(doc(db, 'pm_usuarios', usuario.uid), { notificationSound: 'notification' });
+                    const audio = new Audio('/assets/sounds/notification.mp3');
+                    audio.play().catch(e => console.error("Error playing sound:", e));
+                  } catch (e) {
+                    console.error("Error saving sound pref", e);
+                  }
+                }}
+                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border flex items-center justify-center gap-2 transition-colors ${(!usuario.notificationSound || usuario.notificationSound === 'notification') ? 'bg-current text-slate-900 border-current shadow-lg' : 'border-current/30 text-current hover:bg-current/10'}`}
+              >
+                <span className="material-symbols-outlined text-[16px]">notifications_active</span>
+                Silbato
+              </button>
+              <button 
+                onClick={async () => {
+                  try {
+                    await updateDoc(doc(db, 'pm_usuarios', usuario.uid), { notificationSound: 'notification-sound' });
+                    const audio = new Audio('/assets/sounds/notification-sound.mp3');
+                    audio.play().catch(e => console.error("Error playing sound:", e));
+                  } catch (e) {
+                    console.error("Error saving sound pref", e);
+                  }
+                }}
+                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border flex items-center justify-center gap-2 transition-colors ${usuario.notificationSound === 'notification-sound' ? 'bg-current text-slate-900 border-current shadow-lg' : 'border-current/30 text-current hover:bg-current/10'}`}
+              >
+                <span className="material-symbols-outlined text-[16px]">campaign</span>
+                Estadio
+              </button>
+            </div>
           </div>
-          <button 
-            onClick={handleResetPassword}
-            className="premium-button-accent px-3 py-1.5 rounded-lg font-bold text-xs uppercase hover:bg-[#cda024] transition-colors"
-          >
-            {resetSent ? 'Enviado!' : 'Resetear'}
-          </button>
+
+          <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5">
+            <div>
+              <p className="font-bold text-current opacity-70 text-sm">Contraseña</p>
+              <p className="text-xs text-current opacity-60 mt-1">Enviar enlace de recuperación a tu correo</p>
+            </div>
+            <button 
+              onClick={handleResetPassword}
+              className="premium-button-accent px-3 py-1.5 rounded-lg font-bold text-xs uppercase hover:bg-[#cda024] transition-colors"
+            >
+              {resetSent ? '¡Enviado!' : 'Resetear'}
+            </button>
+          </div>
         </div>
       </section>
 
@@ -494,7 +535,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                               : prev.gruposPermitidos.filter(id => id !== g.codigo)
                           }));
                         }}
-                        className="accent-current w-4 h-4 cursor-pointer"
+                        className="w-4 h-4 cursor-pointer rounded border-2 border-current bg-transparent checked:bg-blue-500 checked:border-blue-500 transition-colors"
                       />
                       <span>{g.nombre} <span className="text-current opacity-60 text-xs ml-1 font-mono">({g.codigo})</span></span>
                     </label>

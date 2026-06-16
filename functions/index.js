@@ -237,3 +237,90 @@ async function calcularYGuardarPuntos(partidoId, partidoActualizado) {
 
   await batch.commit();
 }
+
+// 5. Cron Job: sendMatchReminders
+exports.sendMatchReminders = functions.pubsub
+  .schedule('every 15 minutes')
+  .timeZone('America/Bogota')
+  .onRun(async (context) => {
+    const snapshot = await db.collection('pm_partidos').get();
+    const now = new Date();
+    
+    const upcomingMatches = [];
+    snapshot.forEach(doc => {
+      const p = doc.data();
+      if (!p.fecha || !p.hora || p.estado === 'finalizado') return;
+      try {
+        const parts = p.fecha.split(' ');
+        if (parts.length < 2) return;
+        const [day, month] = parts[1].split('-');
+        const year = 2026; // Adjust if necessary
+        
+        let [time, modifier] = p.hora.split(' ');
+        let [hours, minutes] = time.split(':');
+        if (hours === '12') hours = '00';
+        if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
+        
+        const startTime = new Date(`${year}-${month}-${day}T${hours.toString().padStart(2, '0')}:${minutes}:00-05:00`); 
+        
+        const diffMs = startTime.getTime() - now.getTime();
+        const diffHours = diffMs / (1000 * 60 * 60);
+        
+        // Target times: 12h, 2h, 1h. Margin of 0.25h (15 minutes)
+        const is12h = diffHours > 11.75 && diffHours <= 12.0;
+        const is2h = diffHours > 1.75 && diffHours <= 2.0;
+        const is1h = diffHours > 0.75 && diffHours <= 1.0;
+
+        if (is12h) upcomingMatches.push({ ...p, hoursLeft: 12 });
+        else if (is2h) upcomingMatches.push({ ...p, hoursLeft: 2 });
+        else if (is1h) upcomingMatches.push({ ...p, hoursLeft: 1 });
+      } catch (e) {
+        // Ignore parsing errors for this match
+      }
+    });
+
+    if (upcomingMatches.length === 0) {
+      console.log('No matches requiring reminders at this time.');
+      return null;
+    }
+
+    // Fetch users with fcmToken
+    const usersSnap = await db.collection('pm_usuarios').get();
+    const tokens = [];
+    usersSnap.forEach(u => {
+       const token = u.data().fcmToken;
+       if (token) tokens.push(token);
+    });
+
+    if (tokens.length === 0) {
+       console.log('No users with FCM tokens found.');
+       return null;
+    }
+
+    const messages = [];
+    upcomingMatches.forEach(match => {
+        let title = `¡El partido comienza en ${match.hoursLeft} horas!`;
+        if (match.hoursLeft === 1) title = '¡El partido comienza en 1 hora!';
+        
+        const body = `¡No olvides hacer tu apuesta! ${match.equipoLocal} vs ${match.equipoVisitante}`;
+        
+        const message = {
+          notification: {
+            title,
+            body,
+          },
+          tokens: tokens,
+        };
+        messages.push(admin.messaging().sendEachForMulticast(message));
+    });
+
+    try {
+        const responses = await Promise.all(messages);
+        let successCount = 0;
+        responses.forEach(r => successCount += r.successCount);
+        console.log(`Sent reminders for ${upcomingMatches.length} matches. Delivered to ${successCount} devices.`);
+    } catch (e) {
+        console.error("Error sending push notifications", e);
+    }
+    return null;
+  });

@@ -89,7 +89,10 @@ export default function App() {
         unsubscribe = onMessage(messaging, (payload) => {
           console.log('[App.tsx] Foreground message received. ', payload);
           // Play sound
-          const audio = new Audio('/assets/sounds/notification.mp3');
+          const soundFile = usuario?.notificationSound === 'notification-sound' 
+            ? 'notification-sound.mp3' 
+            : 'notification.mp3';
+          const audio = new Audio(`/assets/sounds/${soundFile}`);
           audio.play().catch(e => console.log('Audio play failed', e));
           
           // Show toast
@@ -105,7 +108,7 @@ export default function App() {
     };
     setupMessaging();
     return () => unsubscribe();
-  }, []);
+  }, [usuario?.notificationSound]);
 
   // Request Notification Permissions and save Token
   useEffect(() => {
@@ -120,7 +123,7 @@ export default function App() {
             // Importante: Aquí se usa la llave VAPID real generada en Firebase.
             const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY });
             if (token) {
-              await setDoc(doc(db, 'users', usuario.uid), { fcmToken: token }, { merge: true });
+              await setDoc(doc(db, 'pm_usuarios', usuario.uid), { fcmToken: token }, { merge: true });
             }
           }
         }

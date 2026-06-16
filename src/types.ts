@@ -22,6 +22,7 @@ export interface Usuario {
   puntosPorGrupo?: Record<string, number>;
   createdAt: string;
   esAdmin?: boolean;
+  notificationSound?: string;
 }
 
 export interface Partido {
