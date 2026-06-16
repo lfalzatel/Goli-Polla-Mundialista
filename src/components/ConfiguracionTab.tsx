@@ -10,6 +10,7 @@ interface ConfiguracionTabProps {
   activeThemes: string[];
   setActiveThemes: (themes: string[]) => void;
   onLogout: () => void;
+  onToggleNotifications?: (enabled: boolean) => void;
 }
 
 const AVAILABLE_THEMES = [
@@ -20,8 +21,9 @@ const AVAILABLE_THEMES = [
   { id: 'kilocode', name: 'Kilo', icon: 'bolt' }
 ];
 
-export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, activeThemes, setActiveThemes, onLogout }: ConfiguracionTabProps) {
+export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, activeThemes, setActiveThemes, onLogout, onToggleNotifications }: ConfiguracionTabProps) {
   const [resetSent, setResetSent] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   
   // Admin Group States
   const [misGrupos, setMisGrupos] = useState<any[]>([]);
@@ -186,9 +188,44 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
     }
   };
 
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  const handleTestNotification = async () => {
+    try {
+      showToast("Enviando notificación de prueba...");
+      const idToken = await getAuth().currentUser?.getIdToken();
+      const response = await fetch('https://us-central1-green-force-pwa-2025.cloudfunctions.net/sendTestNotification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ data: { uid: usuario.uid } })
+      });
+      const data = await response.json();
+      if (data.result?.success) {
+        showToast("¡Notificación enviada con éxito!");
+      } else {
+        showToast("Error al enviar la notificación.");
+      }
+    } catch (e) {
+      console.error(e);
+      showToast("Error al invocar la función de prueba.");
+    }
+  };
+
   return (
     <div className="space-y-6 pb-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
+      {toastMessage && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[200] bg-[#0a0b0d] border border-[#f59e0b] shadow-[0_0_20px_rgba(245,158,11,0.4)] rounded-xl px-6 py-4 flex items-center justify-center animate-in fade-in zoom-in duration-300">
+          <p className="font-mono text-[#f59e0b] text-sm font-bold tracking-wide">{toastMessage}</p>
+        </div>
+      )}
+
       {/* SECCIÓN APARIENCIA */}
       <section className="premium-card border rounded-2xl p-5 shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 stadium-mesh opacity-20 pointer-events-none"></div>
@@ -245,6 +282,46 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             <span className="material-symbols-outlined premium-card-title">shield_person</span>
           </div>
 
+          <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5">
+            <div>
+              <p className="font-bold text-current opacity-70 text-sm">Contraseña</p>
+              <p className="text-xs text-current opacity-60 mt-1">Enviar enlace de recuperación a tu correo</p>
+            </div>
+            <button 
+              onClick={handleResetPassword}
+              className="premium-button-accent px-3 py-1.5 rounded-lg font-bold text-xs uppercase hover:bg-[#cda024] transition-colors"
+            >
+              {resetSent ? '¡Enviado!' : 'Resetear'}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* SECCIÓN NOTIFICACIONES */}
+      <section className="premium-card border border-current rounded-2xl p-5 shadow-xl relative overflow-hidden">
+        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
+          <span className="material-symbols-outlined">notifications</span>
+          NOTIFICACIONES
+        </h2>
+        
+        <div className="flex flex-col gap-3 mb-3">
+          <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5">
+            <div>
+              <p className="font-bold text-current opacity-70 text-sm">Alertas Push</p>
+              <p className="text-xs text-current opacity-60 mt-1">Recibir recordatorios de partidos</p>
+            </div>
+            {onToggleNotifications && (
+              <button 
+                onClick={() => {
+                  onToggleNotifications(usuario.notificationsEnabled === false ? true : false);
+                }}
+                className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ${usuario.notificationsEnabled !== false ? 'bg-[#00FFB2]' : 'bg-slate-700'}`}
+              >
+                <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ${usuario.notificationsEnabled !== false ? 'translate-x-6' : 'translate-x-0'}`}></div>
+              </button>
+            )}
+          </div>
+
           <div className="flex flex-col gap-2 p-3 rounded-lg theme-card/20 border border-white/5">
             <div>
               <p className="font-bold text-current opacity-70 text-sm">Sonido de Notificación</p>
@@ -257,7 +334,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     await updateDoc(doc(db, 'pm_usuarios', usuario.uid), { notificationSound: 'notification' });
                     const audio = new Audio('/assets/sounds/notification.mp3');
                     audio.play().catch(e => console.error("Error playing sound:", e));
-                    alert("¡Sonido 'Silbato' seleccionado y guardado!");
+                    showToast("¡Sonido 'Silbato' seleccionado y guardado!");
                   } catch (e) {
                     console.error("Error saving sound pref", e);
                   }
@@ -273,7 +350,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     await updateDoc(doc(db, 'pm_usuarios', usuario.uid), { notificationSound: 'notification-sound' });
                     const audio = new Audio('/assets/sounds/notification-sound.mp3');
                     audio.play().catch(e => console.error("Error playing sound:", e));
-                    alert("¡Sonido 'Estadio' seleccionado y guardado!");
+                    showToast("¡Sonido 'Estadio' seleccionado y guardado!");
                   } catch (e) {
                     console.error("Error saving sound pref", e);
                   }
@@ -284,19 +361,6 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 Estadio
               </button>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5">
-            <div>
-              <p className="font-bold text-current opacity-70 text-sm">Contraseña</p>
-              <p className="text-xs text-current opacity-60 mt-1">Enviar enlace de recuperación a tu correo</p>
-            </div>
-            <button 
-              onClick={handleResetPassword}
-              className="premium-button-accent px-3 py-1.5 rounded-lg font-bold text-xs uppercase hover:bg-[#cda024] transition-colors"
-            >
-              {resetSent ? '¡Enviado!' : 'Resetear'}
-            </button>
           </div>
         </div>
       </section>
@@ -340,6 +404,22 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           </div>
 
           {/* Lista de Grupos */}
+          {misGrupos.length > 0 && (
+            <div className="theme-card/10 rounded-xl p-4 mb-4 border border-white/10">
+              <h4 className="font-sans font-bold premium-card-title mb-3 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px]">campaign</span>
+                Herramientas del Sistema
+              </h4>
+              <p className="text-xs text-current opacity-70 mb-3">Prueba el sistema de notificaciones globales.</p>
+              <button
+                onClick={handleTestNotification}
+                className="w-full premium-button-accent font-bold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wider"
+              >
+                <span className="material-symbols-outlined">send</span>
+                Enviar Notificación de Prueba
+              </button>
+            </div>
+          )}
           {misGrupos.length > 0 && (
             <div className="theme-card/10 rounded-xl p-4 mb-4 border border-white/10">
               <h4 className="font-sans font-bold premium-card-title mb-3 flex items-center gap-2">
@@ -588,18 +668,18 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             <p className="text-slate-300 text-sm mb-6">
               ¿Estás seguro de que deseas eliminar permanentemente a <span className="font-bold text-white">{userToDelete.nombre}</span>? Esta acción no se puede deshacer.
             </p>
-            <div className="flex w-full gap-3">
+            <div className="mt-5 flex justify-end gap-3 w-full">
               <button 
                 onClick={() => setUserToDelete(null)}
-                className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors"
+                className="flex-1 px-4 py-3 font-bold text-sm text-white bg-slate-700 hover:bg-slate-600 rounded-xl"
               >
                 Cancelar
               </button>
               <button 
                 onClick={handleDeleteUser}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors shadow-[0_4px_12px_rgba(239,68,68,0.3)]"
+                className="flex-1 px-4 py-3 bg-red-600/90 hover:bg-red-600 text-white font-bold text-sm rounded-xl border border-red-500/50"
               >
-                Eliminar
+                Sí, Eliminar
               </button>
             </div>
           </div>

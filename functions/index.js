@@ -284,12 +284,15 @@ exports.sendMatchReminders = functions.pubsub
       return null;
     }
 
-    // Fetch users with fcmToken
+    // Fetch users with fcmToken and notifications enabled
     const usersSnap = await db.collection('pm_usuarios').get();
     const tokens = [];
     usersSnap.forEach(u => {
-       const token = u.data().fcmToken;
-       if (token) tokens.push(token);
+       const userData = u.data();
+       const token = userData.fcmToken;
+       if (token && userData.notificationsEnabled !== false) {
+           tokens.push(token);
+       }
     });
 
     if (tokens.length === 0) {
@@ -324,3 +327,65 @@ exports.sendMatchReminders = functions.pubsub
     }
     return null;
   });
+
+// 6. Callable Function: sendTestNotification
+exports.sendTestNotification = functions.https.onRequest(async (req, res) => {
+    // Enable CORS
+    res.set('Access-Control-Allow-Origin', '*');
+    if (req.method === 'OPTIONS') {
+        res.set('Access-Control-Allow-Methods', 'POST');
+        res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        res.status(204).send('');
+        return;
+    }
+
+    try {
+        // Verify Auth
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            res.status(401).send({ error: 'Unauthorized' });
+            return;
+        }
+
+        const idToken = authHeader.split('Bearer ')[1];
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        
+        // Ensure user is admin
+        const userDoc = await db.collection('pm_usuarios').doc(decodedToken.uid).get();
+        if (!userDoc.exists || (!userDoc.data().esAdmin && userDoc.data().email !== 'lfalzatel@gmail.com')) {
+            res.status(403).send({ error: 'Forbidden' });
+            return;
+        }
+
+        // Fetch users to send test to (the user asked for ALL users)
+        const usersSnap = await db.collection('pm_usuarios').get();
+        const tokens = [];
+        usersSnap.forEach(u => {
+           const userData = u.data();
+           const token = userData.fcmToken;
+           if (token && userData.notificationsEnabled !== false) {
+               tokens.push(token);
+           }
+        });
+
+        if (tokens.length === 0) {
+            res.status(200).send({ result: { success: false, message: 'No tokens found' } });
+            return;
+        }
+
+        const message = {
+            notification: {
+                title: '¡Notificación de Prueba!',
+                body: 'Si ves esto, el sistema de notificaciones globales está funcionando perfectamente.',
+            },
+            tokens: tokens,
+        };
+
+        const response = await admin.messaging().sendEachForMulticast(message);
+        res.status(200).send({ result: { success: true, delivered: response.successCount } });
+
+    } catch (e) {
+        console.error("Error en sendTestNotification:", e);
+        res.status(500).send({ error: 'Internal Server Error' });
+    }
+});

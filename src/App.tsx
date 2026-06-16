@@ -329,16 +329,27 @@ export default function App() {
     }
   };
 
-  const handleUpdateWhatsapp = async (newPhone: string) => {
-    if (usuario) {
-      const updatedUser = { ...usuario, whatsapp: newPhone };
-      setUsuario(updatedUser);
-      // Guardar también en Firestore con merge para evitar errores si el documento es nuevo
-      try {
-        await setDoc(doc(db, 'pm_usuarios', usuario.uid), { whatsapp: newPhone }, { merge: true });
-      } catch (e) {
-        console.error("Error al actualizar WhatsApp", e);
-      }
+  const handleUpdateWhatsapp = async (newWhatsapp: string) => {
+    if (!usuario) return;
+    try {
+      await updateDoc(doc(db, 'pm_usuarios', usuario.uid), {
+        whatsapp: newWhatsapp
+      });
+      // La actualización se reflejará a través de onSnapshot en AuthContext
+    } catch (error) {
+      console.error("Error actualizando WhatsApp:", error);
+      alert("Hubo un error al actualizar tu WhatsApp.");
+    }
+  };
+
+  const handleToggleNotifications = async (enabled: boolean) => {
+    if (!usuario) return;
+    try {
+      await updateDoc(doc(db, 'pm_usuarios', usuario.uid), {
+        notificationsEnabled: enabled
+      });
+    } catch (error) {
+      console.error("Error actualizando notificaciones:", error);
     }
   };
 
@@ -558,6 +569,7 @@ export default function App() {
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         activeThemes={activeThemes}
+        onToggleNotifications={handleToggleNotifications}
       />
 
       {/* Group Change Modal */}
@@ -723,6 +735,7 @@ export default function App() {
             activeThemes={activeThemes}
             setActiveThemes={setActiveThemes}
             onLogout={handleLogout}
+            onToggleNotifications={handleToggleNotifications}
           />
         )}
       </main>

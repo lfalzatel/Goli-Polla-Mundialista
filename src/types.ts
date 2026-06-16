@@ -23,6 +23,7 @@ export interface Usuario {
   createdAt: string;
   esAdmin?: boolean;
   notificationSound?: string;
+  notificationsEnabled?: boolean;
 }
 
 export interface Partido {

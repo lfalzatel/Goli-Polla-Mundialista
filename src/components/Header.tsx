@@ -278,6 +278,26 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                   <span className="font-sans font-medium">Configuración</span>
                 </button>
 
+                {/* Notifications Quick Toggle */}
+                {onToggleNotifications && (
+                  <div className={`w-full flex items-center justify-between gap-3 ${isConsoleMode ? 'px-4 py-2.5 text-sm hover:bg-white/5 rounded-lg uppercase tracking-wider ' + consoleColor : 'px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg'} transition-colors text-left`}>
+                    <div className="flex items-center gap-3">
+                      <span className={`material-symbols-outlined text-[18px] ${isConsoleMode ? 'text-slate-400' : 'text-[#034226]'}`}>
+                        {usuario.notificationsEnabled !== false ? 'notifications_active' : 'notifications_off'}
+                      </span>
+                      <span className="font-sans font-medium">Notificaciones</span>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        onToggleNotifications(usuario.notificationsEnabled === false ? true : false);
+                      }}
+                      className={`w-10 h-5 flex items-center rounded-full p-1 transition-colors duration-300 ${usuario.notificationsEnabled !== false ? (isConsoleMode ? 'bg-[#00FFB2]' : 'bg-[#034226]') : 'bg-slate-300 dark:bg-slate-700'}`}
+                    >
+                      <div className={`w-3.5 h-3.5 bg-white rounded-full shadow-md transform transition-transform duration-300 ${usuario.notificationsEnabled !== false ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                    </button>
+                  </div>
+                )}
+
                 <div className={`h-[1px] my-1 ${isConsoleMode ? 'bg-white/5' : 'bg-slate-100'}`} />
 
                 <button
