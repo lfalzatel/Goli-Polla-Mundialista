@@ -24,6 +24,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
   const [editingScores, setEditingScores] = useState<Record<string, { golesLocal: number; golesVisitante: number; totalGolesApuesta?: "mas25" | "menos25" | null }>>({});
   const [editingBonos, setEditingBonos] = useState<Partial<BonificacionesEspeciales>>(bonificaciones || {});
   const [isBonosExpanded, setIsBonosExpanded] = useState(false);
+  const [isAdminExpanded, setIsAdminExpanded] = useState(false);
   const [notifText, setNotifText] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
@@ -242,39 +243,50 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
       
       {/* Simulation Console Card mimicking Cloud Function cron job */}
       {isAdmin && (
-        <div className="premium-card border-2 border-[#e1b12c] rounded-2xl p-5 shadow-xl">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <span className="font-mono text-[9px] premium-button-accent text-[#034226] px-2.5 py-1 rounded-full uppercase tracking-widest font-extrabold shadow-sm">
+        <div className="premium-card border-2 border-[#e1b12c] rounded-2xl overflow-hidden shadow-xl">
+          <button 
+            onClick={() => setIsAdminExpanded(!isAdminExpanded)}
+            className="w-full flex justify-between items-center p-4 bg-black/20 hover:bg-black/30 transition-colors"
+          >
+            <div className="flex flex-col items-start text-left">
+              <span className="font-mono text-[9px] premium-button-accent text-[#034226] px-2.5 py-1 rounded-full uppercase tracking-widest font-extrabold shadow-sm mb-1">
                 Panel de Administrador
               </span>
-              <h3 className="font-display text-xl premium-text mt-2 tracking-wide uppercase">
-                Obtener Resultados Reales
+              <h3 className="font-display text-lg premium-text tracking-wide uppercase">
+                Resultados Reales API
               </h3>
-              <p className="font-sans text-xs premium-text opacity-70 mt-1 leading-relaxed">
+            </div>
+            <span className={`material-symbols-outlined premium-text transition-transform duration-300 ${isAdminExpanded ? 'rotate-180' : ''}`}>
+              expand_more
+            </span>
+          </button>
+
+          {isAdminExpanded && (
+            <div className="p-5 border-t border-white/10 bg-black/10">
+              <p className="font-sans text-xs premium-text opacity-70 mb-4 leading-relaxed">
                 Esta herramienta consulta los partidos finalizados y actualiza los puntajes.
               </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-4 sm:mt-0">
-              <button
-                onClick={runCloudFunctionSync}
-                className="premium-button-accent hover:opacity-90 text-[#034226] font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md flex-1 sm:flex-none justify-center"
-              >
-                <span className="material-symbols-outlined text-[16px] font-bold">cloud_download</span>
-                <span>ACTUALIZAR RESULTADOS</span>
-              </button>
-              
-              {onRepararPuntos && (
+              <div className="flex flex-col sm:flex-row gap-2 w-full">
                 <button
-                  onClick={onRepararPuntos}
-                  className="bg-red-500 hover:bg-red-600 text-white font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md flex-1 sm:flex-none justify-center"
+                  onClick={runCloudFunctionSync}
+                  className="premium-button-accent hover:opacity-90 text-[#034226] font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md flex-1 justify-center"
                 >
-                  <span className="material-symbols-outlined text-[16px] font-bold">build</span>
-                  <span>REPARAR PUNTOS</span>
+                  <span className="material-symbols-outlined text-[16px] font-bold">cloud_download</span>
+                  <span>ACTUALIZAR RESULTADOS</span>
                 </button>
-              )}
+                
+                {onRepararPuntos && (
+                  <button
+                    onClick={onRepararPuntos}
+                    className="bg-red-500 hover:bg-red-600 text-white font-sans font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap shadow-md flex-1 justify-center"
+                  >
+                    <span className="material-symbols-outlined text-[16px] font-bold">build</span>
+                    <span>REPARAR PUNTOS</span>
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
 

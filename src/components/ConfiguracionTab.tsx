@@ -35,6 +35,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [allGroups, setAllGroups] = useState<any[]>([]);
   const [editingUser, setEditingUser] = useState<any | null>(null);
+  const [userToDelete, setUserToDelete] = useState<any | null>(null);
   const [editFormData, setEditFormData] = useState({ esAdmin: false, codigoGrupo: '', whatsapp: '', gruposPermitidos: [] as string[] });
 
   useEffect(() => {
@@ -152,12 +153,12 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
   };
 
   const handleDeleteUser = async () => {
-    if (!editingUser) return;
-    if (!window.confirm(`¿Estás seguro de que deseas eliminar permanentemente a ${editingUser.nombre}?`)) return;
+    if (!userToDelete) return;
     try {
-      await deleteDoc(doc(db, 'pm_usuarios', editingUser.id));
-      setAllUsers(prev => prev.filter(u => u.id !== editingUser.id));
+      await deleteDoc(doc(db, 'pm_usuarios', userToDelete.id));
+      setAllUsers(prev => prev.filter(u => u.id !== userToDelete.id));
       setEditingUser(null);
+      setUserToDelete(null);
     } catch (e) {
       console.error("Error deleting user", e);
       alert('Error al eliminar usuario');
@@ -516,7 +517,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
             <div className="flex gap-3 mt-6">
               <button 
-                onClick={handleDeleteUser}
+                onClick={() => setUserToDelete(editingUser)}
                 className="w-1/3 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 font-bold py-3 rounded-xl transition-all active:scale-95 flex items-center justify-center"
                 title="Eliminar Usuario"
               >
@@ -527,6 +528,35 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 className="w-2/3 premium-button-accent hover:opacity-90 font-bold py-3 rounded-xl transition-all shadow-[0_4px_12px_rgba(225,177,44,0.3)] active:scale-95"
               >
                 Guardar Cambios
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE CONFIRMACIÓN DE ELIMINACIÓN */}
+      {userToDelete && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#1e293b] border border-red-500/30 rounded-2xl w-full max-w-sm p-6 shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col items-center text-center">
+            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
+              <span className="material-symbols-outlined text-red-500 text-3xl">warning</span>
+            </div>
+            <h3 className="text-xl font-display font-bold text-white mb-2">¿Eliminar Usuario?</h3>
+            <p className="text-slate-300 text-sm mb-6">
+              ¿Estás seguro de que deseas eliminar permanentemente a <span className="font-bold text-white">{userToDelete.nombre}</span>? Esta acción no se puede deshacer.
+            </p>
+            <div className="flex w-full gap-3">
+              <button 
+                onClick={() => setUserToDelete(null)}
+                className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleDeleteUser}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors shadow-[0_4px_12px_rgba(239,68,68,0.3)]"
+              >
+                Eliminar
               </button>
             </div>
           </div>
