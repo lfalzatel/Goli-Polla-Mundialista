@@ -136,6 +136,7 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
         clearInterval(interval);
       }, duration);
 
+      googleProvider.setCustomParameters({ prompt: 'select_account' });
       await signInWithPopup(auth, googleProvider);
       // We don't call handleUserAuth here, onAuthStateChanged will handle it.
 
