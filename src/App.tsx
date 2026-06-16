@@ -680,7 +680,7 @@ export default function App() {
       {/* Floating Leaderboard Action Button (Contextual quick tool) */}
       <button 
         onClick={() => setShowFloatingRanking(!showFloatingRanking)}
-        className="fixed bottom-24 right-4 w-12 h-12 bg-[#ffe16d] text-[#121316] hover:bg-[#e9c400] rounded-full shadow-2xl flex items-center justify-center border border-[#ffe16d]/30 active:scale-90 transition-transform cursor-pointer z-40"
+        className="fixed bottom-24 right-4 w-12 h-12 header-accent-bg text-slate-900 hover:opacity-80 rounded-full shadow-2xl flex items-center justify-center border border-white/20 active:scale-90 transition-transform cursor-pointer z-40"
         title="Mostrar tabla de posiciones del grupo"
         aria-haspopup="dialog"
       >
@@ -691,13 +691,13 @@ export default function App() {
       {showFloatingRanking && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowFloatingRanking(false)}></div>
-          <div className="relative w-full max-w-[340px] bg-[#1f1f23] border border-white/10 rounded-2xl p-5 shadow-2xl animate-in font-sans">
+          <div className="relative w-full max-w-[340px] premium-card border rounded-2xl p-5 shadow-2xl animate-in font-sans">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="font-display text-xl text-[#b1c6f9] tracking-wider uppercase flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#ffe16d]">workspace_premium</span>
+              <h4 className="font-display text-xl premium-card-title tracking-wider uppercase flex items-center gap-2">
+                <span className="material-symbols-outlined text-current">workspace_premium</span>
                 Tabla del Grupo
               </h4>
-              <button onClick={() => setShowFloatingRanking(false)} className="text-[#8e9099] hover:text-white p-1">
+              <button onClick={() => setShowFloatingRanking(false)} className="theme-text-muted hover:theme-text-card p-1">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -708,18 +708,18 @@ export default function App() {
                 return (
                   <div 
                     key={lead.uid} 
-                    className={`flex justify-between items-center p-2.5 rounded-xl ${
-                      isSelf ? 'bg-[#79ff5b]/15 border border-[#79ff5b]/30' : 'bg-[#121316]/50'
+                    className={`flex justify-between items-center p-2.5 rounded-xl border ${
+                      isSelf ? 'theme-card section-title-accent' : 'theme-subcard border-transparent'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className="font-mono text-xs text-[#8e9099] w-4 text-center">#{lead.posicion}</span>
-                      <img alt={lead.nombre} className="w-8 h-8 rounded-full border border-white/5" src={lead.foto} />
-                      <span className={`text-xs font-semibold ${isSelf ? 'text-[#79ff5b]' : 'theme-text opacity-70'}`}>
+                      <span className="font-mono text-xs theme-text-muted w-4 text-center">#{lead.posicion}</span>
+                      <img alt={lead.nombre} className="w-8 h-8 rounded-full border border-white/10" src={lead.foto} />
+                      <span className={`text-xs font-semibold ${isSelf ? 'section-title-accent font-bold' : 'theme-text-card opacity-80'}`}>
                         {lead.nombre} {isSelf && '(Tú)'}
                       </span>
                     </div>
-                    <span className="font-mono text-xs text-[#ffe16d] font-bold">{lead.puntosTotal} PTS</span>
+                    <span className="font-mono text-xs premium-card-title font-bold">{lead.puntosTotal} PTS</span>
                   </div>
                 );
               })}
@@ -730,7 +730,7 @@ export default function App() {
                 setActiveTab('ranking');
                 setShowFloatingRanking(false);
               }}
-              className="mt-4 w-full bg-[#192f59] hover:bg-[#314671] text-[#b1c6f9] py-2 rounded-xl text-xs font-bold transition-all uppercase"
+              className="mt-4 w-full theme-subcard section-title-accent border border-current hover:opacity-80 py-2 rounded-xl text-xs font-bold transition-all uppercase"
             >
               Ir a Desglose Completo
             </button>

@@ -385,5 +385,5 @@
   color: rgba(255, 255, 255, 0.6) !important;
 }
 [data-theme="glass"] .theme-text-muted {
-  color: rgba(255, 255, 255, 0.75) !important;
+  color: #0369a1 !important; /* Blue for visibility on light backgrounds */
 }

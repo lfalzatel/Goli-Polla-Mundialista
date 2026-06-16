@@ -114,7 +114,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
               setShowNotifications(!showNotifications);
               setShowDropdown(false);
             }}
-            className="w-8 h-8 rounded-full flex items-center justify-center bg-[#02331d] border border-white/20 hover:bg-[#012213] transition-colors relative cursor-pointer"
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-black/15 border border-white/20 hover:bg-black/25 transition-colors relative cursor-pointer"
           >
             <span className="material-symbols-outlined text-white/80 text-[18px]">notifications</span>
             {hasAlert && (
