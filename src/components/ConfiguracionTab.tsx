@@ -257,11 +257,12 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     await updateDoc(doc(db, 'pm_usuarios', usuario.uid), { notificationSound: 'notification' });
                     const audio = new Audio('/assets/sounds/notification.mp3');
                     audio.play().catch(e => console.error("Error playing sound:", e));
+                    alert("¡Sonido 'Silbato' seleccionado y guardado!");
                   } catch (e) {
                     console.error("Error saving sound pref", e);
                   }
                 }}
-                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border flex items-center justify-center gap-2 transition-colors ${(!usuario.notificationSound || usuario.notificationSound === 'notification') ? 'bg-current text-slate-900 border-current shadow-lg' : 'border-current/30 text-current hover:bg-current/10'}`}
+                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border-2 flex items-center justify-center gap-2 transition-all ${(!usuario.notificationSound || usuario.notificationSound === 'notification') ? 'bg-blue-600 text-white border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.5)] scale-105' : 'border-white/20 text-white/70 hover:bg-white/10'}`}
               >
                 <span className="material-symbols-outlined text-[16px]">notifications_active</span>
                 Silbato
@@ -272,11 +273,12 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     await updateDoc(doc(db, 'pm_usuarios', usuario.uid), { notificationSound: 'notification-sound' });
                     const audio = new Audio('/assets/sounds/notification-sound.mp3');
                     audio.play().catch(e => console.error("Error playing sound:", e));
+                    alert("¡Sonido 'Estadio' seleccionado y guardado!");
                   } catch (e) {
                     console.error("Error saving sound pref", e);
                   }
                 }}
-                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border flex items-center justify-center gap-2 transition-colors ${usuario.notificationSound === 'notification-sound' ? 'bg-current text-slate-900 border-current shadow-lg' : 'border-current/30 text-current hover:bg-current/10'}`}
+                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border-2 flex items-center justify-center gap-2 transition-all ${usuario.notificationSound === 'notification-sound' ? 'bg-blue-600 text-white border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.5)] scale-105' : 'border-white/20 text-white/70 hover:bg-white/10'}`}
               >
                 <span className="material-symbols-outlined text-[16px]">campaign</span>
                 Estadio
