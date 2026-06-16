@@ -189,7 +189,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             <button
               key={theme.id}
               onClick={() => setThemeMode(theme.id)}
-              className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${themeMode === theme.id ? 'border-current bg-current/10 premium-card-title scale-105 shadow-lg shadow-xl' : 'border-slate-500/30 theme-card/10 theme-text-card opacity-80 hover:border-slate-400'}`}
+              className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${themeMode === theme.id ? 'border-current bg-current/10 premium-card-title scale-105 shadow-lg shadow-xl' : 'border-slate-500/30 theme-card/10 text-current opacity-80 hover:border-slate-400'}`}
             >
               <span className="material-symbols-outlined text-[28px] mb-2">{theme.icon}</span>
               <span className="font-sans font-bold text-sm">{theme.name}</span>
@@ -203,7 +203,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
         <div className="space-y-3 relative z-10">
           {AVAILABLE_THEMES.map(theme => (
             <label key={`toggle-${theme.id}`} className="flex items-center justify-between p-3 rounded-lg theme-card/10 border border-slate-500/30 cursor-pointer hover:theme-card/20 transition-colors">
-              <span className="font-mono text-sm theme-text-card">{theme.name === 'Original' ? 'Noche (Original)' : theme.name}</span>
+              <span className="font-mono text-sm text-current">{theme.name === 'Original' ? 'Noche (Original)' : theme.name}</span>
               <input 
                 type="checkbox" 
                 className="w-5 h-5 accent-current"
@@ -263,14 +263,14 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 placeholder="Nombre del Grupo (Ej. Empresa X)" 
                 value={newGroupName}
                 onChange={e => setNewGroupName(e.target.value)}
-                className="w-full theme-card border border-current rounded-lg py-2 px-3 text-sm theme-text-card font-semibold focus:ring-2 focus:ring-current outline-none"
+                className="w-full theme-card border border-current rounded-lg py-2 px-3 text-sm text-current font-semibold focus:ring-2 focus:ring-current outline-none"
               />
               <input 
                 type="text" 
                 placeholder="Código Único (Ej. GOLI2026)" 
                 value={newGroupCode}
                 onChange={e => setNewGroupCode(e.target.value)}
-                className="w-full theme-card border border-current rounded-lg py-2 px-3 text-sm theme-text-card font-semibold focus:ring-2 focus:ring-current outline-none uppercase"
+                className="w-full theme-card border border-current rounded-lg py-2 px-3 text-sm text-current font-semibold focus:ring-2 focus:ring-current outline-none uppercase"
               />
             </div>
             <button
@@ -294,7 +294,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                   <div key={g.id} className="theme-card/5 border border-white/10 rounded-lg p-3 flex flex-col gap-3 shadow-sm">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
-                        <p className="font-bold theme-text-card text-sm leading-tight">{g.nombre}</p>
+                        <p className="font-bold text-current text-sm leading-tight">{g.nombre}</p>
                         <button 
                           onClick={async () => {
                             const newName = window.prompt("Ingresa el nuevo nombre para el grupo:", g.nombre);
@@ -304,7 +304,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                               } catch(e) { console.error("Error renaming group", e); }
                             }
                           }}
-                          className="text-slate-400 hover:theme-text-card transition-colors p-0.5"
+                          className="text-slate-400 hover:text-current transition-colors p-0.5"
                           title="Editar nombre"
                         >
                           <span className="material-symbols-outlined text-[14px]">edit</span>
@@ -330,7 +330,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                         className={`font-mono font-bold text-xs px-3 py-1.5 rounded border transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
                           copiedCode === g.codigo 
                             ? 'premium-button-accent border-[#cda023]' 
-                            : 'theme-card/10 theme-text-card border-white/20 hover:theme-card/20'
+                            : 'theme-card/10 text-current border-white/20 hover:theme-card/20'
                         }`}
                         title="Copiar código"
                       >
@@ -352,7 +352,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             </h4>
             
             {loadingUsers ? (
-              <p className="theme-text-card text-xs text-center py-4 opacity-50 animate-pulse">Cargando usuarios...</p>
+              <p className="text-current text-xs text-center py-4 opacity-50 animate-pulse">Cargando usuarios...</p>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
                 {allUsers.map(u => (
@@ -360,14 +360,14 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     <div className="flex items-center gap-3">
                       <img src={u.foto || "https://ui-avatars.com/api/?name=" + u.nombre} className="w-8 h-8 rounded-full bg-slate-200" alt={u.nombre} />
                       <div>
-                        <p className="font-bold theme-text-card text-xs">{u.nombre}</p>
-                        <p className="text-[10px] theme-text-card opacity-80">{u.email} • Grupo: <span className="premium-card-title font-mono">{u.codigoGrupo || 'N/A'}</span></p>
+                        <p className="font-bold text-current text-xs">{u.nombre}</p>
+                        <p className="text-[10px] text-current opacity-80">{u.email} • Grupo: <span className="premium-card-title font-mono">{u.codigoGrupo || 'N/A'}</span></p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <button 
                         onClick={() => handleOpenEditUser(u)}
-                        className="theme-card/10 hover:theme-card/20 theme-text-card p-1.5 rounded-lg transition-colors"
+                        className="theme-card/10 hover:theme-card/20 text-current p-1.5 rounded-lg transition-colors"
                         title="Editar usuario"
                       >
                         <span className="material-symbols-outlined text-[16px]">edit</span>
@@ -423,7 +423,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             <div className="flex items-center gap-3 mb-6 theme-card/5 p-3 rounded-xl border border-white/10">
               <img src={editingUser.foto || "https://ui-avatars.com/api/?name=" + editingUser.nombre} className="w-10 h-10 rounded-full bg-slate-200" alt="" />
               <div>
-                <p className="font-bold theme-text-card text-sm">{editingUser.nombre}</p>
+                <p className="font-bold text-current text-sm">{editingUser.nombre}</p>
                 <p className="text-xs text-slate-400">{editingUser.email}</p>
               </div>
             </div>
@@ -434,13 +434,13 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 <div className="flex gap-2">
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: false})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-100 theme-text-card border border-slate-300 shadow-inner' : 'theme-card/10 theme-text-card opacity-80 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${!editFormData.esAdmin ? 'bg-slate-100 text-slate-900 border border-slate-300 shadow-inner' : 'theme-card/10 text-current opacity-80 border border-transparent'}`}
                   >
                     Usuario
                   </button>
                   <button 
                     onClick={() => setEditFormData({...editFormData, esAdmin: true})}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-slate-100 theme-text-card border border-slate-300 shadow-inner' : 'theme-card/10 theme-text-card opacity-80 border border-transparent'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${editFormData.esAdmin ? 'bg-slate-100 text-slate-900 border border-slate-300 shadow-inner' : 'theme-card/10 text-current opacity-80 border border-transparent'}`}
                   >
                     Administrador
                   </button>
@@ -452,11 +452,11 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 <select 
                   value={editFormData.codigoGrupo}
                   onChange={(e) => setEditFormData({...editFormData, codigoGrupo: e.target.value})}
-                  className="w-full theme-card/20 border border-white/10 rounded-lg py-2.5 px-3 theme-text-card font-mono focus:border-current outline-none transition-colors appearance-none"
+                  className="w-full theme-card/20 border border-white/10 rounded-lg py-2.5 px-3 text-current font-mono focus:border-current outline-none transition-colors appearance-none"
                 >
                   <option value="">Seleccionar grupo...</option>
                   {allGroups.map(g => (
-                    <option key={g.id} value={g.codigo} className="premium-card theme-text-card">
+                    <option key={g.id} value={g.codigo} className="premium-card text-current">
                       {g.nombre} ({g.codigo})
                     </option>
                   ))}
@@ -467,7 +467,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                 <label className="block text-xs font-bold premium-card-title mb-1.5 uppercase">Grupos Permitidos</label>
                 <div className="max-h-32 overflow-y-auto theme-card/10 border border-white/10 rounded-lg p-2 space-y-1">
                   {allGroups.map(g => (
-                    <label key={g.id} className="flex items-center gap-3 theme-text-card text-sm cursor-pointer hover:theme-card/5 p-1.5 rounded-md transition-colors">
+                    <label key={g.id} className="flex items-center gap-3 text-current text-sm cursor-pointer hover:theme-card/5 p-1.5 rounded-md transition-colors">
                       <input 
                         type="checkbox" 
                         checked={editFormData.gruposPermitidos.includes(g.codigo)}
@@ -495,7 +495,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                   type="text"
                   value={editFormData.whatsapp}
                   onChange={(e) => setEditFormData({...editFormData, whatsapp: e.target.value})}
-                  className="w-full theme-card/20 border border-white/10 rounded-lg py-2.5 px-3 theme-text-card font-sans focus:border-current outline-none transition-colors"
+                  className="w-full theme-card/20 border border-white/10 rounded-lg py-2.5 px-3 text-current font-sans focus:border-current outline-none transition-colors"
                   placeholder="Ej. 3001234567"
                 />
               </div>
