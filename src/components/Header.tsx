@@ -126,7 +126,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
           {showNotifications && (
             <div className="fixed left-4 right-4 top-[70px] sm:top-auto sm:absolute sm:right-auto sm:left-1/2 sm:-translate-x-1/2 sm:mt-2 sm:w-[280px] theme-card border-theme rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200">
               <div className="px-4 py-2 border-b border-theme flex justify-between items-center">
-                <h4 className="font-bold theme-text text-sm">Próximos Partidos</h4>
+                <h4 className="font-bold text-current text-sm">Próximos Partidos</h4>
               </div>
               <div className="max-h-64 overflow-y-auto">
                 {proximosPartidos.length === 0 ? (
@@ -144,7 +144,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
                           <img src={p.banderaVisitante} alt={p.equipoVisitante} className="w-5 h-3.5 object-cover rounded shadow-sm" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold theme-text truncate">{p.equipoLocal} vs {p.equipoVisitante}</p>
+                          <p className="text-xs font-bold text-current truncate">{p.equipoLocal} vs {p.equipoVisitante}</p>
                           <p className="text-[10px] text-slate-500">
                             {new Date(p.fechaHoraInicio).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                           </p>
@@ -363,22 +363,22 @@ export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, 
             <div className="w-16 h-16 bg-[#034226] header-accent-text rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg border-4 border-slate-50">
               <span className="material-symbols-outlined text-[32px]">download_for_offline</span>
             </div>
-            <h3 className="font-display text-2xl theme-text mb-2">Instalar Goli Polla</h3>
+            <h3 className="font-display text-2xl text-slate-900 mb-2">Instalar Goli Polla</h3>
             <p className="text-sm text-slate-500 mb-6 leading-relaxed">
               Para tener la mejor experiencia y acceso rápido, instala esta aplicación en tu pantalla de inicio:
             </p>
-            <div className="space-y-4 text-left">
-              <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-theme">
+            <div className="space-y-4 text-left mb-6">
+              <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <span className="material-symbols-outlined text-slate-400 mt-0.5">apple</span>
                 <div>
-                  <h4 className="font-bold theme-text opacity-90 text-sm">En iPhone (Safari)</h4>
+                  <h4 className="font-bold text-slate-800 opacity-90 text-sm">En iPhone (Safari)</h4>
                   <p className="text-xs text-slate-500 mt-1">Toca el botón <strong>Compartir</strong> en la barra inferior y selecciona <strong>"Añadir a la pantalla de inicio"</strong>.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-theme">
+              <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <span className="material-symbols-outlined text-slate-400 mt-0.5">android</span>
                 <div>
-                  <h4 className="font-bold theme-text opacity-90 text-sm">En Android (Chrome)</h4>
+                  <h4 className="font-bold text-slate-800 opacity-90 text-sm">En Android (Chrome)</h4>
                   <p className="text-xs text-slate-500 mt-1">Toca el menú <strong>(tres puntos)</strong> arriba y selecciona <strong>"Añadir a la pantalla de inicio"</strong>.</p>
                 </div>
               </div>
