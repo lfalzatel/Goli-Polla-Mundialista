@@ -227,7 +227,10 @@ export default function App() {
             if (
               prev.puntosTotal !== pt || 
               JSON.stringify(prev.gruposPermitidos || []) !== JSON.stringify(gp) ||
-              prev.esAdmin !== myData.esAdmin
+              prev.esAdmin !== myData.esAdmin ||
+              prev.whatsapp !== myData.whatsapp ||
+              prev.notificationSound !== myData.notificationSound ||
+              prev.notificationsEnabled !== myData.notificationsEnabled
             ) {
               const nextUser = { ...prev, ...myData, puntosTotal: pt, gruposPermitidos: gp };
               localStorage.setItem('polla_usuario', JSON.stringify(nextUser));

@@ -257,7 +257,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               <span className="font-mono text-sm text-current">{theme.name === 'Original' ? 'Noche (Original)' : theme.name}</span>
               <input 
                 type="checkbox" 
-                className="w-5 h-5 cursor-pointer rounded border-2 border-current bg-transparent checked:bg-blue-500 checked:border-blue-500 transition-colors"
+                className="w-5 h-5 cursor-pointer rounded border-2 border-current bg-transparent appearance-none relative checked:bg-current before:content-['✓'] before:absolute before:text-[#0a0b0d] before:text-sm before:font-black before:left-[3px] before:top-[-3px] before:hidden checked:before:block transition-all"
                 checked={activeThemes.includes(theme.id)}
                 onChange={() => handleToggleTheme(theme.id)}
               />
@@ -617,7 +617,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                               : prev.gruposPermitidos.filter(id => id !== g.codigo)
                           }));
                         }}
-                        className="w-4 h-4 cursor-pointer rounded border-2 border-current bg-transparent checked:bg-blue-500 checked:border-blue-500 transition-colors"
+                        className="w-4 h-4 cursor-pointer rounded border-2 border-current bg-transparent appearance-none relative checked:bg-current before:content-['✓'] before:absolute before:text-[#0a0b0d] before:text-[10px] before:font-black before:left-[2px] before:top-[-1px] before:hidden checked:before:block transition-all"
                       />
                       <span>{g.nombre} <span className="text-current opacity-60 text-xs ml-1 font-mono">({g.codigo})</span></span>
                     </label>
