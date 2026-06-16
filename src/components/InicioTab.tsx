@@ -81,6 +81,20 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
     return { ...p, estado: computedEstado };
   });
 
+  const currentFaseRaw = partidosComputados.find(p => p.estado !== 'finalizado')?.fase || partidosComputados[partidosComputados.length - 1]?.fase || 'primera';
+  const getFaseDisplay = (fase: string) => {
+    switch(fase) {
+      case 'primera': return 'FASE DE GRUPOS';
+      case 'octavos': return 'OCTAVOS DE FINAL';
+      case 'cuartos': return 'CUARTOS DE FINAL';
+      case 'semifinal': return 'SEMIFINALES';
+      case 'final': return 'LA GRAN FINAL';
+      case 'tercer_puesto': return 'TERCER PUESTO';
+      default: return 'TORNEO EN CURSO';
+    }
+  };
+  const faseDisplay = getFaseDisplay(currentFaseRaw);
+
   // Filter matches based on search term (universal filter) and selected date
   const filteredPartidos = partidosComputados.filter(p => {
     if (selectedDate && p.fecha !== selectedDate) return false;
@@ -490,8 +504,8 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
 
       {/* Main Tournament Phase Indicator */}
       <div className="flex items-center justify-between">
-        <span className="font-sans text-xs text-[#79ff5b] bg-[#79ff5b]/15 px-3.5 py-1.5 rounded-full border border-[#79ff5b]/30 uppercase tracking-widest font-bold">
-          FASE DE GRUPOS
+        <span className="font-sans text-xs theme-card border section-title-accent px-3.5 py-1.5 rounded-full uppercase tracking-widest font-bold shadow-sm">
+          {faseDisplay}
         </span>
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div>
