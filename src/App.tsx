@@ -95,13 +95,25 @@ export default function App() {
           const audio = new Audio(`/assets/sounds/${soundFile}`);
           audio.play().catch(e => console.log('Audio play failed', e));
           
-          // Show toast
+          // Show toast inside app
           if (payload.notification) {
              setNotificationToast({
                title: payload.notification.title || 'Nueva Notificación',
                body: payload.notification.body || ''
              });
              setTimeout(() => setNotificationToast(null), 5000);
+             
+             // Show system notification (barra de notificaciones)
+             if ('serviceWorker' in navigator && Notification.permission === 'granted') {
+               navigator.serviceWorker.ready.then((registration) => {
+                 registration.showNotification(payload.notification!.title || 'GOLI Polla Mundialista', {
+                   body: payload.notification!.body || '',
+                   icon: '/assets/logo.png',
+                   vibrate: [200, 100, 200, 100, 200, 100, 200],
+                   tag: 'goli-foreground-notification'
+                 });
+               });
+             }
           }
         });
       }
