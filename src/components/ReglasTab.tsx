@@ -252,17 +252,17 @@ export default function ReglasTab() {
           </div>
         </div>
         {/* Premios y Ganadores Card */}
-        <div className="md:col-span-12 bg-gradient-to-br from-[#034226] to-[#045c36] border border-[#e1b12c]/40 p-6 rounded-2xl shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <span className="material-symbols-outlined text-[100px] text-[#e1b12c]" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
+        <div className="md:col-span-12 premium-card border p-6 rounded-2xl shadow-lg relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <span className="material-symbols-outlined text-[100px] text-current" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
           </div>
           
-          <h3 className="font-display text-2xl text-[#e1b12c] mb-5 flex items-center gap-2 uppercase tracking-wide relative z-10">
+          <h3 className="font-display text-2xl premium-card-title mb-5 flex items-center gap-2 uppercase tracking-wide relative z-10">
             <span className="material-symbols-outlined text-[24px]">emoji_events</span>
             Distribución de Premios
           </h3>
           
-          <p className="text-white/80 font-sans text-sm mb-6 max-w-2xl relative z-10">
+          <p className="opacity-80 font-sans text-sm mb-6 max-w-2xl relative z-10">
             Al finalizar el torneo, el pozo acumulado será distribuido entre los 3 mejores pronosticadores de la tabla general, garantizando una competencia emocionante hasta el último partido:
           </p>
 
