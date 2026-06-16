@@ -19,7 +19,7 @@ interface HeaderProps {
   activeThemes?: string[];
 }
 
-export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, onOpenChat, partidos = [], onGoToSettings, themeMode, setThemeMode, activeThemes = [] }: HeaderProps) {
+export default function Header({ usuario, grupoNombre, onLogout, onChangeGroup, onOpenChat, partidos = [], onGoToSettings, themeMode, setThemeMode, activeThemes = [], onToggleNotifications }: HeaderProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
