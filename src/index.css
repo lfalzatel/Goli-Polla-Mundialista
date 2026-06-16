@@ -335,3 +335,14 @@
 [data-theme="glass"] .header-accent-text { color: var(--text-primary) !important; }
 [data-theme="glass"] .header-accent-border { border-color: var(--text-primary) !important; }
 [data-theme="glass"] .header-accent-bg { background-color: var(--text-primary) !important; }
+
+/* Dynamic team name text size for console modes to prevent truncation */
+.team-name-text {
+  font-size: 1rem; /* text-base */
+  line-height: 1.5rem;
+}
+
+[data-theme="cyberpunk"] .team-name-text, [data-theme="kilocode"] .team-name-text {
+  font-size: 0.75rem !important; /* text-xs */
+  line-height: 1rem !important;
+}

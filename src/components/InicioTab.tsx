@@ -572,9 +572,9 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             referrerPolicy="no-referrer"
                           />
                         </div>
-                        <span className="font-display text-base theme-text-card text-slate-700 tracking-wider truncate max-w-[124px]">
-                          {match.equipoLocal}
-                        </span>
+                          <span className="font-display team-name-text theme-text-card text-slate-700 tracking-wider truncate max-w-[124px]">
+                            {match.equipoLocal}
+                          </span>
                         
                         {/* Interactive Prediction Controls */}
                         {!yaBloqueado && (
@@ -641,9 +641,9 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             referrerPolicy="no-referrer"
                           />
                         </div>
-                        <span className="font-display text-base theme-text-card text-slate-700 tracking-wider truncate max-w-[124px]">
-                          {match.equipoVisitante}
-                        </span>
+                          <span className="font-display team-name-text theme-text-card text-slate-700 tracking-wider truncate max-w-[124px]">
+                            {match.equipoVisitante}
+                          </span>
 
                         {!yaBloqueado && (
                           <div className="flex items-center gap-2 mt-1 bg-slate-50 border /80 rounded-full px-2 py-1 premium-pill-container">
