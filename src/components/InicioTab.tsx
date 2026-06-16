@@ -643,7 +643,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                       <div className="flex flex-col items-center justify-center px-1 flex-shrink-0">
                         {match.estado === 'finalizado' || match.estado === 'en_vivo' ? (
                           match.golesLocal !== null && match.golesLocal !== undefined ? (
-                            <div className="flex flex-col items-center bg-slate-100 px-3 py-1.5 rounded-xl border /50">
+                            <div className="flex flex-col items-center theme-subcard px-3 py-1.5 rounded-xl border /50">
                               <span className="font-sans text-[8px] theme-text-muted font-bold uppercase tracking-wider mb-0.5">Real</span>
                               <div className="flex items-center gap-2">
                                 <span className="font-display text-3xl text-[#034226] font-black">
@@ -656,7 +656,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                               </div>
                             </div>
                           ) : (
-                            <div className="flex flex-col items-center bg-slate-100 px-3 py-1.5 rounded-xl border /50">
+                            <div className="flex flex-col items-center theme-subcard px-3 py-1.5 rounded-xl border /50">
                               <span className="font-sans text-[8px] theme-text-muted font-bold uppercase tracking-wider mb-0.5 text-center">Por<br/>Act.</span>
                               <div className="flex items-center gap-2">
                                 <span className="font-display text-lg theme-text-muted font-black">VS</span>
@@ -664,7 +664,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             </div>
                           )
                         ) : (
-                          <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center font-bold text-[10px] theme-text-muted border  shadow-inner">
+                          <div className="w-9 h-9 rounded-full theme-subcard flex items-center justify-center font-bold text-[10px] theme-text-muted border  shadow-inner">
                             VS
                           </div>
                         )}
