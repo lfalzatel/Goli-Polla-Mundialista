@@ -183,7 +183,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           GESTIÓN DE TEMAS
         </h2>
         
-        <p className="text-sm theme-text opacity-70 font-sans mb-4 relative z-10">Tema Visual Activo</p>
+        <p className="text-sm text-current opacity-70 font-sans mb-4 relative z-10">Tema Visual Activo</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 relative z-10">
           {AVAILABLE_THEMES.map(theme => (
             <button
@@ -199,7 +199,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
         <div className="h-[1px] bg-current/20 my-4 relative z-10"></div>
 
-        <p className="text-sm theme-text opacity-70 font-sans mb-4 relative z-10">Modos en Menú Desplegable</p>
+        <p className="text-sm text-current opacity-70 font-sans mb-4 relative z-10">Modos en Menú Desplegable</p>
         <div className="space-y-3 relative z-10">
           {AVAILABLE_THEMES.map(theme => (
             <label key={`toggle-${theme.id}`} className="flex items-center justify-between p-3 rounded-lg theme-card/10 border border-slate-500/30 cursor-pointer hover:theme-card/20 transition-colors">
@@ -224,7 +224,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
         
         <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 mb-3">
           <div>
-            <p className="font-bold theme-text opacity-70 text-sm">Rol de Cuenta</p>
+            <p className="font-bold text-current opacity-70 text-sm">Rol de Cuenta</p>
             <p className="text-xs text-slate-400 mt-1">{usuario.esAdmin ? 'Administrador' : 'Usuario General'}</p>
           </div>
           <span className="material-symbols-outlined premium-card-title">shield_person</span>
@@ -232,7 +232,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
 
         <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 mb-3">
           <div>
-            <p className="font-bold theme-text opacity-70 text-sm">Contraseña</p>
+            <p className="font-bold text-current opacity-70 text-sm">Contraseña</p>
             <p className="text-xs text-slate-400 mt-1">Enviar enlace de recuperación a tu correo</p>
           </div>
           <button 
@@ -392,14 +392,14 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           <button className="w-full flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 hover:bg-black/50 transition-colors">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined premium-card-title">download</span>
-              <span className="font-bold theme-text opacity-70 text-sm">Instalar Aplicación (PWA)</span>
+              <span className="font-bold text-current opacity-70 text-sm">Instalar Aplicación (PWA)</span>
             </div>
           </button>
           
           <button onClick={handleShareApp} className="w-full flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 hover:bg-black/50 transition-colors">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined premium-card-title">share</span>
-              <span className="font-bold theme-text opacity-70 text-sm">Compartir App</span>
+              <span className="font-bold text-current opacity-70 text-sm">Compartir App</span>
             </div>
           </button>
           
