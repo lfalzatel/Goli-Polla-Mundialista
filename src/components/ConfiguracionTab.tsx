@@ -29,6 +29,13 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
   const [resetSent, setResetSent] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   
+  // Collapse states
+  const [isThemeExpanded, setIsThemeExpanded] = useState(true);
+  const [isAccountExpanded, setIsAccountExpanded] = useState(false);
+  const [isNotifExpanded, setIsNotifExpanded] = useState(false);
+  const [isAdminExpanded, setIsAdminExpanded] = useState(false);
+  const [isAppExpanded, setIsAppExpanded] = useState(false);
+  
   // Admin Group States
   const [misGrupos, setMisGrupos] = useState<any[]>([]);
   const [newGroupName, setNewGroupName] = useState('');
@@ -242,14 +249,24 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
       )}
 
       {/* SECCIÓN APARIENCIA */}
-      <section className="premium-card border rounded-2xl p-5 shadow-xl relative overflow-hidden">
+      <section className="premium-card border rounded-2xl p-0 shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 stadium-mesh opacity-20 pointer-events-none"></div>
-        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2 relative z-10">
-          <span className="material-symbols-outlined">palette</span>
-          GESTIÓN DE TEMAS
-        </h2>
+        <button 
+          onClick={() => setIsThemeExpanded(!isThemeExpanded)}
+          className="w-full flex items-center justify-between p-5 relative z-10"
+        >
+          <h2 className="premium-card-title font-display text-xl flex items-center gap-2 m-0">
+            <span className="material-symbols-outlined">palette</span>
+            GESTIÓN DE TEMAS
+          </h2>
+          <span className={`material-symbols-outlined premium-text transition-transform duration-300 ${isThemeExpanded ? 'rotate-180' : ''}`}>
+            expand_more
+          </span>
+        </button>
         
-        <p className="text-sm text-current opacity-70 font-sans mb-4 relative z-10">Tema Visual Activo</p>
+        {isThemeExpanded && (
+          <div className="p-5 pt-0 relative z-10">
+            <p className="text-sm text-current opacity-70 font-sans mb-4">Tema Visual Activo</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 relative z-10">
           {AVAILABLE_THEMES.map(theme => (
             <button
@@ -279,16 +296,27 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
             </label>
           ))}
         </div>
+          </div>
+        )}
       </section>
 
       {/* SECCIÓN CUENTA Y PERFIL */}
-      <section className="premium-card border border-current rounded-2xl p-5 shadow-xl relative overflow-hidden">
-        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
-          <span className="material-symbols-outlined">person</span>
-          CUENTA Y PERFIL
-        </h2>
+      <section className="premium-card border border-current rounded-2xl p-0 shadow-xl relative overflow-hidden">
+        <button 
+          onClick={() => setIsAccountExpanded(!isAccountExpanded)}
+          className="w-full flex items-center justify-between p-5"
+        >
+          <h2 className="premium-card-title font-display text-xl flex items-center gap-2 m-0">
+            <span className="material-symbols-outlined">person</span>
+            CUENTA Y PERFIL
+          </h2>
+          <span className={`material-symbols-outlined premium-text transition-transform duration-300 ${isAccountExpanded ? 'rotate-180' : ''}`}>
+            expand_more
+          </span>
+        </button>
         
-        <div className="flex flex-col gap-3 mb-3">
+        {isAccountExpanded && (
+          <div className="p-5 pt-0 flex flex-col gap-3">
           <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5">
             <div>
               <p className="font-bold text-current opacity-70 text-sm">Rol de Cuenta</p>
@@ -309,17 +337,27 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               {resetSent ? '¡Enviado!' : 'Resetear'}
             </button>
           </div>
-        </div>
+          </div>
+        )}
       </section>
 
       {/* SECCIÓN NOTIFICACIONES */}
-      <section className="premium-card border border-current rounded-2xl p-5 shadow-xl relative overflow-hidden">
-        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
-          <span className="material-symbols-outlined">notifications</span>
-          NOTIFICACIONES
-        </h2>
+      <section className="premium-card border border-current rounded-2xl p-0 shadow-xl relative overflow-hidden">
+        <button 
+          onClick={() => setIsNotifExpanded(!isNotifExpanded)}
+          className="w-full flex items-center justify-between p-5"
+        >
+          <h2 className="premium-card-title font-display text-xl flex items-center gap-2 m-0">
+            <span className="material-symbols-outlined">notifications</span>
+            NOTIFICACIONES
+          </h2>
+          <span className={`material-symbols-outlined premium-text transition-transform duration-300 ${isNotifExpanded ? 'rotate-180' : ''}`}>
+            expand_more
+          </span>
+        </button>
         
-        <div className="flex flex-col gap-3 mb-3">
+        {isNotifExpanded && (
+          <div className="p-5 pt-0 flex flex-col gap-3">
           <div className="flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5">
             <div>
               <p className="font-bold text-current opacity-70 text-sm">Alertas Push</p>
@@ -377,18 +415,29 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               </button>
             </div>
           </div>
-        </div>
+          </div>
+        )}
       </section>
 
       {/* SECCIÓN GESTIÓN (ADMIN) */}
       {(usuario.esAdmin || usuario.email === 'lfalzatel@gmail.com') && (
-        <section className="premium-card border rounded-2xl p-5 shadow-xl">
-          <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
-            <span className="material-symbols-outlined">admin_panel_settings</span>
-            PANEL DE ADMINISTRADOR
-          </h2>
+        <section className="premium-card border rounded-2xl p-0 shadow-xl relative overflow-hidden">
+          <button 
+            onClick={() => setIsAdminExpanded(!isAdminExpanded)}
+            className="w-full flex items-center justify-between p-5"
+          >
+            <h2 className="premium-card-title font-display text-xl flex items-center gap-2 m-0">
+              <span className="material-symbols-outlined">admin_panel_settings</span>
+              PANEL DE ADMINISTRADOR
+            </h2>
+            <span className={`material-symbols-outlined premium-text transition-transform duration-300 ${isAdminExpanded ? 'rotate-180' : ''}`}>
+              expand_more
+            </span>
+          </button>
           
-          <div className="theme-card/10 rounded-xl p-4 mb-4 border border-white/10">
+          {isAdminExpanded && (
+            <div className="p-5 pt-0">
+              <div className="theme-card/10 rounded-xl p-4 mb-4 border border-white/10">
             <h4 className="font-sans font-bold premium-card-title mb-3 flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px]">group_add</span>
               Crear Nuevo Grupo
@@ -562,17 +611,28 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               </div>
             )}
           </div>
+            </div>
+          )}
         </section>
       )}
 
       {/* SECCIÓN APP */}
-      <section className="premium-card border border-current rounded-2xl p-5 shadow-xl">
-        <h2 className="premium-card-title font-display text-xl mb-4 flex items-center gap-2">
-          <span className="material-symbols-outlined">app_shortcut</span>
-          APLICACIÓN
-        </h2>
+      <section className="premium-card border border-current rounded-2xl p-0 shadow-xl relative overflow-hidden">
+        <button 
+          onClick={() => setIsAppExpanded(!isAppExpanded)}
+          className="w-full flex items-center justify-between p-5"
+        >
+          <h2 className="premium-card-title font-display text-xl flex items-center gap-2 m-0">
+            <span className="material-symbols-outlined">app_shortcut</span>
+            APLICACIÓN
+          </h2>
+          <span className={`material-symbols-outlined premium-text transition-transform duration-300 ${isAppExpanded ? 'rotate-180' : ''}`}>
+            expand_more
+          </span>
+        </button>
         
-        <div className="space-y-3">
+        {isAppExpanded && (
+          <div className="p-5 pt-0 space-y-3">
           <button className="w-full flex items-center justify-between p-3 rounded-lg theme-card/20 border border-white/5 hover:bg-black/50 transition-colors">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined premium-card-title">download</span>
@@ -590,7 +650,8 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
           <div className="p-3 rounded-lg border border-white/5 text-center mt-6">
             <p className="text-xs font-mono text-slate-500">GOLI Polla Mundialista v2.2.0</p>
           </div>
-        </div>
+          </div>
+        )}
       </section>
 
       {/* Modal de Edición de Usuario */}
