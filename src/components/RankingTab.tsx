@@ -88,9 +88,9 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
            p.estadio.toLowerCase().includes(term);
   }).sort((a, b) => {
     const order: Record<string, number> = {
-      'finalizado': 1,
-      'en_vivo': 2,
-      'pendiente': 3
+      'en_vivo': 1,
+      'pendiente': 2,
+      'finalizado': 3
     };
     if (order[a.estado] !== order[b.estado]) {
       return order[a.estado] - order[b.estado];
