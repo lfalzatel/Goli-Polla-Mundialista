@@ -281,19 +281,19 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
           className="w-full premium-card py-3 px-5 flex justify-between items-center cursor-pointer hover:brightness-110 transition-all text-left"
         >
           <div>
-            <h2 className="font-display text-xl premium-accent flex items-center gap-2 tracking-wide uppercase">
+            <h2 className="font-display text-xl premium-card-title flex items-center gap-2 tracking-wide uppercase">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
               Pronósticos Globales
             </h2>
-            <p className="premium-text font-sans text-xs mt-0.5">
+            <p className="text-current font-sans text-xs mt-0.5 opacity-80">
               {!isBonosExpanded && !bonificaciones ? "Realiza tus apuestas aquí para recibir bonificaciones extra." : "Toca para expandir / contraer"}
             </p>
           </div>
           <div className="flex items-center gap-3">
             {isBonosLocked && (
-              <span className="material-symbols-outlined premium-accent">lock</span>
+              <span className="material-symbols-outlined premium-card-title">lock</span>
             )}
-            <span className={`material-symbols-outlined premium-accent transition-transform duration-300 ${isBonosExpanded ? 'rotate-180' : ''}`}>
+            <span className={`material-symbols-outlined premium-card-title transition-transform duration-300 ${isBonosExpanded ? 'rotate-180' : ''}`}>
               expand_more
             </span>
           </div>
@@ -301,7 +301,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
         
         {isBonosExpanded && (
         <div className="p-5 space-y-5 animate-fade-in">
-          <p className="theme-text-muted font-sans text-xs leading-relaxed font-medium">
+          <p className="text-current font-sans text-xs leading-relaxed font-medium opacity-80">
             Selecciona a tus favoritos para ganar los puntos extra. {isBonosLocked ? "La etapa de edición ha finalizado." : "Asegúrate de guardar antes del inicio de Octavos."}
           </p>
           
@@ -309,80 +309,80 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
             
             {/* Campeón */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase">
-                <span className="material-symbols-outlined text-sm text-[#e1b12c]">trophy</span>
+              <label className="text-xs font-bold text-current flex items-center gap-1.5 uppercase opacity-90">
+                <span className="material-symbols-outlined text-sm text-current">trophy</span>
                 Campeón (+20 pts)
               </label>
               <select 
                 disabled={isBonosLocked}
                 value={editingBonos.campeon || ''}
                 onChange={(e) => setEditingBonos({...editingBonos, campeon: e.target.value})}
-                className="bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-sans text-slate-700 outline-none focus:ring-2 focus:ring-[#034226] disabled:opacity-60"
+                className="theme-card border border-current rounded-lg p-2.5 text-sm font-sans theme-text-card outline-none focus:ring-2 focus:ring-current disabled:opacity-60"
               >
                 <option value="">-- Selecciona un País --</option>
                 {equiposOrdenados.map(eq => <option key={eq} value={eq}>{eq}</option>)}
               </select>
-              <p className="text-[10px] theme-text-muted font-sans leading-tight">El equipo que levantará la copa al final.</p>
+              <p className="text-[10px] text-current font-sans leading-tight opacity-70">El equipo que levantará la copa al final.</p>
             </div>
 
             {/* Valla Invicta */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase">
-                <span className="material-symbols-outlined text-sm text-[#034226]">shield</span>
+              <label className="text-xs font-bold text-current flex items-center gap-1.5 uppercase opacity-90">
+                <span className="material-symbols-outlined text-sm text-current">shield</span>
                 Valla Invicta (+10 pts)
               </label>
               <select 
                 disabled={isBonosLocked}
                 value={editingBonos.vallaInvicta || ''}
                 onChange={(e) => setEditingBonos({...editingBonos, vallaInvicta: e.target.value})}
-                className="bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-sans text-slate-700 outline-none focus:ring-2 focus:ring-[#034226] disabled:opacity-60"
+                className="theme-card border border-current rounded-lg p-2.5 text-sm font-sans theme-text-card outline-none focus:ring-2 focus:ring-current disabled:opacity-60"
               >
                 <option value="">-- Selecciona un País --</option>
                 {equiposOrdenados.map(eq => <option key={eq} value={eq}>{eq}</option>)}
               </select>
-              <p className="text-[10px] theme-text-muted font-sans leading-tight">El equipo que recibirá menos goles en total.</p>
+              <p className="text-[10px] text-current font-sans leading-tight opacity-70">El equipo que recibirá menos goles en total.</p>
             </div>
 
             {/* Fair Play */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase">
-                <span className="material-symbols-outlined text-sm text-[#e1b12c]">style</span>
+              <label className="text-xs font-bold text-current flex items-center gap-1.5 uppercase opacity-90">
+                <span className="material-symbols-outlined text-sm text-current">style</span>
                 Fair Play (+5 pts)
               </label>
               <select 
                 disabled={isBonosLocked}
                 value={editingBonos.fairPlay || ''}
                 onChange={(e) => setEditingBonos({...editingBonos, fairPlay: e.target.value})}
-                className="bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-sans text-slate-700 outline-none focus:ring-2 focus:ring-[#034226] disabled:opacity-60"
+                className="theme-card border border-current rounded-lg p-2.5 text-sm font-sans theme-text-card outline-none focus:ring-2 focus:ring-current disabled:opacity-60"
               >
                 <option value="">-- Selecciona un País --</option>
                 {equiposOrdenados.map(eq => <option key={eq} value={eq}>{eq}</option>)}
               </select>
-              <p className="text-[10px] theme-text-muted font-sans leading-tight">El equipo con menos tarjetas y mejor juego limpio.</p>
+              <p className="text-[10px] text-current font-sans leading-tight opacity-70">El equipo con menos tarjetas y mejor juego limpio.</p>
             </div>
 
             {/* Revelación */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase">
-                <span className="material-symbols-outlined text-sm text-[#e1b12c]">stars</span>
+              <label className="text-xs font-bold text-current flex items-center gap-1.5 uppercase opacity-90">
+                <span className="material-symbols-outlined text-sm text-current">stars</span>
                 Revelación (+5 pts)
               </label>
               <select 
                 disabled={isBonosLocked}
                 value={editingBonos.revelacion || ''}
                 onChange={(e) => setEditingBonos({...editingBonos, revelacion: e.target.value})}
-                className="bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-sans text-slate-700 outline-none focus:ring-2 focus:ring-[#034226] disabled:opacity-60"
+                className="theme-card border border-current rounded-lg p-2.5 text-sm font-sans theme-text-card outline-none focus:ring-2 focus:ring-current disabled:opacity-60"
               >
                 <option value="">-- Selecciona un País --</option>
                 {equiposOrdenados.map(eq => <option key={eq} value={eq}>{eq}</option>)}
               </select>
-              <p className="text-[10px] theme-text-muted font-sans leading-tight">El equipo sorpresa oficial del torneo.</p>
+              <p className="text-[10px] text-current font-sans leading-tight opacity-70">El equipo sorpresa oficial del torneo.</p>
             </div>
 
             {/* Goleador (Libre) */}
             <div className="flex flex-col gap-1.5 sm:col-span-2">
-              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase">
-                <span className="material-symbols-outlined text-sm text-[#034226]">sports_and_outdoors</span>
+              <label className="text-xs font-bold text-current flex items-center gap-1.5 uppercase opacity-90">
+                <span className="material-symbols-outlined text-sm text-current">sports_and_outdoors</span>
                 Goleador / Bota de Oro (+10 pts)
               </label>
               <input 
@@ -391,9 +391,9 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 placeholder="Ej. Lionel Messi, Mbappé..."
                 value={editingBonos.goleador || ''}
                 onChange={(e) => setEditingBonos({...editingBonos, goleador: e.target.value})}
-                className="bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-sans text-slate-700 outline-none focus:ring-2 focus:ring-[#034226] disabled:opacity-60"
+                className="theme-card border border-current rounded-lg p-2.5 text-sm font-sans theme-text-card outline-none focus:ring-2 focus:ring-current disabled:opacity-60"
               />
-              <p className="text-[10px] theme-text-muted font-sans leading-tight">Jugador que anotará la mayor cantidad de goles en el torneo.</p>
+              <p className="text-[10px] text-current font-sans leading-tight opacity-70">Jugador que anotará la mayor cantidad de goles en el torneo.</p>
             </div>
 
           </div>
