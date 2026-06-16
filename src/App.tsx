@@ -616,10 +616,10 @@ export default function App() {
       <main className="pt-20 pb-24 md:pb-20 max-w-4xl mx-auto p-4 md:p-6 min-h-[calc(100vh-64px)] overflow-x-hidden">
         
         {/* Global Page Header */}
-        <div className={`mb-6 border p-4 shadow-xl flex items-center justify-center relative overflow-hidden ${isConsoleMode ? 'theme-bg premium-pill-container' : 'border-[#e1b12c]/30 bg-[#034226] rounded-2xl'}`}>
+        <div className="mb-6 border p-4 shadow-xl flex items-center justify-center relative overflow-hidden app-page-header">
           <div className={`absolute inset-0 stadium-mesh ${isConsoleMode ? 'opacity-5' : 'opacity-20'}`}></div>
-          <h1 className={`font-display text-3xl md:text-4xl tracking-wider leading-none select-none uppercase text-center relative z-10 ${isConsoleMode ? 'theme-text-card' : 'text-white'}`}>
-            GOLI <span className={isConsoleMode ? 'theme-text' : 'text-[#e1b12c]'}>POLLA MUNDIALISTA</span>
+          <h1 className="font-display text-3xl md:text-4xl tracking-wider leading-none select-none uppercase text-center relative z-10 app-page-header-title">
+            GOLI <span className="app-page-header-accent">POLLA MUNDIALISTA</span>
           </h1>
         </div>
 

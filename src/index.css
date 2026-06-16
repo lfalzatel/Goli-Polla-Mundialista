@@ -241,3 +241,48 @@
   backdrop-filter: blur(12px) !important;
   border-color: var(--text-primary) !important;
 }
+
+/* App Page Header Container */
+.app-page-header {
+  background-color: #034226;
+  border-color: rgba(225, 177, 44, 0.3);
+  border-radius: 1rem;
+}
+
+[data-theme="cyberpunk"] .app-page-header, [data-theme="kilocode"] .app-page-header {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-card) !important;
+  border-radius: 0 !important;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, rgba(0,0,0,0.15) 2px) !important;
+}
+
+[data-theme="glass"] .app-page-header {
+  background-color: rgba(14, 165, 233, 0.1) !important;
+  backdrop-filter: blur(8px) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  border-radius: 1rem !important;
+}
+
+.app-page-header-title {
+  color: #ffffff;
+}
+
+[data-theme="cyberpunk"] .app-page-header-title, [data-theme="kilocode"] .app-page-header-title {
+  color: var(--text-card) !important;
+}
+
+[data-theme="glass"] .app-page-header-title {
+  color: #0f172a !important;
+}
+
+.app-page-header-accent {
+  color: #e1b12c;
+}
+
+[data-theme="cyberpunk"] .app-page-header-accent, [data-theme="kilocode"] .app-page-header-accent {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="glass"] .app-page-header-accent {
+  color: var(--text-primary) !important;
+}
