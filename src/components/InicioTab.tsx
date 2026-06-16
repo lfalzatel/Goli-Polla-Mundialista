@@ -718,15 +718,15 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             <div className="bg-[#034226]/5 rounded-xl border border-[#034226]/10 p-3 mx-1 flex flex-col gap-1.5 text-[11px]">
                               <div className="text-[9px] font-bold theme-text-muted uppercase tracking-widest mb-1">Desglose de puntos</div>
                               
-                              {ptsObj.marcador > 0 && <div className="flex justify-between items-center theme-text-card"><span>Marcador Exacto:</span> <span className="font-bold theme-card px-2 py-0.5 rounded border text-points-breakdown ">+{ptsObj.marcador} pts</span></div>}
+                              {ptsObj.marcador > 0 && <div className="flex justify-between items-center text-points-breakdown"><span>Marcador Exacto:</span> <span className="font-bold theme-card px-2 py-0.5 rounded border text-points-breakdown ">+{ptsObj.marcador} pts</span></div>}
                               
-                              {ptsObj.ganador > 0 && <div className="flex justify-between items-center theme-text-card"><span>{ptsObj.ganador === 3 ? 'Ganador + Goles:' : 'Equipo Ganador:'}</span> <span className="font-bold theme-card px-2 py-0.5 rounded border text-points-breakdown ">+{ptsObj.ganador} pts</span></div>}
+                              {ptsObj.ganador > 0 && <div className="flex justify-between items-center text-points-breakdown"><span>{ptsObj.ganador === 3 ? 'Ganador + Goles:' : 'Equipo Ganador:'}</span> <span className="font-bold theme-card px-2 py-0.5 rounded border text-points-breakdown ">+{ptsObj.ganador} pts</span></div>}
                               
-                              {ptsObj.empate > 0 && <div className="flex justify-between items-center theme-text-card"><span>Empate Acertado:</span> <span className="font-bold theme-card px-2 py-0.5 rounded border text-points-breakdown ">+{ptsObj.empate} pts</span></div>}
+                              {ptsObj.empate > 0 && <div className="flex justify-between items-center text-points-breakdown"><span>Empate Acertado:</span> <span className="font-bold theme-card px-2 py-0.5 rounded border text-points-breakdown ">+{ptsObj.empate} pts</span></div>}
                               
-                              {ptsObj.totalGoles > 0 && <div className="flex justify-between items-center theme-text-card"><span>Opcional ({apuesta.totalGolesApuesta === 'mas25' ? '+2.5' : '-2.5'} Goles):</span> <span className="font-bold theme-card px-2 py-0.5 rounded border text-points-breakdown ">+{ptsObj.totalGoles} pts</span></div>}
+                              {ptsObj.totalGoles > 0 && <div className="flex justify-between items-center text-points-breakdown"><span>Opcional ({apuesta.totalGolesApuesta === 'mas25' ? '+2.5' : '-2.5'} Goles):</span> <span className="font-bold theme-card px-2 py-0.5 rounded border text-points-breakdown ">+{ptsObj.totalGoles} pts</span></div>}
                               
-                              <div className="flex justify-between items-center border-t border-[#034226]/10 pt-2 mt-1 font-black theme-text-card text-xs">
+                              <div className="flex justify-between items-center border-t border-[#034226]/10 pt-2 mt-1 font-black text-points-total text-xs">
                                 <span className="uppercase tracking-wider">Puntos Obtenidos:</span> <span className="theme-card premium-pill-container px-2.5 py-1 rounded-md border text-points-total">+{ptsObj.total} pts</span>
                               </div>
                             </div>
