@@ -390,6 +390,9 @@ export default function App() {
       await updateDoc(doc(db, 'pm_usuarios', usuario.uid), {
         notificationsEnabled: enabled
       });
+      const updatedUser = { ...usuario, notificationsEnabled: enabled };
+      setUsuario(updatedUser);
+      localStorage.setItem('polla_usuario', JSON.stringify(updatedUser));
     } catch (error) {
       console.error("Error actualizando notificaciones:", error);
     }
