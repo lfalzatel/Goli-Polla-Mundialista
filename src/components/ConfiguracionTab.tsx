@@ -30,7 +30,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
   const [toastMessage, setToastMessage] = useState('');
   
   // Collapse states
-  const [isThemeExpanded, setIsThemeExpanded] = useState(true);
+  const [isThemeExpanded, setIsThemeExpanded] = useState(false);
   const [isAccountExpanded, setIsAccountExpanded] = useState(false);
   const [isNotifExpanded, setIsNotifExpanded] = useState(false);
   const [isAdminExpanded, setIsAdminExpanded] = useState(false);

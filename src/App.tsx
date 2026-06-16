@@ -348,10 +348,15 @@ export default function App() {
     try {
       const grupoSnap = await getDoc(doc(db, 'pm_grupos', codeUpper));
       if (grupoSnap.exists() && grupoSnap.data().activo) {
+        const newGruposPermitidos = usuario.gruposPermitidos ? [...usuario.gruposPermitidos] : [];
+        if (!newGruposPermitidos.includes(codeUpper)) {
+          newGruposPermitidos.push(codeUpper);
+        }
         await updateDoc(doc(db, 'pm_usuarios', usuario.uid), {
-          codigoGrupo: codeUpper
+          codigoGrupo: codeUpper,
+          gruposPermitidos: newGruposPermitidos
         });
-        const updatedUser = { ...usuario, codigoGrupo: codeUpper };
+        const updatedUser = { ...usuario, codigoGrupo: codeUpper, gruposPermitidos: newGruposPermitidos };
         setUsuario(updatedUser);
         localStorage.setItem('polla_usuario', JSON.stringify(updatedUser));
         setShowGroupModal(false);

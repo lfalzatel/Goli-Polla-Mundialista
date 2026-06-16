@@ -183,6 +183,7 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
         foto: pendingUser.photoURL,
         whatsapp: fullPhone,
         codigoGrupo: codigoGrupo.toUpperCase(),
+        gruposPermitidos: [codigoGrupo.toUpperCase()],
         puntosTotal: 0,
         createdAt: new Date().toISOString()
       });
@@ -194,7 +195,7 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
         codigoGrupo.toUpperCase(), 
         pendingUser.uid,
         pendingUser.photoURL || undefined,
-        []
+        [codigoGrupo.toUpperCase()]
       );
     } catch (error) {
       console.error("Error guardando perfil", error);
