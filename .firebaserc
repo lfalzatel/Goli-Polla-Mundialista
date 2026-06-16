@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "green-force-pwa-2025"
-  }
+  },
+  "targets": {
+    "green-force-pwa-2025": {
+      "hosting": {
+        "polla": [
+          "goli-polla"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

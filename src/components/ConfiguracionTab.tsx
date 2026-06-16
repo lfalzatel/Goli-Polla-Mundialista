@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { db } from '../lib/firebase';
-import { collection, query, where, onSnapshot, doc, setDoc, getDocs, updateDoc, writeBatch } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, setDoc, getDocs, updateDoc, writeBatch, deleteDoc } from 'firebase/firestore';
 
 interface ConfiguracionTabProps {
   usuario: any;
@@ -148,6 +148,19 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
     } catch (e) {
       console.error("Error updating user", e);
       alert('Error al guardar cambios');
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!editingUser) return;
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar permanentemente a ${editingUser.nombre}?`)) return;
+    try {
+      await deleteDoc(doc(db, 'pm_usuarios', editingUser.id));
+      setAllUsers(prev => prev.filter(u => u.id !== editingUser.id));
+      setEditingUser(null);
+    } catch (e) {
+      console.error("Error deleting user", e);
+      alert('Error al eliminar usuario');
     }
   };
 
@@ -501,12 +514,21 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
               </div>
             </div>
 
-            <button 
-              onClick={handleSaveUserEdit}
-              className="w-full premium-button-accent hover:opacity-90 font-bold py-3 rounded-xl mt-6 transition-all shadow-[0_4px_12px_rgba(225,177,44,0.3)] active:scale-95"
-            >
-              Guardar Cambios
-            </button>
+            <div className="flex gap-3 mt-6">
+              <button 
+                onClick={handleDeleteUser}
+                className="w-1/3 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 font-bold py-3 rounded-xl transition-all active:scale-95 flex items-center justify-center"
+                title="Eliminar Usuario"
+              >
+                <span className="material-symbols-outlined text-[20px]">delete</span>
+              </button>
+              <button 
+                onClick={handleSaveUserEdit}
+                className="w-2/3 premium-button-accent hover:opacity-90 font-bold py-3 rounded-xl transition-all shadow-[0_4px_12px_rgba(225,177,44,0.3)] active:scale-95"
+              >
+                Guardar Cambios
+              </button>
+            </div>
           </div>
         </div>
       )}

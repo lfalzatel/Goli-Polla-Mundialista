@@ -152,7 +152,8 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!codigoGrupo.trim()) {
+    const codigoUpper = codigoGrupo.trim().toUpperCase();
+    if (!codigoUpper) {
       setErrorText('Por favor ingresa un código de acceso de grupo.');
       return;
     }
@@ -165,6 +166,15 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
 
     try {
       setLoading(true);
+      
+      // Validar que el grupo exista antes de crear el perfil del usuario
+      const grupoSnap = await getDoc(doc(db, 'pm_grupos', codigoUpper));
+      if (!grupoSnap.exists() || !grupoSnap.data().activo) {
+        setErrorText("El código de grupo no existe o está inactivo.");
+        setLoading(false);
+        return;
+      }
+
       const fullPhone = '+57 ' + whatsappNumber;
       // Guardar en Firestore
       await setDoc(doc(db, 'pm_usuarios', pendingUser.uid), {
