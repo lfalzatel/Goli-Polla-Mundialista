@@ -41,7 +41,7 @@ export default function ReglasTab() {
             <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 section-title-accent shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Marcador Exacto</p>
-                <p className="text-slate-500 text-xs font-sans mt-0.5">Si aciertas la cantidad exacta de goles que hizo cada equipo. <br/><span className="italic">Ejemplo: Apostaste 2-1 y el partido terminó exactamente 2-1.</span></p>
+                <p className="theme-text-muted text-xs font-sans mt-0.5">Si aciertas la cantidad exacta de goles que hizo cada equipo. <br/><span className="italic">Ejemplo: Apostaste 2-1 y el partido terminó exactamente 2-1.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
                 <span className="font-display text-4xl section-title-accent font-bold">5</span>
@@ -53,7 +53,7 @@ export default function ReglasTab() {
             <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 border-[#e1b12c] shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Ganador + Goles</p>
-                <p className="text-slate-500 text-xs font-sans mt-0.5">Si aciertas al equipo ganador y además aciertas la cantidad exacta de goles que anotó alguno de los dos equipos. <br/><span className="italic">Ejemplo: Apostaste 3-0 y terminó 3-1.</span></p>
+                <p className="theme-text-muted text-xs font-sans mt-0.5">Si aciertas al equipo ganador y además aciertas la cantidad exacta de goles que anotó alguno de los dos equipos. <br/><span className="italic">Ejemplo: Apostaste 3-0 y terminó 3-1.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
                 <span className="font-display text-4xl text-[#e1b12c] font-black">3</span>
@@ -65,7 +65,7 @@ export default function ReglasTab() {
             <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 border-slate-300 shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Equipo Ganador</p>
-                <p className="text-slate-500 text-xs font-sans mt-0.5">Si aciertas quién ganó el partido, o el empate, sin exactitud en goles. <br/><span className="italic">Ejemplo: Apostaste 2-0 y el partido terminó 1-0.</span></p>
+                <p className="theme-text-muted text-xs font-sans mt-0.5">Si aciertas quién ganó el partido, o el empate, sin exactitud en goles. <br/><span className="italic">Ejemplo: Apostaste 2-0 y el partido terminó 1-0.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
                 <span className="font-display text-4xl text-slate-400 font-black">2</span>
@@ -77,7 +77,7 @@ export default function ReglasTab() {
             <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 section-title-accent shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Empate Acertado (Bonus)</p>
-                <p className="text-slate-500 text-xs font-sans mt-0.5">Bonus especial si predices un empate y aciertas que el resultado fue empate, aunque falles el marcador exacto. <br/><span className="italic">Ejemplo: Apostaste 1-1 y terminó 2-2.</span></p>
+                <p className="theme-text-muted text-xs font-sans mt-0.5">Bonus especial si predices un empate y aciertas que el resultado fue empate, aunque falles el marcador exacto. <br/><span className="italic">Ejemplo: Apostaste 1-1 y terminó 2-2.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
                 <span className="font-display text-4xl section-title-accent font-bold">4</span>
@@ -89,7 +89,7 @@ export default function ReglasTab() {
             <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 border-[#e1b12c] shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Total de Goles (Over/Under)</p>
-                <p className="text-slate-500 text-xs font-sans mt-0.5">Si apuestas si la suma de goles de ambos equipos será mayor o menor a 2.5 y aciertas. <br/><span className="italic">Ejemplo: Elegiste "+2.5 goles" y el partido terminó 2-1 (Total 3).</span></p>
+                <p className="theme-text-muted text-xs font-sans mt-0.5">Si apuestas si la suma de goles de ambos equipos será mayor o menor a 2.5 y aciertas. <br/><span className="italic">Ejemplo: Elegiste "+2.5 goles" y el partido terminó 2-1 (Total 3).</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
                 <span className="font-display text-4xl text-[#e1b12c] font-black">2</span>
@@ -107,7 +107,7 @@ export default function ReglasTab() {
               <span className="material-symbols-outlined text-[22px] section-title-accent">account_tree</span>
               Fases del Torneo
             </h3>
-            <p className="text-slate-500 font-sans text-xs leading-relaxed mb-6 font-medium">
+            <p className="theme-text-muted font-sans text-xs leading-relaxed mb-6 font-medium">
               El torneo se divide en dos fases críticas. Tus predicciones de la Fase 1 deben completarse antes del partido de inicio.
             </p>
 
@@ -168,7 +168,7 @@ export default function ReglasTab() {
                   <span className="font-sans text-[10px] text-[#e1b12c] font-extrabold">PTS</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-500 font-sans leading-relaxed">
+              <p className="text-xs theme-text-muted font-sans leading-relaxed">
                 Acierta qué selección levantará la copa al final del torneo. Debe seleccionarse antes de que inicien los octavos de final.
               </p>
             </div>
@@ -187,7 +187,7 @@ export default function ReglasTab() {
                   <span className="font-sans text-[10px] section-title-accent font-extrabold">PTS</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-500 font-sans leading-relaxed">
+              <p className="text-xs theme-text-muted font-sans leading-relaxed">
                 Acierta qué jugador anotará la mayor cantidad de goles en todo el mundial. Válido si se elige antes de iniciar la Fase 2.
               </p>
             </div>
@@ -206,7 +206,7 @@ export default function ReglasTab() {
                   <span className="font-sans text-[10px] section-title-accent font-extrabold">PTS</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-500 font-sans leading-relaxed">
+              <p className="text-xs theme-text-muted font-sans leading-relaxed">
                 Acierta el arquero que ganará el Guante de Oro (menos goles recibidos y mejor desempeño general) del torneo.
               </p>
             </div>
@@ -225,7 +225,7 @@ export default function ReglasTab() {
                   <span className="font-sans text-[10px] text-[#e1b12c] font-extrabold">PTS</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-500 font-sans leading-relaxed">
+              <p className="text-xs theme-text-muted font-sans leading-relaxed">
                 Acierta qué equipo recibirá el trofeo oficial al Juego Limpio por menor cantidad de tarjetas o faltas graves.
               </p>
             </div>
@@ -244,7 +244,7 @@ export default function ReglasTab() {
                   <span className="font-sans text-[10px] text-[#e1b12c] font-extrabold">PTS</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-500 font-sans leading-relaxed">
+              <p className="text-xs theme-text-muted font-sans leading-relaxed">
                 Acierta el equipo sorpresa del mundial (generalmente la selección no favorita que llega más lejos en las eliminatorias). El administrador validará el equipo revelación oficial al finalizar.
               </p>
             </div>

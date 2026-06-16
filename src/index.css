@@ -376,3 +376,14 @@
   font-size: 0.75rem !important; /* text-xs */
   line-height: 1rem !important;
 }
+
+/* Muted text that adapts to light/dark themes */
+.theme-text-muted {
+  color: #64748b; /* slate-500 */
+}
+[data-theme="cyberpunk"] .theme-text-muted, [data-theme="kilocode"] .theme-text-muted {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+[data-theme="glass"] .theme-text-muted {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
