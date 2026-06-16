@@ -766,7 +766,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                               onClick={() => setOverUnderScore(match.partidoId, getEditingOverUnder(match.partidoId) === 'mas25' ? null : 'mas25')}
                               className={`px-3 py-1.5 rounded-full text-[10px] font-bold border transition-all ${
                                 getEditingOverUnder(match.partidoId) === 'mas25' 
-                                  ? 'bg-blue-600 text-white border-blue-500 shadow-[0_0_10px_rgba(37,99,235,0.5)] scale-105' 
+                                  ? 'button-selected-accent scale-105' 
                                   : 'bg-transparent text-current opacity-60 border-current hover:opacity-100 hover:bg-current/10'
                               }`}
                             >
@@ -776,7 +776,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                               onClick={() => setOverUnderScore(match.partidoId, getEditingOverUnder(match.partidoId) === 'menos25' ? null : 'menos25')}
                               className={`px-3 py-1.5 rounded-full text-[10px] font-bold border transition-all ${
                                 getEditingOverUnder(match.partidoId) === 'menos25' 
-                                  ? 'bg-blue-600 text-white border-blue-500 shadow-[0_0_10px_rgba(37,99,235,0.5)] scale-105' 
+                                  ? 'button-selected-accent scale-105' 
                                   : 'bg-transparent text-current opacity-60 border-current hover:opacity-100 hover:bg-current/10'
                               }`}
                             >

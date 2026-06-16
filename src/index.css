@@ -222,6 +222,30 @@
   color: #fff !important;
 }
 
+/* Dynamic selected button style for Over/Under and Sound selections */
+.button-selected-accent {
+  background-color: #2563eb; /* blue-600 */
+  color: white;
+  border-color: #3b82f6; /* blue-500 */
+  box-shadow: 0 0 15px rgba(37,99,235,0.5);
+}
+
+[data-theme='cyberpunk'] .button-selected-accent, [data-theme='kilocode'] .button-selected-accent {
+  background-color: var(--text-primary) !important;
+  color: var(--bg-app) !important;
+  border-color: var(--text-primary) !important;
+  box-shadow: 0 0 15px var(--text-primary) !important;
+  border-radius: 0 !important;
+  font-weight: 900 !important;
+}
+
+[data-theme='glass'] .button-selected-accent {
+  background-color: var(--text-primary) !important;
+  color: white !important;
+  border-color: var(--text-primary) !important;
+  box-shadow: 0 0 15px var(--text-primary) !important;
+}
+
 /* Add scanlines background utility */
 .scanlines-bg {
   background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, rgba(0,0,0,0.15) 2px) !important;

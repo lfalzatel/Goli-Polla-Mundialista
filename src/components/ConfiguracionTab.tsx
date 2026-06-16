@@ -262,7 +262,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     console.error("Error saving sound pref", e);
                   }
                 }}
-                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border-2 flex items-center justify-center gap-2 transition-all ${(!usuario.notificationSound || usuario.notificationSound === 'notification') ? 'bg-blue-600 text-white border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.5)] scale-105' : 'border-white/20 text-white/70 hover:bg-white/10'}`}
+                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border-2 flex items-center justify-center gap-2 transition-all ${(!usuario.notificationSound || usuario.notificationSound === 'notification') ? 'button-selected-accent scale-105' : 'border-white/20 text-white/70 hover:bg-white/10'}`}
               >
                 <span className="material-symbols-outlined text-[16px]">notifications_active</span>
                 Silbato
@@ -278,7 +278,7 @@ export default function ConfiguracionTab({ usuario, themeMode, setThemeMode, act
                     console.error("Error saving sound pref", e);
                   }
                 }}
-                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border-2 flex items-center justify-center gap-2 transition-all ${usuario.notificationSound === 'notification-sound' ? 'bg-blue-600 text-white border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.5)] scale-105' : 'border-white/20 text-white/70 hover:bg-white/10'}`}
+                className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg border-2 flex items-center justify-center gap-2 transition-all ${usuario.notificationSound === 'notification-sound' ? 'button-selected-accent scale-105' : 'border-white/20 text-white/70 hover:bg-white/10'}`}
               >
                 <span className="material-symbols-outlined text-[16px]">campaign</span>
                 Estadio
