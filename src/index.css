@@ -394,4 +394,4 @@
 .text-points-total { color: #034226 !important; }
 [data-theme='noche'] .text-points-total { color: #22c55e !important; }
 [data-theme='glass'] .text-points-total { color: #0ea5e9 !important; }
-[data-theme='cyberpunk'] .text-points-total, [data-theme='kilocode'] .text-points-total { color: var(--text-primary) !important; font-weight: 900; }
+[data-theme='cyberpunk'] .text-points-total, [data-theme='kilocode'] .text-points-total { color: #79ff5b !important; font-weight: 900; }
