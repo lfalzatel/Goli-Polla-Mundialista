@@ -329,13 +329,42 @@
   background-color: #e1b12c;
 }
 
-[data-theme="cyberpunk"] .header-accent-text { color: #00FFB2 !important; }
-[data-theme="cyberpunk"] .header-accent-border { border-color: #00FFB2 !important; }
-[data-theme="cyberpunk"] .header-accent-bg { background-color: #00FFB2 !important; }
+[data-theme="cyberpunk"] .header-accent-text { color: #79ff5b !important; }
+[data-theme="cyberpunk"] .header-accent-border { border-color: #79ff5b !important; }
+[data-theme="cyberpunk"] .header-accent-bg { background-color: #79ff5b !important; }
 
 [data-theme="glass"] .header-accent-text { color: #ffffff !important; }
 [data-theme="glass"] .header-accent-border { border-color: rgba(255, 255, 255, 0.5) !important; }
 [data-theme="glass"] .header-accent-bg { background-color: rgba(255, 255, 255, 0.5) !important; }
+
+/* Subcards inside theme-card to avoid blinding white in dark modes */
+.theme-subcard {
+  background-color: #f8fafc; /* slate-50 */
+}
+[data-theme="cyberpunk"] .theme-subcard, [data-theme="kilocode"] .theme-subcard {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="glass"] .theme-subcard {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Section titles that default to dark green but adapt to console modes */
+.section-title-accent {
+  color: #034226;
+  border-color: #034226;
+}
+[data-theme="cyberpunk"] .section-title-accent { 
+  color: #79ff5b !important; 
+  border-color: #79ff5b !important; 
+}
+[data-theme="kilocode"] .section-title-accent { 
+  color: #e1b12c !important; 
+  border-color: #e1b12c !important; 
+}
+[data-theme="glass"] .section-title-accent { 
+  color: var(--text-primary) !important; 
+  border-color: var(--text-primary) !important; 
+}
 
 /* Dynamic team name text size for console modes to prevent truncation */
 .team-name-text {

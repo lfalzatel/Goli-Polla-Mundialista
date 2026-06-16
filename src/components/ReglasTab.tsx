@@ -24,13 +24,13 @@ export default function ReglasTab() {
         
         {/* Scoring list card */}
         <div className="md:col-span-8 theme-card border  p-6 rounded-2xl relative overflow-hidden shadow-sm">
-          <div className="absolute top-4 right-4 opacity-[0.03] text-[#034226]">
+          <div className="absolute top-4 right-4 opacity-[0.03] section-title-accent">
             <span className="material-symbols-outlined text-[140px]" style={{ fontVariationSettings: "'FILL' 0" }}>
               sports_soccer
             </span>
           </div>
 
-          <h3 className="font-display text-2xl text-[#034226] mb-5 flex items-center gap-2 tracking-wide uppercase">
+          <h3 className="font-display text-2xl section-title-accent mb-5 flex items-center gap-2 tracking-wide uppercase">
             <span className="material-symbols-outlined text-[22px] text-[#e1b12c]">scoreboard</span>
             Puntuación por Partido
           </h3>
@@ -38,19 +38,19 @@ export default function ReglasTab() {
           <div className="space-y-4">
             
             {/* Exact marcador row */}
-            <div className="flex justify-between items-center p-4 bg-[#034226]/5 rounded-xl border-l-4 border-[#034226] shadow-sm">
+            <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 section-title-accent shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Marcador Exacto</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Si aciertas la cantidad exacta de goles que hizo cada equipo. <br/><span className="italic">Ejemplo: Apostaste 2-1 y el partido terminó exactamente 2-1.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
-                <span className="font-display text-4xl text-[#034226] font-bold">5</span>
-                <span className="font-sans text-xs text-[#034226] font-extrabold">PTS</span>
+                <span className="font-display text-4xl section-title-accent font-bold">5</span>
+                <span className="font-sans text-xs section-title-accent font-extrabold">PTS</span>
               </div>
             </div>
 
             {/* Winner + Goals row */}
-            <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border-l-4 border-[#e1b12c] shadow-sm">
+            <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 border-[#e1b12c] shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Ganador + Goles</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Si aciertas al equipo ganador y además aciertas la cantidad exacta de goles que anotó alguno de los dos equipos. <br/><span className="italic">Ejemplo: Apostaste 3-0 y terminó 3-1.</span></p>
@@ -62,7 +62,7 @@ export default function ReglasTab() {
             </div>
 
             {/* Winner row */}
-            <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border-l-4 border-slate-300 shadow-sm">
+            <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 border-slate-300 shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Equipo Ganador</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Si aciertas quién ganó el partido, o el empate, sin exactitud en goles. <br/><span className="italic">Ejemplo: Apostaste 2-0 y el partido terminó 1-0.</span></p>
@@ -74,19 +74,19 @@ export default function ReglasTab() {
             </div>
 
             {/* Empate Bonus row */}
-            <div className="flex justify-between items-center p-4 bg-[#034226]/5 rounded-xl border-l-4 border-[#034226] shadow-sm">
+            <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 section-title-accent shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Empate Acertado (Bonus)</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Bonus especial si predices un empate y aciertas que el resultado fue empate, aunque falles el marcador exacto. <br/><span className="italic">Ejemplo: Apostaste 1-1 y terminó 2-2.</span></p>
               </div>
               <div className="flex items-center gap-2 shrink-0 ml-2">
-                <span className="font-display text-4xl text-[#034226] font-bold">4</span>
-                <span className="font-sans text-xs text-[#034226] font-extrabold">PTS</span>
+                <span className="font-display text-4xl section-title-accent font-bold">4</span>
+                <span className="font-sans text-xs section-title-accent font-extrabold">PTS</span>
               </div>
             </div>
 
             {/* Over/Under row */}
-            <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border-l-4 border-[#e1b12c] shadow-sm">
+            <div className="flex justify-between items-center p-4 theme-subcard rounded-xl border-l-4 border-[#e1b12c] shadow-sm">
               <div>
                 <p className="font-sans font-bold theme-text-card">Total de Goles (Over/Under)</p>
                 <p className="text-slate-500 text-xs font-sans mt-0.5">Si apuestas si la suma de goles de ambos equipos será mayor o menor a 2.5 y aciertas. <br/><span className="italic">Ejemplo: Elegiste "+2.5 goles" y el partido terminó 2-1 (Total 3).</span></p>
@@ -103,8 +103,8 @@ export default function ReglasTab() {
         {/* Phases summary timeline card */}
         <div className="md:col-span-4 theme-card border  p-6 rounded-2xl flex flex-col justify-between shadow-sm">
           <div>
-            <h3 className="font-display text-2xl text-[#034226] mb-4 flex items-center gap-2 tracking-wide uppercase">
-              <span className="material-symbols-outlined text-[22px] text-[#034226]">account_tree</span>
+            <h3 className="font-display text-2xl section-title-accent mb-4 flex items-center gap-2 tracking-wide uppercase">
+              <span className="material-symbols-outlined text-[22px] section-title-accent">account_tree</span>
               Fases del Torneo
             </h3>
             <p className="text-slate-500 font-sans text-xs leading-relaxed mb-6 font-medium">
@@ -113,8 +113,8 @@ export default function ReglasTab() {
 
             <ul className="space-y-4">
               <li className="flex gap-3">
-                <div className="w-8 h-8 rounded bg-[#034226]/10 flex items-center justify-center shrink-0 border border-[#034226]/20">
-                  <span className="font-mono font-bold text-xs text-[#034226]">01</span>
+                <div className="w-8 h-8 rounded bg-[#034226]/10 flex items-center justify-center shrink-0 border section-title-accent/20">
+                  <span className="font-mono font-bold text-xs section-title-accent">01</span>
                 </div>
                 <div>
                   <p className="font-sans font-bold text-sm theme-text-card">Fase de Grupos</p>
@@ -145,7 +145,7 @@ export default function ReglasTab() {
 
         {/* Global Special Tournament Picks (Phase 2 Booster) */}
         <div className="md:col-span-12 theme-card border  p-6 rounded-2xl shadow-sm">
-          <h3 className="font-display text-2xl text-[#034226] mb-5 flex items-center gap-2 uppercase tracking-wide">
+          <h3 className="font-display text-2xl section-title-accent mb-5 flex items-center gap-2 uppercase tracking-wide">
             <span className="material-symbols-outlined text-[24px] text-[#e1b12c]" style={{ fontVariationSettings: "'FILL' 1" }}>
               workspace_premium
             </span>
@@ -155,7 +155,7 @@ export default function ReglasTab() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
             {/* Champion */}
-            <div className="bg-slate-50 p-4 rounded-xl flex flex-col justify-between border /60 hover:border-[#e1b12c] transition-all shadow-sm gap-2">
+            <div className="theme-subcard p-4 rounded-xl flex flex-col justify-between border /60 hover:border-[#e1b12c] transition-all shadow-sm gap-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-[#e1b12c]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -174,17 +174,17 @@ export default function ReglasTab() {
             </div>
 
             {/* Top Scorer */}
-            <div className="bg-slate-50 p-4 rounded-xl flex flex-col justify-between border /60 hover:border-slate-400 transition-all shadow-sm gap-2">
+            <div className="theme-subcard p-4 rounded-xl flex flex-col justify-between border /60 hover:border-slate-400 transition-all shadow-sm gap-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-[#034226]">
+                  <span className="material-symbols-outlined section-title-accent">
                     sports_and_outdoors
                   </span>
                   <span className="font-sans font-bold text-slate-700 text-sm">Goleador (Bota de Oro)</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="font-display text-2xl text-[#034226] font-black">+10</span>
-                  <span className="font-sans text-[10px] text-[#034226] font-extrabold">PTS</span>
+                  <span className="font-display text-2xl section-title-accent font-black">+10</span>
+                  <span className="font-sans text-[10px] section-title-accent font-extrabold">PTS</span>
                 </div>
               </div>
               <p className="text-xs text-slate-500 font-sans leading-relaxed">
@@ -193,17 +193,17 @@ export default function ReglasTab() {
             </div>
 
             {/* Best Defense/Valla Invicta */}
-            <div className="bg-slate-50 p-4 rounded-xl flex flex-col justify-between border /60 hover:border-slate-400 transition-all shadow-sm gap-2">
+            <div className="theme-subcard p-4 rounded-xl flex flex-col justify-between border /60 hover:border-slate-400 transition-all shadow-sm gap-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-[#034226]">
+                  <span className="material-symbols-outlined section-title-accent">
                     shield
                   </span>
                   <span className="font-sans font-bold text-slate-700 text-sm">Valla Invicta</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="font-display text-2xl text-[#034226] font-black">+10</span>
-                  <span className="font-sans text-[10px] text-[#034226] font-extrabold">PTS</span>
+                  <span className="font-display text-2xl section-title-accent font-black">+10</span>
+                  <span className="font-sans text-[10px] section-title-accent font-extrabold">PTS</span>
                 </div>
               </div>
               <p className="text-xs text-slate-500 font-sans leading-relaxed">
@@ -212,7 +212,7 @@ export default function ReglasTab() {
             </div>
 
             {/* Fair Play bonus */}
-            <div className="bg-slate-50 p-4 rounded-xl flex flex-col justify-between border /60 hover:border-slate-400 transition-all shadow-sm gap-2">
+            <div className="theme-subcard p-4 rounded-xl flex flex-col justify-between border /60 hover:border-slate-400 transition-all shadow-sm gap-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-[#e1b12c]">
@@ -231,7 +231,7 @@ export default function ReglasTab() {
             </div>
 
             {/* Revelación bonus */}
-            <div className="bg-slate-50 p-4 rounded-xl flex flex-col justify-between border /60 hover:border-slate-400 transition-all shadow-sm gap-2 md:col-span-2">
+            <div className="theme-subcard p-4 rounded-xl flex flex-col justify-between border /60 hover:border-slate-400 transition-all shadow-sm gap-2 md:col-span-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-[#e1b12c]">
