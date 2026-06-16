@@ -213,7 +213,7 @@ export default function PerfilTab({
             
             <div className="space-y-1">
               <h2 className="font-display text-2xl theme-text-card tracking-wide leading-none">{nombre}</h2>
-              <div className="flex items-center gap-1.5 text-slate-500">
+              <div className="flex items-center gap-1.5 theme-text-muted">
                 <span className="material-symbols-outlined text-[16px] text-[#e1b12c]" style={{ fontVariationSettings: "'FILL' 1" }}>
                   verified
                 </span>
@@ -221,7 +221,7 @@ export default function PerfilTab({
                   Ranking Global: #14
                 </span>
               </div>
-              <p className="font-sans text-xs text-slate-400 font-semibold uppercase">Grupo Activo: {grupoNombre || codigoGrupo}</p>
+              <p className="font-sans text-xs theme-text-muted font-semibold uppercase">Grupo Activo: {grupoNombre || codigoGrupo}</p>
             </div>
           </div>
 
@@ -236,7 +236,7 @@ export default function PerfilTab({
         {/* Editable Contacts fields */}
         <div className="relative z-10 mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 pt-5 border-t border-slate-100">
           <form onSubmit={handleSavePhone} className="space-y-1.5">
-            <label className="font-sans text-xs text-slate-500 font-bold block ml-1 uppercase">
+            <label className="font-sans text-xs theme-text-muted font-bold block ml-1 uppercase">
               WhatsApp de Contacto
             </label>
             <div className="relative flex items-center">
@@ -338,7 +338,7 @@ export default function PerfilTab({
                       3
                     </div>
                   ) : (
-                    <span className="font-display text-lg text-slate-500 w-8 text-center font-bold">{user.posicion}</span>
+                    <span className="font-display text-lg theme-text-muted w-8 text-center font-bold">{user.posicion}</span>
                   )}
 
                   {/* Avatar thumbnail */}
@@ -355,7 +355,7 @@ export default function PerfilTab({
                     <span className={`font-sans text-sm font-bold block ${isSelf ? 'text-[#034226]' : 'theme-text-card'}`}>
                       {user.nombre} {isSelf && '(Tú)'}
                     </span>
-                    <span className="font-sans text-[10px] text-slate-500 font-semibold leading-none">
+                    <span className="font-sans text-[10px] theme-text-muted font-semibold leading-none">
                       {user.isMe ? 'Subiendo 2 puestos' : user.tendencia === 'subiendo' ? '▲ Subiendo' : user.tendencia === 'bajando' ? '▼ Bajando' : ' Estable'}
                     </span>
                   </div>
@@ -363,7 +363,7 @@ export default function PerfilTab({
 
                 <div className="text-right">
                   <span className="font-display text-2xl text-[#034226] font-black block leading-none">{user.puntosTotal}</span>
-                  <span className="block font-sans text-[8px] text-slate-400 tracking-widest font-bold uppercase mt-0.5">PTS</span>
+                  <span className="block font-sans text-[8px] theme-text-muted tracking-widest font-bold uppercase mt-0.5">PTS</span>
                 </div>
               </div>
             );
@@ -380,7 +380,7 @@ export default function PerfilTab({
 
         <div className="space-y-4">
           {historialApuestas.length === 0 ? (
-            <div className="theme-card rounded-2xl p-6 text-center text-slate-500 border  shadow-sm text-sm">
+            <div className="theme-card rounded-2xl p-6 text-center theme-text-muted border  shadow-sm text-sm">
               No tienes partidos finalizados con apuestas registradas aún.
             </div>
           ) : historialApuestas.map((item, idx) => {
@@ -392,7 +392,7 @@ export default function PerfilTab({
                 
                 {/* Header row */}
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                  <span className="font-sans text-[10px] text-slate-400 font-bold uppercase tracking-wider">{item.fase}</span>
+                  <span className="font-sans text-[10px] theme-text-muted font-bold uppercase tracking-wider">{item.fase}</span>
                   <div className={`flex items-center gap-1 px-2.5 py-0.5 rounded font-sans text-[10px] font-extrabold tracking-wide uppercase ${item.badgeColor} premium-pill-container`}>
                     <span className="material-symbols-outlined text-[13px] font-bold">
                       {item.icon}
@@ -421,12 +421,12 @@ export default function PerfilTab({
                   <div className="flex flex-col items-center justify-center">
                     <div className="flex items-center gap-2">
                       <div className="flex flex-col items-center">
-                        <span className="font-sans text-[8px] text-slate-400 font-bold uppercase theme-text-card opacity-80">Tu Polla</span>
+                        <span className="font-sans text-[8px] theme-text-muted font-bold uppercase theme-text-card opacity-80">Tu Polla</span>
                         <span className="font-display text-base theme-text-card text-[#034226] font-bold whitespace-nowrap">{item.golesLocApuesta} - {item.golesVisApuesta}</span>
                       </div>
                       <div className="h-6 w-[1px] bg-slate-200 mx-1 opacity-50"></div>
                       <div className="flex flex-col items-center">
-                        <span className="font-sans text-[8px] text-slate-400 font-bold uppercase theme-text-card opacity-80">Real</span>
+                        <span className="font-sans text-[8px] theme-text-muted font-bold uppercase theme-text-card opacity-80">Real</span>
                         <span className="font-display text-base text-[#e1b12c] font-bold whitespace-nowrap">{item.golesLocReal} - {item.golesVisReal}</span>
                       </div>
                     </div>
@@ -472,24 +472,24 @@ export default function PerfilTab({
 
             <h3 className="font-display text-2xl theme-text-card mb-2">Instalar Goli Polla</h3>
             
-            <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+            <p className="text-sm theme-text-muted mb-6 leading-relaxed">
               Para tener la mejor experiencia y acceso rápido, instala esta aplicación en tu pantalla de inicio:
             </p>
 
             <div className="space-y-4 text-left">
               <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <span className="material-symbols-outlined text-slate-400 mt-0.5">apple</span>
+                <span className="material-symbols-outlined theme-text-muted mt-0.5">apple</span>
                 <div>
                   <h4 className="font-bold text-slate-700 text-sm">En iPhone (Safari)</h4>
-                  <p className="text-xs text-slate-500 mt-1">Toca el botón <strong>Compartir</strong> en la barra inferior y selecciona <strong>"Añadir a la pantalla de inicio"</strong>.</p>
+                  <p className="text-xs theme-text-muted mt-1">Toca el botón <strong>Compartir</strong> en la barra inferior y selecciona <strong>"Añadir a la pantalla de inicio"</strong>.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <span className="material-symbols-outlined text-slate-400 mt-0.5">android</span>
+                <span className="material-symbols-outlined theme-text-muted mt-0.5">android</span>
                 <div>
                   <h4 className="font-bold text-slate-700 text-sm">En Android (Chrome)</h4>
-                  <p className="text-xs text-slate-500 mt-1">Toca el menú <strong>(tres puntos)</strong> en la esquina superior derecha y selecciona <strong>"Añadir a la pantalla de inicio"</strong> o "Instalar aplicación".</p>
+                  <p className="text-xs theme-text-muted mt-1">Toca el menú <strong>(tres puntos)</strong> en la esquina superior derecha y selecciona <strong>"Añadir a la pantalla de inicio"</strong> o "Instalar aplicación".</p>
                 </div>
               </div>
             </div>

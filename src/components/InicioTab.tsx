@@ -287,7 +287,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
         
         {isBonosExpanded && (
         <div className="p-5 space-y-5 animate-fade-in">
-          <p className="text-slate-500 font-sans text-xs leading-relaxed font-medium">
+          <p className="theme-text-muted font-sans text-xs leading-relaxed font-medium">
             Selecciona a tus favoritos para ganar los puntos extra. {isBonosLocked ? "La etapa de edición ha finalizado." : "Asegúrate de guardar antes del inicio de Octavos."}
           </p>
           
@@ -308,7 +308,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 <option value="">-- Selecciona un País --</option>
                 {equiposOrdenados.map(eq => <option key={eq} value={eq}>{eq}</option>)}
               </select>
-              <p className="text-[10px] text-slate-400 font-sans leading-tight">El equipo que levantará la copa al final.</p>
+              <p className="text-[10px] theme-text-muted font-sans leading-tight">El equipo que levantará la copa al final.</p>
             </div>
 
             {/* Valla Invicta */}
@@ -326,7 +326,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 <option value="">-- Selecciona un País --</option>
                 {equiposOrdenados.map(eq => <option key={eq} value={eq}>{eq}</option>)}
               </select>
-              <p className="text-[10px] text-slate-400 font-sans leading-tight">El equipo que recibirá menos goles en total.</p>
+              <p className="text-[10px] theme-text-muted font-sans leading-tight">El equipo que recibirá menos goles en total.</p>
             </div>
 
             {/* Fair Play */}
@@ -344,7 +344,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 <option value="">-- Selecciona un País --</option>
                 {equiposOrdenados.map(eq => <option key={eq} value={eq}>{eq}</option>)}
               </select>
-              <p className="text-[10px] text-slate-400 font-sans leading-tight">El equipo con menos tarjetas y mejor juego limpio.</p>
+              <p className="text-[10px] theme-text-muted font-sans leading-tight">El equipo con menos tarjetas y mejor juego limpio.</p>
             </div>
 
             {/* Revelación */}
@@ -362,7 +362,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 <option value="">-- Selecciona un País --</option>
                 {equiposOrdenados.map(eq => <option key={eq} value={eq}>{eq}</option>)}
               </select>
-              <p className="text-[10px] text-slate-400 font-sans leading-tight">El equipo sorpresa oficial del torneo.</p>
+              <p className="text-[10px] theme-text-muted font-sans leading-tight">El equipo sorpresa oficial del torneo.</p>
             </div>
 
             {/* Goleador (Libre) */}
@@ -379,7 +379,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 onChange={(e) => setEditingBonos({...editingBonos, goleador: e.target.value})}
                 className="bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-sans text-slate-700 outline-none focus:ring-2 focus:ring-[#034226] disabled:opacity-60"
               />
-              <p className="text-[10px] text-slate-400 font-sans leading-tight">Jugador que anotará la mayor cantidad de goles en el torneo.</p>
+              <p className="text-[10px] theme-text-muted font-sans leading-tight">Jugador que anotará la mayor cantidad de goles en el torneo.</p>
             </div>
 
           </div>
@@ -399,12 +399,12 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                 </span>
                 <span className="uppercase">{bonificaciones ? 'ACTUALIZAR BONIFICACIONES' : 'GUARDAR BONIFICACIONES'}</span>
               </button>
-              <p className="text-[10px] text-slate-400 font-sans font-semibold text-center uppercase tracking-wider">
-                LÍMITE DE EDICIÓN: <span className="text-slate-500">27 DE JUNIO 2026 (INICIO FASE 2)</span>
+              <p className="text-[10px] theme-text-muted font-sans font-semibold text-center uppercase tracking-wider">
+                LÍMITE DE EDICIÓN: <span className="theme-text-muted">27 DE JUNIO 2026 (INICIO FASE 2)</span>
               </p>
             </div>
           ) : (
-            <div className="w-full flex items-center gap-2 text-slate-500 font-sans justify-center bg-slate-100 py-2.5 rounded-xl border /40 mt-2">
+            <div className="w-full flex items-center gap-2 theme-text-muted font-sans justify-center bg-slate-100 py-2.5 rounded-xl border /40 mt-2">
               <span className="material-symbols-outlined text-[16px] text-[#e1b12c] font-bold">lock</span>
               <span className="font-medium text-xs">
                 Edición finalizada. Tus pronósticos globales están bloqueados.
@@ -421,7 +421,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
         <div className="flex gap-2 relative">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <span className="material-symbols-outlined text-slate-400">search</span>
+              <span className="material-symbols-outlined theme-text-muted">search</span>
             </div>
             <input
               type="text"
@@ -433,7 +433,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
             {searchTerm && (
               <button 
                 onClick={() => setSearchTerm('')}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:theme-text-card"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center theme-text-muted hover:theme-text-card"
               >
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
@@ -441,7 +441,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
           </div>
           <button
               onClick={() => setShowCalendar(!showCalendar)}
-              className={`w-14 shrink-0 rounded-xl flex items-center justify-center border-2 transition-all shadow-sm ${showCalendar || selectedDate ? 'premium-card text-white border-transparent' : 'theme-card text-slate-500  hover:bg-slate-50'}`}
+              className={`w-14 shrink-0 rounded-xl flex items-center justify-center border-2 transition-all shadow-sm ${showCalendar || selectedDate ? 'premium-card text-white border-transparent' : 'theme-card theme-text-muted  hover:bg-slate-50'}`}
             >
             <span className="material-symbols-outlined text-[24px]">calendar_month</span>
           </button>
@@ -455,7 +455,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
               {selectedDate && (
                 <button 
                   onClick={() => setSelectedDate(null)}
-                  className="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded font-bold hover:bg-slate-200 transition-colors"
+                  className="text-[10px] bg-slate-100 theme-text-muted px-2 py-1 rounded font-bold hover:bg-slate-200 transition-colors"
                 >
                   MOSTRAR TODOS
                 </button>
@@ -505,7 +505,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
       {[
         { estadoKey: 'en_vivo', titulo: 'EN VIVO', colorCls: 'text-red-500 border-red-500 bg-red-500/10 flex gap-2 justify-center items-center', icon: true },
         { estadoKey: 'pendiente', titulo: 'PRÓXIMOS PARTIDOS', colorCls: 'premium-card premium-card-title border-2 border-current shadow-lg', icon: false },
-        { estadoKey: 'finalizado', titulo: 'FINALIZADOS', colorCls: 'text-slate-400 border-slate-600 bg-[#121316]', icon: false }
+        { estadoKey: 'finalizado', titulo: 'FINALIZADOS', colorCls: 'theme-text-muted border-slate-600 bg-[#121316]', icon: false }
       ].map(({ estadoKey, titulo, colorCls, icon }) => {
         const fechasObj = partidosPorEstadoYFecha[estadoKey];
         if (!fechasObj || Object.keys(fechasObj).length === 0) return null;
@@ -551,10 +551,10 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                   <div className="p-5">
                     {/* Header info */}
                     <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
-                      <span className="font-sans text-[10px] text-slate-400 font-bold uppercase tracking-wider theme-text-card opacity-80">
+                      <span className="font-sans text-[10px] theme-text-muted font-bold uppercase tracking-wider theme-text-card opacity-80">
                         {match.grupoTorneo} • {match.estadio}
                       </span>
-                      <span className={`font-mono text-xs font-bold uppercase ${match.estado === 'en_vivo' ? 'text-red-500 animate-pulse flex items-center gap-1.5' : yaBloqueado ? 'text-slate-400' : 'theme-text-card text-[#034226]'}`}>
+                      <span className={`font-mono text-xs font-bold uppercase ${match.estado === 'en_vivo' ? 'text-red-500 animate-pulse flex items-center gap-1.5' : yaBloqueado ? 'theme-text-muted' : 'theme-text-card text-[#034226]'}`}>
                         {match.estado === 'en_vivo' ? <><span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>JUGÁNDOSE</> : match.estado === 'finalizado' ? 'FINALIZADO' : match.hora}
                       </span>
                     </div>
@@ -605,12 +605,12 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                         {match.estado === 'finalizado' || match.estado === 'en_vivo' ? (
                           match.golesLocal !== null && match.golesLocal !== undefined ? (
                             <div className="flex flex-col items-center bg-slate-100 px-3 py-1.5 rounded-xl border /50">
-                              <span className="font-sans text-[8px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Real</span>
+                              <span className="font-sans text-[8px] theme-text-muted font-bold uppercase tracking-wider mb-0.5">Real</span>
                               <div className="flex items-center gap-2">
                                 <span className="font-display text-3xl text-[#034226] font-black">
                                   {match.golesLocal}
                                 </span>
-                                <span className="font-mono text-xs text-slate-400">-</span>
+                                <span className="font-mono text-xs theme-text-muted">-</span>
                                 <span className="font-display text-3xl text-[#034226] font-black">
                                   {match.golesVisitante}
                                 </span>
@@ -618,14 +618,14 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             </div>
                           ) : (
                             <div className="flex flex-col items-center bg-slate-100 px-3 py-1.5 rounded-xl border /50">
-                              <span className="font-sans text-[8px] text-slate-400 font-bold uppercase tracking-wider mb-0.5 text-center">Por<br/>Act.</span>
+                              <span className="font-sans text-[8px] theme-text-muted font-bold uppercase tracking-wider mb-0.5 text-center">Por<br/>Act.</span>
                               <div className="flex items-center gap-2">
-                                <span className="font-display text-lg text-slate-400 font-black">VS</span>
+                                <span className="font-display text-lg theme-text-muted font-black">VS</span>
                               </div>
                             </div>
                           )
                         ) : (
-                          <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center font-bold text-[10px] text-slate-400 border  shadow-inner">
+                          <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center font-bold text-[10px] theme-text-muted border  shadow-inner">
                             VS
                           </div>
                         )}
@@ -702,7 +702,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                           {/* Breakdown UI */}
                           {match.estado === 'finalizado' && match.golesLocal !== null && ptsObj && (
                             <div className="bg-[#034226]/5 rounded-xl border border-[#034226]/10 p-3 mx-1 flex flex-col gap-1.5 text-[11px]">
-                              <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Desglose de puntos</div>
+                              <div className="text-[9px] font-bold theme-text-muted uppercase tracking-widest mb-1">Desglose de puntos</div>
                               
                               {ptsObj.marcador > 0 && <div className="flex justify-between items-center theme-text-card"><span>Marcador Exacto:</span> <span className="font-bold theme-card px-2 py-0.5 rounded border ">+{ptsObj.marcador} pts</span></div>}
                               
@@ -722,7 +722,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                         <div className="w-full flex flex-col gap-3 items-center">
                           {/* Over/Under Selection */}
                           <div className="flex w-full items-center gap-2 mb-1 justify-center">
-                            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Opcional:</span>
+                            <span className="text-[10px] theme-text-muted font-bold uppercase tracking-wider">Opcional:</span>
                             <button
                               onClick={() => setOverUnderScore(match.partidoId, getEditingOverUnder(match.partidoId) === 'mas25' ? null : 'mas25')}
                               className={`px-3 py-1.5 rounded-full text-[10px] font-bold border transition-colors ${
@@ -758,8 +758,8 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
                             </span>
                             <span className="uppercase">{apuesta ? 'ACTUALIZAR APUESTA' : 'GUARDAR APUESTA'}</span>
                           </button>
-                          <p className="text-[10px] text-slate-400 font-sans font-semibold text-center uppercase tracking-wider">
-                            LÍMITE DE EDICIÓN: <span className="text-slate-500">{match.fecha} a las {match.hora}</span>
+                          <p className="text-[10px] theme-text-muted font-sans font-semibold text-center uppercase tracking-wider">
+                            LÍMITE DE EDICIÓN: <span className="theme-text-muted">{match.fecha} a las {match.hora}</span>
                           </p>
                         </div>
                       )}

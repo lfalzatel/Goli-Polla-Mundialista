@@ -110,7 +110,7 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
         <p className="opacity-80 font-sans text-sm relative z-10">Posiciones y predicciones del grupo</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
         {usuarios.map(user => {
           const isExpanded = expandedUserId === user.uid;
           const isCurrentUser = user.uid === usuarioActualId;
@@ -120,9 +120,9 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
               {/* User row header */}
               <div 
                 onClick={() => handleUserClick(user.uid)}
-                className={`flex items-center gap-4 p-4 cursor-pointer hover:bg-slate-50 transition-colors ${isExpanded ? 'theme-card/5' : ''}`}
+                className={`flex items-center gap-4 p-4 cursor-pointer hover:theme-subcard transition-colors ${isExpanded ? 'theme-card/5' : ''}`}
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${user.posicion === 1 ? 'bg-[#e1b12c] text-[#121316]' : user.posicion === 2 ? 'bg-[#94a3b8] text-[#121316]' : user.posicion === 3 ? 'bg-[#b45309] theme-text-card' : 'bg-slate-100 text-slate-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${user.posicion === 1 ? 'bg-[#e1b12c] text-[#121316]' : user.posicion === 2 ? 'bg-[#94a3b8] text-[#121316]' : user.posicion === 3 ? 'bg-[#b45309] theme-text-card' : 'bg-slate-100 theme-text-muted'}`}>
                   {user.posicion}
                 </div>
                 
@@ -130,39 +130,39 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                   <img src={user.foto} alt={user.nombre} className="w-12 h-12 rounded-full object-cover border-2 " />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center border-2 ">
-                    <span className="material-symbols-outlined text-slate-400">person</span>
+                    <span className="material-symbols-outlined theme-text-muted">person</span>
                   </div>
                 )}
                 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold theme-text-card text-lg truncate flex items-center gap-2">
+                  <h3 className="font-bold theme-text-card text-base truncate flex items-center gap-2">
                     {user.nombre}
                     {isCurrentUser && <span className="text-[10px] bg-[#e1b12c] text-black px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">Tú</span>}
                   </h3>
-                  <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
+                  <p className="text-xs theme-text-muted mt-0.5 flex items-center gap-1">
                     <span className="material-symbols-outlined text-[14px]">visibility</span> Ver apuestas
                   </p>
                 </div>
                 
                 <div className="text-right">
-                  <p className="font-mono text-blackxl font-bold text-[#e1b12c]">{user.puntosTotal}</p>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Puntos</p>
+                  <p className="font-mono text-2xl font-bold text-[#e1b12c]">{user.puntosTotal}</p>
+                  <p className="text-[10px] uppercase tracking-wider theme-text-muted font-bold">Puntos</p>
                 </div>
               </div>
 
               {/* Expanded Bets View */}
               {isExpanded && (
-                <div className="border-t border-slate-100 bg-slate-50 p-4">
+                <div className="border-t border-slate-100 theme-subcard p-4">
                   {/* Search & Calendar Tools */}
                   <div className="flex gap-2 mb-6">
                     <div className="relative flex-1">
-                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 theme-text-muted">search</span>
                       <input 
                         type="text" 
                         placeholder="Buscar equipo o fecha..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full theme-card border  theme-text-card rounded-xl pl-10 pr-4 py-2.5 font-sans focus:outline-none focus:border-[#00ff88]/50 focus:ring-1 focus:ring-[#00ff88]/50 transition-all text-sm placeholder:text-slate-500"
+                        className="w-full theme-card border  theme-text-card rounded-xl pl-10 pr-4 py-2.5 font-sans focus:outline-none focus:border-[#00ff88]/50 focus:ring-1 focus:ring-[#00ff88]/50 transition-all text-sm placeholder:theme-text-muted"
                       />
                     </div>
                     <button 
@@ -211,7 +211,7 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                       <div className="w-8 h-8 border-4 border-green-200 border-t-[#00ff88] rounded-full animate-spin"></div>
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                       {filteredPartidos.map(partido => {
                         const apuesta = getApuestaForPartido(partido.partidoId);
                         
@@ -221,8 +221,8 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                         return (
                           <div key={partido.partidoId} className="theme-card border  rounded-xl p-3 sm:p-4 shadow flex flex-col gap-3">
                             <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{partido.grupoTorneo}</span>
-                              <span className="text-xs text-slate-400">{partido.fecha} - {partido.hora}</span>
+                              <span className="text-[10px] font-bold theme-text-muted uppercase tracking-widest">{partido.grupoTorneo}</span>
+                              <span className="text-xs theme-text-muted">{partido.fecha} - {partido.hora}</span>
                             </div>
                             
                             <div className="flex items-center justify-between gap-2 sm:gap-4">
@@ -234,23 +234,23 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                               <div className="flex-1 flex flex-col items-center">
                                 {isSecret ? (
                                   <div className="flex flex-col items-center mb-1">
-                                    <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-0.5 opacity-0">PRONÓSTICO</span>
+                                    <span className="text-[10px] font-bold theme-text-muted tracking-wider mb-0.5 opacity-0">PRONÓSTICO</span>
                                     <div className="theme-card border  rounded-lg px-4 py-2 flex items-center justify-center">
-                                      <span className="material-symbols-outlined text-slate-500">lock</span>
+                                      <span className="material-symbols-outlined theme-text-muted">lock</span>
                                     </div>
                                   </div>
                                 ) : apuesta ? (
                                   <div className="flex flex-col items-center mb-1">
-                                    <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-0.5 uppercase">Pronóstico</span>
+                                    <span className="text-[10px] font-bold theme-text-muted tracking-wider mb-0.5 uppercase">Pronóstico</span>
                                     <div className="theme-card border border-[#e1b12c]/30 rounded-lg px-3 sm:px-5 py-1.5 flex items-center justify-center gap-2 sm:gap-4 shadow-inner">
-                                      <span className="font-mono text-xl sm:text-blackxl font-bold theme-text-card">{apuesta.golesLocalApuesta}</span>
-                                      <span className="text-slate-500">-</span>
-                                      <span className="font-mono text-xl sm:text-blackxl font-bold theme-text-card">{apuesta.golesVisitanteApuesta}</span>
+                                      <span className="font-mono text-xl sm:text-2xl font-bold theme-text-card">{apuesta.golesLocalApuesta}</span>
+                                      <span className="theme-text-muted">-</span>
+                                      <span className="font-mono text-xl sm:text-2xl font-bold theme-text-card">{apuesta.golesVisitanteApuesta}</span>
                                     </div>
                                   </div>
                                 ) : (
                                   <div className="flex flex-col items-center mb-1">
-                                    <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-0.5 opacity-0">PRONÓSTICO</span>
+                                    <span className="text-[10px] font-bold theme-text-muted tracking-wider mb-0.5 opacity-0">PRONÓSTICO</span>
                                     <div className="theme-card border border-red-500/20 rounded-lg px-3 py-1 flex items-center justify-center">
                                       <span className="text-xs text-red-400">Sin predicción</span>
                                     </div>
@@ -267,7 +267,7 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                                     En Vivo: {partido.golesLocal} - {partido.golesVisitante}
                                   </span>
                                 ) : (
-                                  <span className="text-[10px] text-slate-500 font-mono tracking-wider">VS</span>
+                                  <span className="text-[10px] theme-text-muted font-mono tracking-wider">VS</span>
                                 )}
                               </div>
                               
@@ -282,7 +282,7 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                               <div className="mt-3">
                                 {typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos !== null ? (
                                   <div className="theme-card rounded-xl p-3 border border-[#e1b12c]/20">
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Desglose de Puntos</p>
+                                    <p className="text-[10px] font-bold theme-text-muted uppercase tracking-widest mb-2">Desglose de Puntos</p>
                                     <div className="space-y-1 text-[11px] font-sans">
                                       {apuesta.puntosObtenidos.marcador > 0 && <div className="flex justify-between items-center theme-text-card"><span>Marcador Exacto:</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.marcador} pts</span></div>}
                                       {apuesta.puntosObtenidos.ganador > 0 && <div className="flex justify-between items-center theme-text-card"><span>{apuesta.puntosObtenidos.ganador === 3 ? 'Ganador + Goles:' : 'Equipo Ganador:'}</span> <span className="font-bold text-green-600">+{apuesta.puntosObtenidos.ganador} pts</span></div>}
@@ -307,7 +307,7 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                         );
                       })}
                       {filteredPartidos.length === 0 && (
-                        <p className="text-center text-slate-400 py-8">No se encontraron partidos</p>
+                        <p className="text-center theme-text-muted py-8">No se encontraron partidos</p>
                       )}
                     </div>
                   )}
