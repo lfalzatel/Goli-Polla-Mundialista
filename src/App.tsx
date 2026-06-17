@@ -515,10 +515,10 @@ export default function App() {
       const batch = writeBatch(db);
       for (const uid of Object.keys(userPoints)) {
         const data = userPoints[uid];
-        batch.update(doc(db, 'pm_usuarios', uid), {
+        batch.set(doc(db, 'pm_usuarios', uid), {
             puntosTotal: data.total,
             puntosPorGrupo: data.byGroup
-        });
+        }, { merge: true });
       }
       await batch.commit();
       setNotificationToast({
@@ -590,9 +590,9 @@ export default function App() {
             matchPointsData[apuesta.partidoId].matchPoints[apuesta.uid] = puntosGanados;
 
             // Guardar el objeto completo para tener el desglose
-            batch.update(doc(db, 'pm_apuestas', apuesta.id), {
+            batch.set(doc(db, 'pm_apuestas', apuesta.id), {
                puntosObtenidos: puntosObj
-            });
+            }, { merge: true });
             
             const grupoBet = apuesta.codigoGrupo || 'LACURVA1';
             if (!userPointsByGroup[apuesta.uid]) userPointsByGroup[apuesta.uid] = {};
@@ -616,7 +616,7 @@ export default function App() {
                }
             }
             if (changed) {
-              batch.update(doc(db, 'pm_usuarios', uid), { 
+              batch.set(doc(db, 'pm_usuarios', uid), { 
                 puntosPorGrupo: currentPointsGroupMap,
                 puntosTotal: currentPointsGroupMap[uData.codigoGrupo || 'LACURVA1'] || 0
               });
