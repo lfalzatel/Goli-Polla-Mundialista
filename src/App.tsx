@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Partido, Apuesta, RankedUser, Usuario, BonificacionesEspeciales } from './types';
-import { PARTIDOS_INICIALES, RANKING_INICIAL, APUESTAS_INICIALES_PRESETS, calcularPuntosPartido } from './data';
+import { PARTIDOS_INICIALES, RANKING_INICIAL, APUESTAS_INICIALES_PRESETS, calcularPuntosPartido, apuestasAbiertas } from './data';
 import { db, auth, messagingPromise, functions } from './lib/firebase';
 import { collection, onSnapshot, doc, setDoc, updateDoc, writeBatch, getDocs, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
@@ -71,6 +71,9 @@ export default function App() {
     : isGlassMode
       ? `py-2.5 px-4 text-white/70 hover:text-white`
       : `py-2.5 px-4 text-white/60 hover:text-white`;
+
+  const isAppAdmin = (u: Usuario) =>
+    !!u.esAdmin || u.email === 'lfalzatel@gmail.com' || u.email === 'luis.alzate@barroblanco.edu.co';
 
   const handleTabClick = (tab: 'inicio' | 'reglas' | 'perfil' | 'ranking' | 'configuracion') => {
     setTabRotationToggle(!tabRotationToggle);
@@ -185,7 +188,9 @@ export default function App() {
         // Merge with initial matches so we don't lose unplayed matches that aren't in DB yet
         const mergedPartidos = PARTIDOS_INICIALES.map(inicial => {
           const dbMatch = p.find(m => m.partidoId === inicial.partidoId);
-          return dbMatch ? dbMatch : inicial;
+          return dbMatch
+            ? { ...inicial, ...dbMatch, apuestaAbiertaHasta: dbMatch.apuestaAbiertaHasta ?? inicial.apuestaAbiertaHasta }
+            : inicial;
         });
         
         setPartidos(mergedPartidos);
@@ -259,14 +264,25 @@ export default function App() {
             
             // Only update if something relevant changed to avoid infinite loops
             if (
-              prev.puntosTotal !== pt || 
+              prev.puntosTotal !== pt ||
+              prev.nombre !== myData.nombre ||
+              prev.codigoGrupo !== myData.codigoGrupo ||
+              prev.foto !== myData.foto ||
+              prev.email !== myData.email ||
               JSON.stringify(prev.gruposPermitidos || []) !== JSON.stringify(gp) ||
               prev.esAdmin !== myData.esAdmin ||
               prev.whatsapp !== myData.whatsapp ||
               prev.notificationSound !== myData.notificationSound ||
               prev.notificationsEnabled !== myData.notificationsEnabled
             ) {
-              const nextUser = { ...prev, ...myData, puntosTotal: pt, gruposPermitidos: gp };
+              const nextUser = {
+                ...prev,
+                ...myData,
+                nombre: myData.nombre || prev.nombre || 'Usuario',
+                codigoGrupo: myData.codigoGrupo || prev.codigoGrupo,
+                puntosTotal: pt,
+                gruposPermitidos: gp.length > 0 ? gp : prev.gruposPermitidos,
+              };
               localStorage.setItem('polla_usuario', JSON.stringify(nextUser));
               return nextUser;
             }
@@ -293,20 +309,29 @@ export default function App() {
   }, [usuario?.uid, usuario?.codigoGrupo]);
 
   // Sync state functions
-  const handleLoginSuccess = (nombre: string, email: string, whatsapp: string, codigoGrupo: string, uid: string, fotoUrl?: string, gruposPermitidos?: string[]) => {
+  const handleLoginSuccess = (profile: Pick<Usuario, 'uid' | 'nombre' | 'email' | 'whatsapp' | 'codigoGrupo'> & {
+    foto?: string;
+    gruposPermitidos?: string[];
+    esAdmin?: boolean;
+    puntosTotal?: number;
+    puntosPorGrupo?: Record<string, number>;
+  }) => {
     const newUser: Usuario = {
-      uid,
-      nombre,
-      email,
-      foto: fotoUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuB51HhLfnZaDiGtKYp7MwISidlkzLIvjuKRkqP-Z4Ht2dfgJK3G8Ve2q4QdXolTh7pung4KkLRXjVW-wEb_4UESxWciOP6HrVq2_JhM1XYhDssQTl7p5-ey-rgv2tfQCzfManWqd5WgZ8rShV-0IJFalxgyqdM5DuGNi-aMWPgI2fDBTcvn1bDgPNRX6YlC9MMlGEC_qv3OozOdRzTAWf5n3njxyzJz_10pMEEW1tGZ9t6OAaoy2zhSTVl1dQ10KnYavNUUhU2_0RU',
-      whatsapp,
-      codigoGrupo,
-      gruposPermitidos,
-      puntosTotal: 0,
+      uid: profile.uid,
+      nombre: profile.nombre?.trim() || 'Usuario',
+      email: profile.email,
+      foto: profile.foto || 'https://lh3.googleusercontent.com/aida-public/AB6AXuB51HhLfnZaDiGtKYp7MwISidlkzLIvjuKRkqP-Z4Ht2dfgJK3G8Ve2q4QdXolTh7pung4KkLRXjVW-wEb_4UESxWciOP6HrVq2_JhM1XYhDssQTl7p5-ey-rgv2tfQCzfManWqd5WgZ8rShV-0IJFalxgyqdM5DuGNi-aMWPgI2fDBTcvn1bDgPNRX6YlC9MMlGEC_qv3OozOdRzTAWf5n3njxyzJz_10pMEEW1tGZ9t6OAaoy2zhSTVl1dQ10KnYavNUUhU2_0RU',
+      whatsapp: profile.whatsapp || '',
+      codigoGrupo: profile.codigoGrupo || 'GOLIPOLLA',
+      gruposPermitidos: profile.gruposPermitidos || [profile.codigoGrupo || 'GOLIPOLLA'],
+      puntosTotal: profile.puntosTotal ?? 0,
+      puntosPorGrupo: profile.puntosPorGrupo,
+      esAdmin: profile.esAdmin,
       createdAt: new Date().toISOString()
     };
     
     setUsuario(newUser);
+    localStorage.setItem('polla_usuario', JSON.stringify(newUser));
   };
 
   // Guardar cuenta en el historial de cuentas para cambio rpido
@@ -441,7 +466,7 @@ export default function App() {
     const targetMatch = partidos.find(p => p.partidoId === partidoId);
     
     // Validar si el partido ya inició o fue bloqueado
-    if (targetMatch && (targetMatch.estado !== 'pendiente' || Date.now() > new Date(targetMatch.fechaHoraInicio).getTime())) {
+    if (targetMatch && !apuestasAbiertas(targetMatch)) {
       alert("No puedes apostar en un partido que ya comenzó o ha finalizado.");
       return;
     }
@@ -486,7 +511,7 @@ export default function App() {
   };
 
   const handleRepararPuntos = async () => {
-    if (!usuario || (!usuario.esAdmin && usuario.email !== 'lfalzatel@gmail.com')) return;
+    if (!usuario || !isAppAdmin(usuario)) return;
     try {
       const usersSnap = await getDocs(collection(db, 'pm_usuarios'));
       const betsSnap = await getDocs(collection(db, 'pm_apuestas'));
@@ -840,7 +865,7 @@ export default function App() {
             partidos={partidos} 
             apuestas={apuestas} 
             bonificaciones={bonificaciones}
-            isAdmin={usuario.esAdmin || usuario.email === 'lfalzatel@gmail.com'}
+            isAdmin={isAppAdmin(usuario)}
             onGuardarApuesta={handleGuardarApuesta}
             onGuardarBonificaciones={handleGuardarBonificaciones}
             onSimularPartidos={handleSimularPartidos}

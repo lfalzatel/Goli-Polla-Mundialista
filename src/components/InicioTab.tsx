@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { Partido, Apuesta, BonificacionesEspeciales } from '../types';
-import { calcularPuntosPartido } from '../data';
+import { calcularPuntosPartido, getCierreApuestas, apuestasAbiertas } from '../data';
 import confetti from 'canvas-confetti';
 
 interface InicioTabProps {
@@ -74,7 +74,10 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
   const partidosComputados = partidos.map(p => {
     let computedEstado = p.estado;
     if (computedEstado === 'pendiente' && p.fechaHoraInicio <= now) {
-      if (now - p.fechaHoraInicio >= TRES_HORAS) {
+      const cierreApuestas = getCierreApuestas(p);
+      if (now < cierreApuestas) {
+        computedEstado = 'pendiente';
+      } else if (now - p.fechaHoraInicio >= TRES_HORAS) {
         computedEstado = 'finalizado';
       } else {
         computedEstado = 'en_vivo';
@@ -515,7 +518,7 @@ export default function InicioTab({ partidos, apuestas, bonificaciones, isAdmin,
               } else if (match.estado === 'finalizado') {
                 pointsEarned = 0;
               }
-              const yaBloqueado = match.estado === 'finalizado' || match.estado === 'en_vivo' || Date.now() >= match.fechaHoraInicio;
+              const yaBloqueado = !apuestasAbiertas(match);
 
               return (
                 <div 

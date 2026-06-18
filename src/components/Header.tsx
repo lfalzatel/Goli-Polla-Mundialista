@@ -22,6 +22,9 @@ interface HeaderProps {
 }
 
 export default function Header({ usuario, grupoNombre, onLogout, onSwitchAccount, onChangeGroup, onOpenChat, partidos = [], onGoToSettings, themeMode, setThemeMode, activeThemes = [], onToggleNotifications }: HeaderProps) {
+  const nombreDisplay = usuario?.nombre?.trim() || 'Usuario';
+  const nombreCorto = nombreDisplay.split(' ')[0];
+
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
@@ -93,7 +96,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onSwitchAccount
               GRUPO
             </span>
             <span className="font-display text-[13px] tracking-wider text-white leading-none uppercase mt-0.5 truncate max-w-[120px]">
-              {grupoNombre || usuario.codigoGrupo || 'FOE'}
+              {grupoNombre || usuario.codigoGrupo || 'GOLIPOLLA'}
             </span>
         </div>
       </div>
@@ -184,7 +187,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onSwitchAccount
             
             <div className="flex flex-col items-start leading-tight">
                <span className="text-white font-semibold text-[13px] truncate max-w-[70px] sm:max-w-[100px]">
-                 {usuario.nombre.split(' ')[0]}
+                 {nombreCorto}
                </span>
                <span className="header-accent-text font-medium text-[11px] flex items-center gap-1">
                  <span className="sm:hidden text-[10px]">🏆</span>
@@ -205,7 +208,7 @@ export default function Header({ usuario, grupoNombre, onLogout, onSwitchAccount
           <div className={`fixed left-4 right-4 top-[70px] sm:top-auto sm:absolute sm:left-auto sm:right-0 sm:mt-2 ${isConsoleMode ? 'sm:w-64 bg-[#0a0b0d] border ' + consoleBorderClass + ' font-mono rounded-2xl' : 'sm:w-56 bg-white border border-slate-100 rounded-xl'} shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-3 duration-200`}>
             <div className={`px-4 ${isConsoleMode ? 'py-3 border-white/10' : 'py-2 border-slate-100'} border-b`}>
               <p className={`${isConsoleMode ? 'text-sm font-bold truncate uppercase tracking-widest ' + consoleColor : 'font-sans text-sm font-bold text-slate-800 truncate'}`}>
-                {usuario.nombre}
+                {nombreDisplay}
               </p>
               <p className={`font-mono text-[10px] ${isConsoleMode ? 'text-slate-400' : 'text-slate-500'} truncate`}>
                 {usuario.email}

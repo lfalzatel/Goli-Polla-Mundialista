@@ -31,6 +31,8 @@ export interface Partido {
   fecha: string;      // Formato legible "JUE 11-06", "VIE 12-06", etc.
   hora: string;       // "10:00 AM", "03:00 PM"
   fechaHoraInicio: number; // Timestamp en ms (Date.now())
+  /** Si existe, las apuestas se aceptan hasta esta hora (puede ser después del pitido). */
+  apuestaAbiertaHasta?: number;
   equipoLocal: string;
   equipoVisitante: string;
   banderaLocal: string;      // URL de la bandera

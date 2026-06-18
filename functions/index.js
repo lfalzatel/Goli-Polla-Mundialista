@@ -92,7 +92,9 @@ async function fetchFromFootballData() {
     console.warn('[FootballData] Token no configurado, saltando.');
     return null;
   }
-  const today = '2026-06-10';
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const today = yesterdayDate.toISOString().split('T')[0];
   const tomorrowDate = new Date();
   tomorrowDate.setDate(tomorrowDate.getDate() + 1);
   const tomorrow = tomorrowDate.toISOString().split('T')[0];
@@ -253,40 +255,42 @@ exports.checkAndScoreMatches = functions.pubsub
 
     if (activeDocs.length === 0) {
       console.log('No hay partidos activos en este momento.');
+      await sincronizarApuestasPendientes();
       return null;
     }
 
     console.log(`[Cron] ${activeDocs.length} partido(s) pendiente(s) de revisión.`);
 
     // ── Cascada de APIs ──────────────────────────────────────────────────────
-    let apiMatches = null;
-    let usedSource = '';
+    const footballDataMatches = await fetchFromFootballData();
+    let espnMatches = null;
 
-    // Intento 1: football-data.org
-    apiMatches = await fetchFromFootballData();
-    if (apiMatches) {
-      usedSource = 'football-data.org';
+    if (!footballDataMatches) {
+      console.log('[Cron] football-data.org no disponible, cargando ESPN...');
+      espnMatches = await fetchFromESPN();
     }
 
-    // Intento 2: ESPN (fallback gratuito)
-    if (!apiMatches) {
-      console.log('[Cron] Usando ESPN como fuente de respaldo...');
-      apiMatches = await fetchFromESPN();
-      if (apiMatches) usedSource = 'ESPN';
-    }
-
-    if (!apiMatches) {
+    if (!footballDataMatches && !espnMatches) {
       console.error('[Cron] ❌ Todas las APIs fallaron. No se puede actualizar resultados.');
       return null;
     }
-
-    console.log(`[Cron] Fuente utilizada: ${usedSource}`);
 
     // ── Procesar cada partido activo ─────────────────────────────────────────
     for (const docSnap of activeDocs) {
       const p = docSnap.data();
 
-      const matchFound = findMatchInAPIResults(p, apiMatches);
+      let matchFound = footballDataMatches ? findMatchInAPIResults(p, footballDataMatches) : null;
+      let usedSource = 'football-data.org';
+
+      if (!matchFound) {
+        if (!espnMatches) {
+          espnMatches = await fetchFromESPN();
+        }
+        if (espnMatches) {
+          matchFound = findMatchInAPIResults(p, espnMatches);
+          usedSource = 'ESPN';
+        }
+      }
 
       if (!matchFound) {
         console.warn(`[Cron] ⚠️ No se encontró en la API: ${p.equipoLocal} vs ${p.equipoVisitante}`);
@@ -303,6 +307,7 @@ exports.checkAndScoreMatches = functions.pubsub
 
       const golesLocal = matchFound.golesLocal;
       const golesVisitante = matchFound.golesVisitante;
+      const marcadorCambio = p.golesLocal !== golesLocal || p.golesVisitante !== golesVisitante;
 
       console.log(`[Cron] ${p.equipoLocal} ${golesLocal}-${golesVisitante} ${p.equipoVisitante} [${matchFound.status}] (${usedSource})`);
 
@@ -312,12 +317,14 @@ exports.checkAndScoreMatches = functions.pubsub
         estado: finalizado ? 'finalizado' : 'en_vivo'
       }, { merge: true });
 
-      // Si acaba de finalizar, calcular puntos
-      if (finalizado && p.estado !== 'finalizado') {
+      // Calcular puntos al finalizar o si el marcador cambió
+      if (finalizado && (p.estado !== 'finalizado' || marcadorCambio)) {
         const partidoActualizado = { ...p, golesLocal, golesVisitante, estado: 'finalizado' };
         await calcularYGuardarPuntos(docSnap.id, partidoActualizado);
       }
     }
+
+    await sincronizarApuestasPendientes();
 
     return null;
   });
@@ -433,6 +440,31 @@ async function calcularYGuardarPuntos(partidoId, partidoActualizado) {
   console.log(`[Puntos] ✅ Puntos guardados para ${partidoActualizado.equipoLocal} vs ${partidoActualizado.equipoVisitante}. ${Object.keys(matchPoints).length} apuestas procesadas.`);
 
   await emitirNotificacionesPuntos(partidoActualizado.equipoLocal, partidoActualizado.equipoVisitante, matchPoints);
+}
+
+/** Recalcula partidos finalizados cuyas apuestas aún tienen puntosObtenidos como número. */
+async function sincronizarApuestasPendientes() {
+  const partidosSnap = await db.collection('pm_partidos').where('estado', '==', 'finalizado').get();
+  const partidosMap = {};
+  partidosSnap.forEach(d => { partidosMap[d.id] = d.data(); });
+
+  const apuestasSnap = await db.collection('pm_apuestas').get();
+  const partidosPorRecalcular = new Set();
+
+  apuestasSnap.forEach(doc => {
+    const a = doc.data();
+    const partido = partidosMap[a.partidoId];
+    if (!partido || partido.golesLocal === null || partido.golesLocal === undefined) return;
+    if (typeof a.puntosObtenidos === 'number') {
+      partidosPorRecalcular.add(a.partidoId);
+    }
+  });
+
+  for (const partidoId of partidosPorRecalcular) {
+    const partido = partidosMap[partidoId];
+    console.log(`[Puntos] Sincronizando apuestas pendientes de ${partidoId} (${partido.equipoLocal} vs ${partido.equipoVisitante})`);
+    await calcularYGuardarPuntos(partidoId, partido);
+  }
 }
 
 async function emitirNotificacionesPuntos(equipoLocal, equipoVisitante, matchPoints) {
@@ -636,4 +668,680 @@ exports.sendMatchResultsNotification = functions.https.onCall(async (data, conte
 
   await emitirNotificacionesPuntos(equipoLocal, equipoVisitante, matchPoints);
   return { success: true };
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 8. HTTP: fixApuestasNumero - Reparar apuestas con puntosObtenidos NUMBER
+// ─────────────────────────────────────────────────────────────────────────────
+function calcularPuntosPartidoFix(golesLocalReal, golesVisitanteReal, golesLocalApuesta, golesVisitanteApuesta, totalGolesApuesta) {
+  let marcador = 0;
+  let ganador = 0;
+  let empate = 0;
+  let totalGoles = 0;
+
+  const ganadorReal = golesLocalReal > golesVisitanteReal ? "local" : golesLocalReal < golesVisitanteReal ? "visitante" : "empate";
+  const ganadorApuesta = golesLocalApuesta > golesVisitanteApuesta ? "local" : golesLocalApuesta < golesVisitanteApuesta ? "visitante" : "empate";
+
+  const acertoGolesLocal = golesLocalReal === golesLocalApuesta;
+  const acertoGolesVisitante = golesVisitanteReal === golesVisitanteApuesta;
+
+  if (golesLocalReal === golesLocalApuesta && golesVisitanteReal === golesVisitanteApuesta) {
+    marcador = 5;
+  } else if (ganadorReal === ganadorApuesta && (acertoGolesLocal || acertoGolesVisitante) && ganadorReal !== "empate") {
+    ganador = 3;
+  } else if (ganadorReal === ganadorApuesta && ganadorReal !== "empate") {
+    ganador = 2;
+  }
+
+  if (ganadorReal === "empate" && ganadorApuesta === "empate") {
+    if (marcador === 0) {
+      empate = 4;
+    }
+  }
+
+  const totalGolesReal = golesLocalReal + golesVisitanteReal;
+  if (totalGolesApuesta === "mas25" && totalGolesReal > 2.5) {
+    totalGoles = 2;
+  } else if (totalGolesApuesta === "menos25" && totalGolesReal < 2.5) {
+    totalGoles = 2;
+  }
+
+  const total = marcador + ganador + empate + totalGoles;
+
+  return {
+    marcador,
+    ganador,
+    empate,
+    totalGoles,
+    total
+  };
+}
+
+exports.fixApuestasNumero = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  if (req.method === 'OPTIONS') {
+    res.set('Access-Control-Allow-Methods', 'POST, GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.status(204).send('');
+    return;
+  }
+
+  try {
+    // Validación simple
+    if (req.query.admin !== 'true') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    console.log('\n✅ INICIANDO FIX DE APUESTAS\n');
+
+    const stats = {
+      totalApuestas: 0,
+      conNumero: 0,
+      conObjeto: 0,
+      reparadas: 0,
+      errores: 0,
+      detalles: []
+    };
+
+    // 1. Obtener todos los partidos
+    console.log('📋 Cargando partidos...');
+    const partidosSnap = await db.collection('pm_partidos').get();
+    const partidos = {};
+    
+    partidosSnap.forEach(doc => {
+      partidos[doc.id] = doc.data();
+    });
+    console.log(`✅ ${Object.keys(partidos).length} partidos cargados`);
+
+    // 2. Obtener todas las apuestas
+    console.log('📋 Analizando apuestas...');
+    const apuestasSnap = await db.collection('pm_apuestas').get();
+    stats.totalApuestas = apuestasSnap.size;
+
+    const batch = db.batch();
+    let batchCount = 0;
+    const batchSize = 500;
+
+    // 3. Procesar cada apuesta
+    apuestasSnap.forEach(doc => {
+      const apuesta = doc.data();
+      const tipoActual = typeof apuesta.puntosObtenidos;
+
+      if (tipoActual === 'object' && apuesta.puntosObtenidos !== null) {
+        stats.conObjeto++;
+        return;
+      }
+
+      if (tipoActual === 'number') {
+        stats.conNumero++;
+        
+        // ✅ Solo procesar si el partido FINALIZÓ
+        const partido = partidos[apuesta.partidoId];
+        if (!partido || partido.estado !== 'finalizado' || partido.golesLocal === null) {
+          console.log(`⚠️  Saltando ${apuesta.uid}/${apuesta.partidoId}: partido no finalizado`);
+          stats.detalles.push({
+            uid: apuesta.uid,
+            partidoId: apuesta.partidoId,
+            estado: 'SALTADO - partido no finalizado'
+          });
+          return;
+        }
+
+        try {
+          // 🔧 Recalcular
+          const ptsObj = calcularPuntosPartidoFix(
+            partido.golesLocal,
+            partido.golesVisitante,
+            apuesta.golesLocalApuesta,
+            apuesta.golesVisitanteApuesta,
+            apuesta.totalGolesApuesta
+          );
+
+          // ✅ Actualizar apuesta
+          batch.update(doc.ref, {
+            puntosObtenidos: ptsObj
+          });
+
+          stats.reparadas++;
+          stats.detalles.push({
+            uid: apuesta.uid,
+            partidoId: apuesta.partidoId,
+            estado: 'REPARADA',
+            puntosAntiguos: apuesta.puntosObtenidos,
+            puntosNuevos: ptsObj
+          });
+
+          batchCount++;
+
+          // 4. Commit cada 500
+          if (batchCount >= batchSize) {
+            batch.commit();
+            batchCount = 0;
+          }
+
+        } catch (error) {
+          stats.errores++;
+          stats.detalles.push({
+            uid: apuesta.uid,
+            partidoId: apuesta.partidoId,
+            estado: 'ERROR: ' + error.message
+          });
+          console.error(`❌ Error: ${error.message}`);
+        }
+      }
+    });
+
+    // 5. Commit final
+    if (batchCount > 0) {
+      await batch.commit();
+    }
+
+    // 6. Respuesta
+    res.json({
+      success: true,
+      stats: {
+        total: stats.totalApuestas,
+        conObjeto: stats.conObjeto,
+        conNumero: stats.conNumero,
+        reparadas: stats.reparadas,
+        errores: stats.errores
+      },
+      detalles: stats.detalles.slice(0, 50)
+    });
+
+  } catch (error) {
+    console.error('❌ Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 9. HTTP: verificarGeigerP21 - Verificar apuesta de Geiger en p21
+// ─────────────────────────────────────────────────────────────────────────────
+exports.verificarGeigerP21 = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  if (req.method === 'OPTIONS') {
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(204).send('');
+    return;
+  }
+
+  try {
+    console.log('\n🔍 VERIFICANDO CASO DE GEIGER EN P21\n');
+
+    // UID de Geiger
+    const geigerUID = '2fwWKHeKsQcsyfFcHIrENGFBST02';
+
+    // 1. Obtener p21
+    const p21Doc = await db.collection('pm_partidos').doc('p21').get();
+    if (!p21Doc.exists) {
+      return res.json({ error: 'P21 no existe' });
+    }
+    const p21 = p21Doc.data();
+
+    // 2. Buscar TODAS las apuestas de Geiger para ver estructura
+    console.log('🔍 Buscando todas las apuestas de Geiger...');
+    const allGeigerApuestas = await db.collection('pm_apuestas')
+      .where('uid', '==', geigerUID)
+      .get();
+    
+    console.log(`✅ Geiger tiene ${allGeigerApuestas.size} apuestas`);
+    
+    // 3. Buscar específicamente en p21
+    let p21Apuesta = null;
+    let p21ApuestaDocId = null;
+    
+    allGeigerApuestas.forEach(doc => {
+      if (doc.data().partidoId === 'p21') {
+        p21Apuesta = doc.data();
+        p21ApuestaDocId = doc.id;
+        console.log(`✅ Encontrada apuesta en p21, docId: ${doc.id}`);
+      }
+    });
+
+    if (!p21Apuesta) {
+      // Intentar formato alternativo
+      const docId1 = `${geigerUID}_p21`;
+      const docId2 = `p21_${geigerUID}`;
+      const doc1 = await db.collection('pm_apuestas').doc(docId1).get();
+      const doc2 = await db.collection('pm_apuestas').doc(docId2).get();
+      
+      if (doc1.exists) {
+        p21Apuesta = doc1.data();
+        p21ApuestaDocId = docId1;
+      } else if (doc2.exists) {
+        p21Apuesta = doc2.data();
+        p21ApuestaDocId = docId2;
+      }
+    }
+
+    if (!p21Apuesta) {
+      return res.json({
+        error: 'No se encontró apuesta de Geiger en p21',
+        diagnostico: {
+          totalApuestasGeiger: allGeigerApuestas.size,
+          apuestasEncontradas: allGeigerApuestas.docs.map(d => ({
+            id: d.id,
+            partidoId: d.data().partidoId
+          }))
+        }
+      });
+    }
+
+    // 4. Verificar resultado
+    const totalGolesReal = p21.golesLocal + p21.golesVisitante;
+    const totalGolesApuesta = p21Apuesta.totalGolesApuesta;
+    
+    // ¿Debería ganar 2 puntos?
+    let deberíaGanar2Pts = false;
+    if (totalGolesApuesta === 'menos25' && totalGolesReal < 2.5) {
+      deberíaGanar2Pts = true;
+    } else if (totalGolesApuesta === 'mas25' && totalGolesReal > 2.5) {
+      deberíaGanar2Pts = true;
+    }
+
+    // 5. Revisar qué tiene actualmente
+    const puntosObtenidosActual = p21Apuesta.puntosObtenidos;
+    let tieneLosPuntos = false;
+    if (typeof puntosObtenidosActual === 'object' && puntosObtenidosActual.totalGoles >= 2) {
+      tieneLosPuntos = true;
+    }
+
+    const resultado = {
+      usuario: {
+        uid: geigerUID,
+        nombre: 'Geiger'
+      },
+      p21: {
+        resultado: `${p21.equipoLocal} ${p21.golesLocal}-${p21.golesVisitante} ${p21.equipoVisitante}`,
+        totalGolesReal,
+        estado: p21.estado
+      },
+      apuestaGeiger: {
+        docId: p21ApuestaDocId,
+        apuesta: `${p21Apuesta.golesLocalApuesta}-${p21Apuesta.golesVisitanteApuesta}`,
+        totalGolesApuesta,
+        puntosObtenidosType: typeof puntosObtenidosActual,
+        puntosObtenidosValue: puntosObtenidosActual
+      },
+      analisis: {
+        deberíaGanar2PtsPorTotalGoles: deberíaGanar2Pts,
+        tieneLosPuntosActualmente: tieneLosPuntos,
+        problema: deberíaGanar2Pts && !tieneLosPuntos ? 'SÍ - Los 2 puntos no están incluidos' : 'NO - Está correcto o no debería tener puntos',
+        detalleCalculo: {
+          totalGolesApuesta,
+          totalGolesReal,
+          condicion: totalGolesApuesta === 'menos25' ? `${totalGolesReal} < 2.5` : `${totalGolesReal} > 2.5`,
+          aplica: deberíaGanar2Pts
+        }
+      }
+    };
+
+    res.json(resultado);
+
+  } catch (error) {
+    console.error('❌ Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 10. HTTP: diagnosticarP21 - Diagnosticar todas las apuestas de p21
+// ─────────────────────────────────────────────────────────────────────────────
+exports.diagnosticarP21 = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  if (req.method === 'OPTIONS') {
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(204).send('');
+    return;
+  }
+
+  try {
+    console.log('\n🔍 DIAGNOSTICANDO TODAS LAS APUESTAS DE P21\n');
+
+    // UID de Geiger
+    const geigerUID = '2fwWKHeKsQcsyfFcHIrENGFBST02';
+
+    // 1. Obtener p21
+    const p21Doc = await db.collection('pm_partidos').doc('p21').get();
+    if (!p21Doc.exists) {
+      return res.json({ error: 'P21 no existe' });
+    }
+    const p21 = p21Doc.data();
+    const totalGolesReal = p21.golesLocal + p21.golesVisitante;
+
+    // 2. Obtener TODAS las apuestas de Geiger
+    const allGeigerApuestas = await db.collection('pm_apuestas')
+      .where('uid', '==', geigerUID)
+      .get();
+
+    console.log(`✅ Geiger tiene ${allGeigerApuestas.size} apuestas totales`);
+
+    // 3. Filtrar solo p21
+    const p21Apuestas = [];
+    allGeigerApuestas.forEach(doc => {
+      if (doc.data().partidoId === 'p21') {
+        p21Apuestas.push({
+          docId: doc.id,
+          data: doc.data()
+        });
+      }
+    });
+
+    console.log(`✅ Geiger tiene ${p21Apuestas.length} apuesta(s) en p21`);
+
+    // 4. Buscar directamente todas las apuestas de p21
+    console.log('\n📋 Buscando TODAS las apuestas de p21 para verificar integridad...');
+    const allP21Apuestas = await db.collection('pm_apuestas')
+      .where('partidoId', '==', 'p21')
+      .get();
+
+    console.log(`✅ Total de apuestas en p21: ${allP21Apuestas.size}`);
+
+    // 5. Agrupar por usuario
+    const p21PorUsuario = {};
+    allP21Apuestas.forEach(doc => {
+      const apuesta = doc.data();
+      const uid = apuesta.uid;
+      if (!p21PorUsuario[uid]) {
+        p21PorUsuario[uid] = [];
+      }
+      p21PorUsuario[uid].push({
+        docId: doc.id,
+        totalGolesApuesta: apuesta.totalGolesApuesta,
+        puntosObtenidos: apuesta.puntosObtenidos
+      });
+    });
+
+    // 6. Buscar inconsistencias
+    const inconsistencias = [];
+    for (const uid in p21PorUsuario) {
+      const apuestas = p21PorUsuario[uid];
+      if (apuestas.length > 1) {
+        // Usuario tiene múltiples apuestas
+        inconsistencias.push({
+          tipo: 'DUPLICADO',
+          uid,
+          cantidad: apuestas.length,
+          apuestas
+        });
+      }
+    }
+
+    // 7. Verificar específicamente a Geiger
+    const apuestasDeGeiger = p21PorUsuario[geigerUID] || [];
+    
+    const resultado = {
+      p21: {
+        resultado: `${p21.equipoLocal} ${p21.golesLocal}-${p21.golesVisitante} ${p21.equipoVisitante}`,
+        totalGolesReal,
+        estado: p21.estado
+      },
+      geiger: {
+        uid: geigerUID,
+        totalApuestasEnP21: apuestasDeGeiger.length,
+        apuestas: apuestasDeGeiger
+      },
+      estadisticas: {
+        totalApuestasP21: allP21Apuestas.size,
+        usuariosConDuplicados: inconsistencias.length,
+        detalleInconsistencias: inconsistencias
+      }
+    };
+
+    res.json(resultado);
+
+  } catch (error) {
+    console.error('❌ Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 11. HTTP: buscarMenos25 - Buscar TODAS las apuestas de Geiger con "menos25"
+// ─────────────────────────────────────────────────────────────────────────────
+exports.buscarMenos25 = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  if (req.method === 'OPTIONS') {
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(204).send('');
+    return;
+  }
+
+  try {
+    console.log('\n🔍 BUSCANDO TODAS LAS APUESTAS CON "menos25"\n');
+
+    const geigerUID = '2fwWKHeKsQcsyfFcHIrENGFBST02';
+
+    // 1. Obtener TODAS las apuestas de Geiger
+    const allGeigerApuestas = await db.collection('pm_apuestas')
+      .where('uid', '==', geigerUID)
+      .get();
+
+    console.log(`✅ Geiger tiene ${allGeigerApuestas.size} apuestas totales`);
+
+    // 2. Buscar que tengan "menos25"
+    const conMenos25 = [];
+    allGeigerApuestas.forEach(doc => {
+      const apuesta = doc.data();
+      if (apuesta.totalGolesApuesta === 'menos25') {
+        conMenos25.push({
+          docId: doc.id,
+          partidoId: apuesta.partidoId,
+          totalGolesApuesta: apuesta.totalGolesApuesta,
+          golesLocalApuesta: apuesta.golesLocalApuesta,
+          golesVisitanteApuesta: apuesta.golesVisitanteApuesta,
+          puntosObtenidos: apuesta.puntosObtenidos
+        });
+      }
+    });
+
+    // 3. Buscar específicamente en p21 si hay "menos25"
+    const p21ConMenos25 = conMenos25.filter(a => a.partidoId === 'p21');
+
+    // 4. Obtener TODAS las apuestas con "menos25" de p21
+    const todasP21ConMenos25 = [];
+    const allP21Apuestas = await db.collection('pm_apuestas')
+      .where('partidoId', '==', 'p21')
+      .get();
+    
+    allP21Apuestas.forEach(doc => {
+      if (doc.data().totalGolesApuesta === 'menos25') {
+        todasP21ConMenos25.push({
+          uid: doc.data().uid,
+          docId: doc.id,
+          totalGolesApuesta: doc.data().totalGolesApuesta
+        });
+      }
+    });
+
+    const resultado = {
+      geiger: {
+        uid: geigerUID,
+        totalApuestas: allGeigerApuestas.size,
+        conMenos25: conMenos25.length,
+        p21ConMenos25: p21ConMenos25.length,
+        detalleConMenos25: conMenos25
+      },
+      p21Analisis: {
+        totalApuestasP21: allP21Apuestas.size,
+        conMenos25: todasP21ConMenos25.length,
+        usuariosConMenos25: todasP21ConMenos25
+      }
+    };
+
+    res.json(resultado);
+
+  } catch (error) {
+    console.error('❌ Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 12. HTTP: corregirTotalGolesP21 - Corregir totalGolesApuesta invertido en p21
+// ─────────────────────────────────────────────────────────────────────────────
+exports.corregirTotalGolesP21 = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  if (req.method === 'OPTIONS') {
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(204).send('');
+    return;
+  }
+
+  try {
+    if (req.query.admin !== 'true') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    console.log('\n🔧 ANALIZANDO totalGolesApuesta EN P21\n');
+
+    // P21: Portugal 1-1 RD Congo = 2 goles totales (menos de 2.5)
+    // Si alguien apostó "mas25" = FALLÓ (necesita 0 puntos totalGoles)
+    // Si alguien apostó "menos25" = ACERTÓ (necesita 2 puntos totalGoles)
+
+    const stats = {
+      revisadas: 0,
+      conMenos25: [],
+      conMas25: []
+    };
+
+    // 1. Obtener TODAS las apuestas de p21
+    const allP21Apuestas = await db.collection('pm_apuestas')
+      .where('partidoId', '==', 'p21')
+      .get();
+
+    // 2. Analizar cada apuesta
+    allP21Apuestas.forEach(doc => {
+      const apuesta = doc.data();
+      stats.revisadas++;
+
+      if (apuesta.totalGolesApuesta === 'menos25') {
+        stats.conMenos25.push({
+          uid: apuesta.uid,
+          docId: doc.id,
+          totalGolesApuesta: apuesta.totalGolesApuesta,
+          puntosObtenidos: apuesta.puntosObtenidos,
+          tieneLosPuntos: typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos.totalGoles >= 2
+        });
+      } else if (apuesta.totalGolesApuesta === 'mas25') {
+        stats.conMas25.push({
+          uid: apuesta.uid,
+          docId: doc.id,
+          totalGolesApuesta: apuesta.totalGolesApuesta,
+          puntosObtenidos: apuesta.puntosObtenidos,
+          tieneLosPuntos: typeof apuesta.puntosObtenidos === 'object' && apuesta.puntosObtenidos.totalGoles > 0
+        });
+      }
+    });
+
+    const resultado = {
+      p21_datos: {
+        resultado: "Portugal 1-1 RD Congo",
+        totalGolesReal: 2,
+        correccion: "Los que apostaron 'menos25' acertaron (2 < 2.5). Los que apostaron 'mas25' fallaron (2 < 2.5)."
+      },
+      estadisticas: {
+        totalApuestasRevisadas: stats.revisadas,
+        conMenos25Total: stats.conMenos25.length,
+        conMas25Total: stats.conMas25.length
+      },
+      conMenos25: stats.conMenos25,
+      conMas25: stats.conMas25
+    };
+
+    res.json(resultado);
+
+  } catch (error) {
+    console.error('❌ Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 13. HTTP: diagnosticarP22 - Estado del partido Inglaterra vs Croacia
+// ─────────────────────────────────────────────────────────────────────────────
+exports.diagnosticarP22 = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  try {
+    const p22Doc = await db.collection('pm_partidos').doc('p22').get();
+    if (!p22Doc.exists) {
+      return res.json({ error: 'p22 no existe en pm_partidos' });
+    }
+    const p22 = p22Doc.data();
+
+    const apuestasSnap = await db.collection('pm_apuestas').where('partidoId', '==', 'p22').get();
+    let conPuntos = 0;
+    let sinPuntos = 0;
+    let conNumero = 0;
+    let conObjeto = 0;
+    const muestra = [];
+
+    apuestasSnap.forEach(doc => {
+      const a = doc.data();
+      const tipo = typeof a.puntosObtenidos;
+      const total = tipo === 'number' ? a.puntosObtenidos : (a.puntosObtenidos?.total || 0);
+      if (tipo === 'number') conNumero++;
+      if (tipo === 'object' && a.puntosObtenidos !== null) conObjeto++;
+      if (total > 0) conPuntos++;
+      else sinPuntos++;
+      if (muestra.length < 6) {
+        muestra.push({
+          uid: a.uid,
+          codigoGrupo: a.codigoGrupo,
+          prediccion: `${a.golesLocalApuesta}-${a.golesVisitanteApuesta}`,
+          totalGolesApuesta: a.totalGolesApuesta,
+          puntosObtenidos: a.puntosObtenidos
+        });
+      }
+    });
+
+    res.json({
+      partido: {
+        id: 'p22',
+        equipos: `${p22.equipoLocal} vs ${p22.equipoVisitante}`,
+        estado: p22.estado,
+        goles: `${p22.golesLocal ?? 'null'}-${p22.golesVisitante ?? 'null'}`,
+        fecha: p22.fecha,
+        hora: p22.hora
+      },
+      apuestas: {
+        total: apuestasSnap.size,
+        conPuntosMayorA0: conPuntos,
+        sinPuntos: sinPuntos,
+        conNumero,
+        conObjeto
+      },
+      muestra,
+      usuariosMuestra: await Promise.all(
+        muestra.slice(0, 3).map(async (m) => {
+          const uDoc = await db.collection('pm_usuarios').doc(m.uid).get();
+          const u = uDoc.data() || {};
+          return {
+            uid: m.uid,
+            nombre: u.nombre,
+            puntosTotal: u.puntosTotal,
+            puntosPorGrupo: u.puntosPorGrupo,
+            puntosEnApuestaP22: m.puntosObtenidos
+          };
+        })
+      ),
+      rankingGOLIPOLLA: (await db.collection('pm_usuarios').get()).docs
+        .map(d => {
+          const u = d.data();
+          return {
+            nombre: u.nombre,
+            puntosGOLIPOLLA: u.puntosPorGrupo?.GOLIPOLLA ?? u.puntosTotal ?? 0
+          };
+        })
+        .sort((a, b) => b.puntosGOLIPOLLA - a.puntosGOLIPOLLA)
+        .slice(0, 8)
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });

@@ -30,7 +30,7 @@ export const PARTIDOS_INICIALES: Partido[] = [
   { partidoId: "p21", fecha: "MIE 17-06", hora: "12:00 PM", fechaHoraInicio: 1781715600000, equipoLocal: "PORTUGAL", equipoVisitante: "RD CONGO", banderaLocal: "https://flagcdn.com/w160/pt.png", banderaVisitante: "https://flagcdn.com/w160/cd.png", fase: "primera", golesLocal: null, golesVisitante: null, estado: "pendiente", estadio: "Estadio 21", grupoTorneo: "GRUPO K" },
   { partidoId: "p22", fecha: "MIE 17-06", hora: "03:00 PM", fechaHoraInicio: 1781726400000, equipoLocal: "INGLATERRA", equipoVisitante: "CROACIA", banderaLocal: "https://flagcdn.com/w160/gb-eng.png", banderaVisitante: "https://flagcdn.com/w160/hr.png", fase: "primera", golesLocal: null, golesVisitante: null, estado: "pendiente", estadio: "Estadio 22", grupoTorneo: "GRUPO K" },
   { partidoId: "p23", fecha: "MIE 17-06", hora: "06:00 PM", fechaHoraInicio: 1781737200000, equipoLocal: "GHANA", equipoVisitante: "PANAMÁ", banderaLocal: "https://flagcdn.com/w160/gh.png", banderaVisitante: "https://flagcdn.com/w160/pa.png", fase: "primera", golesLocal: null, golesVisitante: null, estado: "pendiente", estadio: "Estadio 23", grupoTorneo: "GRUPO L" },
-  { partidoId: "p24", fecha: "MIE 17-06", hora: "09:00 PM", fechaHoraInicio: 1781748000000, equipoLocal: "UZBEKISTÁN", equipoVisitante: "COLOMBIA", banderaLocal: "https://flagcdn.com/w160/uz.png", banderaVisitante: "https://flagcdn.com/w160/co.png", fase: "primera", golesLocal: null, golesVisitante: null, estado: "pendiente", estadio: "Estadio 24", grupoTorneo: "GRUPO L" }
+  { partidoId: "p24", fecha: "MIE 17-06", hora: "09:00 PM", fechaHoraInicio: 1781748000000, apuestaAbiertaHasta: 1781751600000, equipoLocal: "UZBEKISTÁN", equipoVisitante: "COLOMBIA", banderaLocal: "https://flagcdn.com/w160/uz.png", banderaVisitante: "https://flagcdn.com/w160/co.png", fase: "primera", golesLocal: null, golesVisitante: null, estado: "pendiente", estadio: "Estadio 24", grupoTorneo: "GRUPO L" }
 ];
 
 export const RANKING_INICIAL: RankedUser[] = [
@@ -135,6 +135,16 @@ export const HISTORIAL_DESGLOSE_MOCK = [
     banderaVis: "https://lh3.googleusercontent.com/aida-public/AB6AXuAfiwskYOei8g_oeRx1tq4FzU6-i9y5xKEX2MO1da97dt0IAaIUXvEuJLN21SygUaEd-AtTIlA4Dk_f5lC-Nt7yie9wD8zPdDCQry1TdM0JagY2V7gnSe2_V6Ogg1yUkl8ex0Qwlgh9ryEKNcBIpb91Dipp9LFTuh8Yny3FrGNzzifnotAIfJksOxaXKAGMoI3ETBrXqcuV8hm_WsxhATLHDB6nf6vJb4opzoE5pC8_xXZdLx_GiSOqDiEnh5RuXbQgv_72Ikf67eo"
   }
 ];
+
+/** Hora límite para enviar apuesta (10:00 PM Bogotá en p24 por falla de la app). */
+export function getCierreApuestas(partido: { partidoId: string; fechaHoraInicio: number; apuestaAbiertaHasta?: number }): number {
+  return partido.apuestaAbiertaHasta ?? partido.fechaHoraInicio;
+}
+
+export function apuestasAbiertas(partido: { estado: string; fechaHoraInicio: number; apuestaAbiertaHasta?: number; partidoId: string }): boolean {
+  if (partido.estado === 'finalizado') return false;
+  return Date.now() < getCierreApuestas(partido);
+}
 
 export function calcularPuntosPartido(
   golesLocalReal: number,

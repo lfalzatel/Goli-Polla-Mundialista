@@ -9,8 +9,16 @@ import { signInWithPopup, onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import GlobalSplash from './GlobalSplash';
 
+import { Usuario } from '../types';
+
 interface SplashLoginProps {
-  onLoginSuccess: (nombre: string, email: string, whatsapp: string, codigoGrupo: string, uid: string, fotoUrl?: string, gruposPermitidos?: string[]) => void;
+  onLoginSuccess: (profile: Pick<Usuario, 'uid' | 'nombre' | 'email' | 'whatsapp' | 'codigoGrupo'> & {
+    foto?: string;
+    gruposPermitidos?: string[];
+    esAdmin?: boolean;
+    puntosTotal?: number;
+    puntosPorGrupo?: Record<string, number>;
+  }) => void;
   isLoggingOut?: boolean;
 }
 
@@ -75,7 +83,8 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
             email: user.email,
             foto: user.photoURL,
             whatsapp: '3000000000',
-            codigoGrupo: 'FOE',
+            codigoGrupo: 'GOLIPOLLA',
+            gruposPermitidos: ['GOLIPOLLA'],
             puntosTotal: 0,
             esAdmin: true,
             createdAt: new Date().toISOString()
@@ -85,7 +94,10 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
             email: user.email,
             foto: user.photoURL,
             whatsapp: '3000000000',
-            codigoGrupo: 'FOE'
+            codigoGrupo: 'GOLIPOLLA',
+            gruposPermitidos: ['GOLIPOLLA'],
+            esAdmin: true,
+            puntosTotal: 0
           }} as any);
         } else {
           setPendingUser(user);
@@ -195,15 +207,16 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
         createdAt: new Date().toISOString()
       });
 
-      onLoginSuccess(
-        pendingUser.displayName || 'Usuario', 
-        pendingUser.email || '', 
-        fullPhone, 
-        codigoGrupo.toUpperCase(), 
-        pendingUser.uid,
-        pendingUser.photoURL || undefined,
-        [codigoGrupo.toUpperCase()]
-      );
+      onLoginSuccess({
+        uid: pendingUser.uid,
+        nombre: pendingUser.displayName || 'Usuario',
+        email: pendingUser.email || '',
+        whatsapp: fullPhone,
+        codigoGrupo: codigoUpper,
+        foto: pendingUser.photoURL || undefined,
+        gruposPermitidos: [codigoUpper],
+        puntosTotal: 0,
+      });
     } catch (error) {
       console.error("Error guardando perfil", error);
       setErrorText("Ocurrió un error al guardar tu perfil.");
@@ -214,7 +227,18 @@ export default function SplashLogin({ onLoginSuccess, isLoggingOut }: SplashLogi
   useEffect(() => {
     if (!loading && pendingUser && (pendingUser as any).existingData) {
       const data = (pendingUser as any).existingData;
-      onLoginSuccess(data.nombre, data.email, data.whatsapp, data.codigoGrupo, pendingUser.uid, data.foto || pendingUser.photoURL || undefined, data.gruposPermitidos);
+      onLoginSuccess({
+        uid: pendingUser.uid,
+        nombre: data.nombre || pendingUser.displayName || 'Usuario',
+        email: data.email || pendingUser.email || '',
+        whatsapp: data.whatsapp || '',
+        codigoGrupo: data.codigoGrupo || 'GOLIPOLLA',
+        foto: data.foto || pendingUser.photoURL || undefined,
+        gruposPermitidos: data.gruposPermitidos || (data.codigoGrupo ? [data.codigoGrupo] : ['GOLIPOLLA']),
+        esAdmin: !!data.esAdmin,
+        puntosTotal: data.puntosTotal ?? 0,
+        puntosPorGrupo: data.puntosPorGrupo,
+      });
     }
   }, [loading, pendingUser, onLoginSuccess]);
 
