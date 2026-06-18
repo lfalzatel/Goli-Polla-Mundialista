@@ -256,18 +256,9 @@ export default function RankingTab({ usuarios, apuestas, partidos, usuarioActual
                                         <span className="font-mono text-xl sm:text-2xl font-bold theme-text-card">{apuesta.golesVisitanteApuesta}</span>
                                       </div>
                                       {apuesta.totalGolesApuesta && (
-                                        (() => {
-                                          // Determinar si acertó en el totalGoles
-                                          const acertóTotalGoles = typeof apuesta.puntosObtenidos === 'object'
-                                            ? apuesta.puntosObtenidos.totalGoles > 0
-                                            : false;
-                                          
-                                          return (
-                                            <span className={`text-[10px] font-bold px-1.5 rounded mt-0.5 ${acertóTotalGoles ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                              {apuesta.totalGolesApuesta === 'mas25' ? '+2.5 Goles' : '-2.5 Goles'}
-                                            </span>
-                                          );
-                                        })()
+                                        <span className={`text-[10px] font-bold px-1.5 rounded mt-0.5 ${apuesta.totalGolesApuesta === 'mas25' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                          {apuesta.totalGolesApuesta === 'mas25' ? '+2.5 Goles' : '-2.5 Goles'}
+                                        </span>
                                       )}
                                     </div>
                                   </div>

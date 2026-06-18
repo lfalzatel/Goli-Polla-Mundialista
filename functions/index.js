@@ -22,7 +22,7 @@ const teamNameMapping = {
   "irak": "Iraq", "noruega": "Norway", "argelia": "Algeria", "austria": "Austria",
   "jordania": "Jordan", "rd congo": "DR Congo", "panamá": "Panama", "uzbekistán": "Uzbekistan",
   "colombia": "Colombia", "bosnia": "Bosnia-Herzegovina", "bosnia y herzegovina": "Bosnia-Herzegovina",
-  "república checa": "Czechia", "paraguay": "Paraguay", "sudáfrica": "South Africa"
+  "república checa": "Czechia", "chequia": "Czechia", "paraguay": "Paraguay", "sudáfrica": "South Africa"
 };
 
 // ESPN team name mapping (Spanish name → ESPN short name variations)
@@ -225,10 +225,34 @@ exports.checkAndScoreMatches = functions.pubsub
   .timeZone('America/Bogota')
   .onRun(async (context) => {
 
+    // Load partidos from local json definition
+    let partidosDef = [];
+    try {
+      partidosDef = require('./partidos.json');
+    } catch (e) {
+      console.warn('No se pudo cargar partidos.json:', e.message);
+    }
+
     // Fetch all matches from firestore
     const snapshot = await db.collection('pm_partidos').get();
+    const existingIds = new Set();
+    snapshot.forEach(doc => existingIds.add(doc.id));
 
-    const activeDocs = snapshot.docs.filter(doc => {
+    // Auto-create missing matches in Firestore
+    const missingPartidos = partidosDef.filter(p => !existingIds.has(p.partidoId));
+    let currentSnapshot = snapshot;
+    if (missingPartidos.length > 0) {
+      console.log(`[Cron] Se detectaron ${missingPartidos.length} partidos faltantes en Firestore. Creándolos...`);
+      const batch = db.batch();
+      for (const p of missingPartidos) {
+        batch.set(db.collection('pm_partidos').doc(p.partidoId), p);
+      }
+      await batch.commit();
+      console.log(`[Cron] ✅ ${missingPartidos.length} partidos creados exitosamente.`);
+      currentSnapshot = await db.collection('pm_partidos').get();
+    }
+
+    const activeDocs = currentSnapshot.docs.filter(doc => {
       const p = doc.data();
       // Si ya está finalizado y TIENE goles, no hay que hacer nada.
       if (p.estado === 'finalizado' && p.golesLocal !== null && p.golesLocal !== undefined) {

@@ -625,27 +625,32 @@ export default function App() {
          }
       });
 
-      // 3. Recalcular el total de puntos de CADA usuario desde cero para garantizar sincronía perfecta
+      // 3. Recalcular el total de puntos de CADA usuario sumando sobre lo que ya tenían
       const usersSnap = await getDocs(collection(db, 'pm_usuarios'));
       
       usersSnap.forEach(uDoc => {
           const uid = uDoc.id;
           if (userPointsByGroup[uid]) {
             const uData = uDoc.data();
-            const currentPointsGroupMap = uData.puntosPorGrupo || {};
-            let changed = false;
+            // Leer los puntos EXISTENTES y sumar los nuevos encima
+            const existingPointsGroupMap: Record<string, number> = {};
+            const raw = uData.puntosPorGrupo || {};
+            for (const [k, v] of Object.entries(raw)) {
+              // Guardia: convertir a número por si algún valor quedó como string
+              existingPointsGroupMap[k] = Number(v) || 0;
+            }
+
             for (const [gCode, newPoints] of Object.entries(userPointsByGroup[uid])) {
-               if (currentPointsGroupMap[gCode] !== newPoints) {
-                 currentPointsGroupMap[gCode] = newPoints;
-                 changed = true;
-               }
+              existingPointsGroupMap[gCode] = (existingPointsGroupMap[gCode] || 0) + newPoints;
             }
-            if (changed) {
-              batch.set(doc(db, 'pm_usuarios', uid), { 
-                puntosPorGrupo: currentPointsGroupMap,
-                puntosTotal: currentPointsGroupMap[uData.codigoGrupo || 'LACURVA1'] || 0
-              });
-            }
+
+            const newTotal = Object.values(existingPointsGroupMap).reduce((acc, v) => acc + v, 0);
+
+            // merge:true para nunca sobreescribir nombre, foto, email, etc.
+            batch.set(doc(db, 'pm_usuarios', uid), { 
+              puntosPorGrupo: existingPointsGroupMap,
+              puntosTotal: newTotal
+            }, { merge: true });
           }
       });
 
