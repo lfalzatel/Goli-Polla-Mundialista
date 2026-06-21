@@ -18,6 +18,7 @@ const teamNameMapping = {
   "portugal": "Portugal", "ghana": "Ghana", "uruguay": "Uruguay", "corea del sur": "South Korea",
   "haití": "Haiti", "escocia": "Scotland", "turquía": "Turkey", "curazao": "Curaçao",
   "japon": "Japan", "costa de marfil": "Ivory Coast", "suecia": "Sweden",
+  "qatar": "Qatar",
   "cabo verde": "Cape Verde Islands", "egipto": "Egypt", "nueva zelanda": "New Zealand",
   "irak": "Iraq", "noruega": "Norway", "argelia": "Algeria", "austria": "Austria",
   "jordania": "Jordan", "rd congo": "DR Congo", "panamá": "Panama", "uzbekistán": "Uzbekistan",
@@ -77,6 +78,12 @@ const espnTeamMapping = {
   "república checa": ["CZE", "Czech Republic"],
   "bosnia y herzegovina": ["BIH", "Bosnia and Herzegovina"],
   "irán": ["IRN", "Iran"],
+  "chequia": ["CZE", "Czech Republic"],
+  "canadá": ["CAN", "Canada"],
+  "bosnia": ["BIH", "Bosnia and Herzegovina"],
+  "qatar": ["QAT", "Qatar"],
+  "curazao": ["CUW", "Curaçao"],
+  "jordania": ["JOR", "Jordan"],
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -340,12 +347,6 @@ exports.checkAndScoreMatches = functions.pubsub
         golesVisitante,
         estado: finalizado ? 'finalizado' : 'en_vivo'
       }, { merge: true });
-
-      // Calcular puntos al finalizar o si el marcador cambió
-      if (finalizado && (p.estado !== 'finalizado' || marcadorCambio)) {
-        const partidoActualizado = { ...p, golesLocal, golesVisitante, estado: 'finalizado' };
-        await calcularYGuardarPuntos(docSnap.id, partidoActualizado);
-      }
     }
 
     await sincronizarApuestasPendientes();
@@ -430,7 +431,9 @@ async function calcularYGuardarPuntos(partidoId, partidoActualizado) {
       ? a.puntosObtenidos
       : (a.puntosObtenidos?.total || 0);
 
-    matchPoints[a.uid] = ptsTotal;
+    const grupo = a.codigoGrupo || 'LACURVA1';
+    if (!matchPoints[a.uid]) matchPoints[a.uid] = {};
+    matchPoints[a.uid][grupo] = ptsTotal;
 
     // Usar set+merge en vez de update para evitar "No document to update"
     batch.set(apuestaDoc.ref, { puntosObtenidos: ptsObj }, { merge: true });
@@ -506,11 +509,23 @@ async function emitirNotificacionesPuntos(equipoLocal, equipoVisitante, matchPoi
   allUsers.forEach(user => {
     const token = user.fcmToken;
     if (token && user.notificationsEnabled !== false) {
-      const pts = matchPoints[user.id] || 0;
+      const userGroupsPoints = matchPoints[user.id] || {};
+      const groups = Object.keys(userGroupsPoints);
+      
       const title = "¡Partido Finalizado!";
-      const body = pts > 0
-        ? `Has ganado ${pts} puntos en ${equipoLocal} vs ${equipoVisitante}.`
-        : `No has ganado puntos en ${equipoLocal} vs ${equipoVisitante}. ¡Suerte en el próximo!`;
+      let body = "";
+
+      if (groups.length === 1) {
+        const pts = userGroupsPoints[groups[0]];
+        body = pts > 0
+          ? `Has ganado ${pts} puntos en ${equipoLocal} vs ${equipoVisitante}.`
+          : `No has ganado puntos en ${equipoLocal} vs ${equipoVisitante}. ¡Suerte en el próximo!`;
+      } else if (groups.length > 1) {
+        const parts = groups.map(g => `${g}: +${userGroupsPoints[g]} pts`);
+        body = `Tus puntos en ${equipoLocal} vs ${equipoVisitante}: ` + parts.join(', ');
+      } else {
+        body = `No has ganado puntos en ${equipoLocal} vs ${equipoVisitante}. ¡Suerte en el próximo!`;
+      }
 
       messages.push({ notification: { title, body }, token });
     }
@@ -1287,85 +1302,71 @@ exports.corregirTotalGolesP21 = functions.https.onRequest(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 13. HTTP: diagnosticarP22 - Estado del partido Inglaterra vs Croacia
+// 13. HTTP: diagnosticarP22 - Diagnosticar p36 (Túnez vs Japón)
 // ─────────────────────────────────────────────────────────────────────────────
 exports.diagnosticarP22 = functions.https.onRequest(async (req, res) => {
   res.set('Access-Control-Allow-Origin', '*');
   try {
-    const p22Doc = await db.collection('pm_partidos').doc('p22').get();
-    if (!p22Doc.exists) {
-      return res.json({ error: 'p22 no existe en pm_partidos' });
+    const p36Doc = await db.collection('pm_partidos').doc('p36').get();
+    if (!p36Doc.exists) {
+      return res.json({ error: 'p36 no existe en pm_partidos' });
     }
-    const p22 = p22Doc.data();
+    const p36 = p36Doc.data();
 
-    const apuestasSnap = await db.collection('pm_apuestas').where('partidoId', '==', 'p22').get();
-    let conPuntos = 0;
-    let sinPuntos = 0;
-    let conNumero = 0;
-    let conObjeto = 0;
-    const muestra = [];
-
-    apuestasSnap.forEach(doc => {
+    const apuestasSnap = await db.collection('pm_apuestas').where('partidoId', '==', 'p36').get();
+    const apuestas = [];
+    
+    for (const doc of apuestasSnap.docs) {
       const a = doc.data();
-      const tipo = typeof a.puntosObtenidos;
-      const total = tipo === 'number' ? a.puntosObtenidos : (a.puntosObtenidos?.total || 0);
-      if (tipo === 'number') conNumero++;
-      if (tipo === 'object' && a.puntosObtenidos !== null) conObjeto++;
-      if (total > 0) conPuntos++;
-      else sinPuntos++;
-      if (muestra.length < 6) {
-        muestra.push({
-          uid: a.uid,
-          codigoGrupo: a.codigoGrupo,
-          prediccion: `${a.golesLocalApuesta}-${a.golesVisitanteApuesta}`,
-          totalGolesApuesta: a.totalGolesApuesta,
-          puntosObtenidos: a.puntosObtenidos
-        });
-      }
-    });
+      const userDoc = await db.collection('pm_usuarios').doc(a.uid).get();
+      const userName = userDoc.exists ? userDoc.data().displayName || userDoc.data().nombre || "Sin nombre" : "Sin usuario";
+      apuestas.push({
+        userName,
+        uid: a.uid,
+        docId: doc.id,
+        prediccion: `${a.golesLocalApuesta}-${a.golesVisitanteApuesta}`,
+        totalGolesApuesta: a.totalGolesApuesta,
+        puntosObtenidos: a.puntosObtenidos
+      });
+    }
 
     res.json({
       partido: {
-        id: 'p22',
-        equipos: `${p22.equipoLocal} vs ${p22.equipoVisitante}`,
-        estado: p22.estado,
-        goles: `${p22.golesLocal ?? 'null'}-${p22.golesVisitante ?? 'null'}`,
-        fecha: p22.fecha,
-        hora: p22.hora
+        id: 'p36',
+        equipos: `${p36.equipoLocal} vs ${p36.equipoVisitante}`,
+        estado: p36.estado,
+        goles: `${p36.golesLocal ?? 'null'}-${p36.golesVisitante ?? 'null'}`,
+        fecha: p36.fecha,
+        hora: p36.hora
       },
-      apuestas: {
-        total: apuestasSnap.size,
-        conPuntosMayorA0: conPuntos,
-        sinPuntos: sinPuntos,
-        conNumero,
-        conObjeto
-      },
-      muestra,
-      usuariosMuestra: await Promise.all(
-        muestra.slice(0, 3).map(async (m) => {
-          const uDoc = await db.collection('pm_usuarios').doc(m.uid).get();
-          const u = uDoc.data() || {};
-          return {
-            uid: m.uid,
-            nombre: u.nombre,
-            puntosTotal: u.puntosTotal,
-            puntosPorGrupo: u.puntosPorGrupo,
-            puntosEnApuestaP22: m.puntosObtenidos
-          };
-        })
-      ),
-      rankingGOLIPOLLA: (await db.collection('pm_usuarios').get()).docs
-        .map(d => {
-          const u = d.data();
-          return {
-            nombre: u.nombre,
-            puntosGOLIPOLLA: u.puntosPorGrupo?.GOLIPOLLA ?? u.puntosTotal ?? 0
-          };
-        })
-        .sort((a, b) => b.puntosGOLIPOLLA - a.puntosGOLIPOLLA)
-        .slice(0, 8)
+      apuestas
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 11. Trigger de Firestore: onPartidoUpdate
+// Recalcula los puntos cuando un partido pasa a finalizado o cambia su marcador
+// ─────────────────────────────────────────────────────────────────────────────
+exports.onPartidoUpdate = functions.firestore
+  .document('pm_partidos/{partidoId}')
+  .onUpdate(async (change, context) => {
+    const before = change.before.data();
+    const after = change.after.data();
+
+    // Comprobar si el partido pasó a estado 'finalizado' o si cambió el marcador estando 'finalizado'
+    const pasoAFinalizado = before.estado !== 'finalizado' && after.estado === 'finalizado';
+    const golesLocalCambiaron = before.golesLocal !== after.golesLocal;
+    const golesVisitanteCambiaron = before.golesVisitante !== after.golesVisitante;
+    const marcadorCambiado = after.estado === 'finalizado' && (golesLocalCambiaron || golesVisitanteCambiaron);
+
+    if (pasoAFinalizado || marcadorCambiado) {
+      const partidoId = context.params.partidoId;
+      console.log(`[Trigger] Partido ${partidoId} (${after.equipoLocal} vs ${after.equipoVisitante}) actualizado. Recalculando puntos...`);
+      await calcularYGuardarPuntos(partidoId, after);
+    }
+    return null;
+  });
+
