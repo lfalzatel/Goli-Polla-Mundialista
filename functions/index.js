@@ -459,7 +459,7 @@ async function calcularYGuardarPuntos(partidoId, partidoActualizado) {
       for (const g of Object.keys(diffs.byGroup)) {
         updateData[`puntosPorGrupo.${g}`] = admin.firestore.FieldValue.increment(diffs.byGroup[g]);
       }
-      batch.set(userRef, updateData, { merge: true });
+      batch.update(userRef, updateData);
     }
   }
 
@@ -1369,4 +1369,6 @@ exports.onPartidoUpdate = functions.firestore
     }
     return null;
   });
+
+
 
