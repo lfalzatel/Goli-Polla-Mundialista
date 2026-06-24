@@ -191,22 +191,30 @@ async function fetchFromESPN() {
  * Busca un partido de la API que coincida con un partido de Firestore.
  * Intenta varias estrategias de matching.
  */
+function normalizeName(str) {
+  if (!str) return '';
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
 function findMatchInAPIResults(p, apiMatches) {
   const localLow = p.equipoLocal.toLowerCase();
   const visitanteLow = p.equipoVisitante.toLowerCase();
-  const englishHome = teamNameMapping[localLow] || p.equipoLocal;
-  const englishAway = teamNameMapping[visitanteLow] || p.equipoVisitante;
+  const homeMapped = teamNameMapping[localLow] || p.equipoLocal;
+  const awayMapped = teamNameMapping[visitanteLow] || p.equipoVisitante;
+  
+  const englishHomeNorm = normalizeName(homeMapped);
+  const englishAwayNorm = normalizeName(awayMapped);
 
-  // Estrategia 1: coincidencia exacta por nombre en inglés
+  // Estrategia 1: coincidencia exacta por nombre en inglés (normalizado)
   let found = apiMatches.find(m =>
-    m.homeTeamName === englishHome && m.awayTeamName === englishAway
+    normalizeName(m.homeTeamName) === englishHomeNorm && normalizeName(m.awayTeamName) === englishAwayNorm
   );
   if (found) return found;
 
-  // Estrategia 2: coincidencia parcial (includes) case insensitive
+  // Estrategia 2: coincidencia parcial (includes) normalizado
   found = apiMatches.find(m =>
-    m.homeTeamName.toLowerCase().includes(englishHome.toLowerCase()) &&
-    m.awayTeamName.toLowerCase().includes(englishAway.toLowerCase())
+    normalizeName(m.homeTeamName).includes(englishHomeNorm) &&
+    normalizeName(m.awayTeamName).includes(englishAwayNorm)
   );
   if (found) return found;
 
@@ -215,8 +223,8 @@ function findMatchInAPIResults(p, apiMatches) {
   const awayAbbrs = espnTeamMapping[visitanteLow] || [];
   if (homeAbbrs.length > 0 && awayAbbrs.length > 0) {
     found = apiMatches.find(m =>
-      (homeAbbrs.includes(m.homeTeamAbbr) || homeAbbrs.some(a => m.homeTeamName?.toLowerCase().includes(a.toLowerCase()))) &&
-      (awayAbbrs.includes(m.awayTeamAbbr) || awayAbbrs.some(a => m.awayTeamName?.toLowerCase().includes(a.toLowerCase())))
+      (homeAbbrs.includes(m.homeTeamAbbr) || homeAbbrs.some(a => normalizeName(m.homeTeamName).includes(normalizeName(a)))) &&
+      (awayAbbrs.includes(m.awayTeamAbbr) || awayAbbrs.some(a => normalizeName(m.awayTeamName).includes(normalizeName(a))))
     );
     if (found) return found;
   }
@@ -312,6 +320,22 @@ exports.checkAndScoreMatches = functions.pubsub
 
       let matchFound = footballDataMatches ? findMatchInAPIResults(p, footballDataMatches) : null;
       let usedSource = 'football-data.org';
+
+      // Fallback a ESPN si en FootballData dice SCHEDULED pero el partido ya debió empezar (API desactualizada)
+      if (matchFound && matchFound.status === 'SCHEDULED' && p.fechaHoraInicio <= Date.now()) {
+        console.log(`[Cron] ${p.equipoLocal} vs ${p.equipoVisitante} figura SCHEDULED en FootballData pero ya debió iniciar. Consultando ESPN...`);
+        if (!espnMatches) {
+          espnMatches = await fetchFromESPN();
+        }
+        if (espnMatches) {
+          const espnMatch = findMatchInAPIResults(p, espnMatches);
+          if (espnMatch && espnMatch.status !== 'SCHEDULED') {
+            matchFound = espnMatch;
+            usedSource = 'ESPN';
+            console.log(`[Cron] ✅ Se encontró estado activo en ESPN para ${p.equipoLocal} vs ${p.equipoVisitante}: ${espnMatch.status}`);
+          }
+        }
+      }
 
       if (!matchFound) {
         if (!espnMatches) {
