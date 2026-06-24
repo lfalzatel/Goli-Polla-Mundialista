@@ -21,7 +21,7 @@ const teamNameMapping = {
   "qatar": "Qatar",
   "cabo verde": "Cape Verde Islands", "egipto": "Egypt", "nueva zelanda": "New Zealand",
   "irak": "Iraq", "noruega": "Norway", "argelia": "Algeria", "austria": "Austria",
-  "jordania": "Jordan", "rd congo": "DR Congo", "panamá": "Panama", "uzbekistán": "Uzbekistan",
+  "jordania": "Jordan", "rd congo": "Congo DR", "panamá": "Panama", "uzbekistán": "Uzbekistan",
   "colombia": "Colombia", "bosnia": "Bosnia-Herzegovina", "bosnia y herzegovina": "Bosnia-Herzegovina",
   "república checa": "Czechia", "chequia": "Czechia", "paraguay": "Paraguay", "sudáfrica": "South Africa"
 };
