@@ -267,13 +267,20 @@ exports.checkAndScoreMatches = functions.pubsub
       currentSnapshot = await db.collection('pm_partidos').get();
     }
 
+    // ─── Ventana de gracia post-finalización ────────────────────────────────
+    // Un partido 'finalizado' con goles se excluye del loop SALVO que aún
+    // esté dentro de los 30 min posteriores al tiempo estimado de fin
+    // (kickoff + 110 min = 90' partido + ~20' de buffer VAR/tiempo extra).
+    // Esto permite detectar goles anulados por VAR o correcciones tardías
+    // de la API sin que el partido quede congelado en un marcador incorrecto.
+    const GRACE_MINUTES = 30;       // minutos adicionales tras fin estimado
+    const MATCH_DURATION_MIN = 110; // duración máxima estimada del partido
+
     const activeDocs = currentSnapshot.docs.filter(doc => {
       const p = doc.data();
-      // Si ya está finalizado y TIENE goles, no hay que hacer nada.
-      if (p.estado === 'finalizado' && p.golesLocal !== null && p.golesLocal !== undefined) {
-        return false;
-      }
       if (!p.fecha || !p.hora) return false;
+
+      let startTime;
       try {
         const parts = p.fecha.split(' ');
         if (parts.length < 2) return false;
@@ -285,11 +292,28 @@ exports.checkAndScoreMatches = functions.pubsub
         if (hours === '12') hours = '00';
         if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
 
-        const startTime = new Date(`${year}-${month}-${day}T${hours.toString().padStart(2, '0')}:${minutes}:00-05:00`);
-        return startTime <= new Date();
+        startTime = new Date(`${year}-${month}-${day}T${hours.toString().padStart(2, '0')}:${minutes}:00-05:00`);
       } catch (e) {
         return false;
       }
+
+      // El partido no ha comenzado aún → ignorar
+      if (startTime > new Date()) return false;
+
+      // Tiempo estimado de fin + ventana de gracia
+      const graceEnd = new Date(startTime.getTime() + (MATCH_DURATION_MIN + GRACE_MINUTES) * 60 * 1000);
+      const withinGrace = new Date() <= graceEnd;
+
+      // Si ya está finalizado con goles Y ya pasó la ventana de gracia → ignorar
+      if (
+        p.estado === 'finalizado' &&
+        p.golesLocal !== null && p.golesLocal !== undefined &&
+        !withinGrace
+      ) {
+        return false;
+      }
+
+      return true;
     });
 
     if (activeDocs.length === 0) {
